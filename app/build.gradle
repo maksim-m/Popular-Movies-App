@@ -1,0 +1,75 @@
+apply plugin: 'com.android.application'
+
+def isOnCi() {
+    def ci = System.getenv("CI")
+    return (ci != null && ci == "travis")
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "me.maxdev.popularmoviesapp"
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        generatedDensities = []
+    }
+
+    def STRING = "String"
+
+    def THE_MOVIE_DB_API_KEY = "THE_MOVIE_DB_API_KEY"
+
+    def UNDEFINED = '"UNDEFINED"'
+
+    buildTypes {
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro',
+                    'proguard-picasso.pro',
+                    'proguard-square-retrofit.pro'
+        }
+
+        debug {
+            minifyEnabled false
+            testCoverageEnabled = true
+        }
+    }
+
+    buildTypes.each {
+        if (!isOnCi()) {
+            it.buildConfigField STRING, THE_MOVIE_DB_API_KEY, MY_MOVIE_DB_API_KEY
+        } else {
+            it.buildConfigField STRING, THE_MOVIE_DB_API_KEY, UNDEFINED
+        }
+    }
+
+    lintOptions {
+        warning 'InvalidPackage'
+        abortOnError false
+    }
+
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+
+    compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.android.support:support-v4:23.2.1'
+    compile 'com.android.support:design:23.2.1'
+
+    compile 'com.squareup.retrofit2:retrofit:2.0.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.0'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+}

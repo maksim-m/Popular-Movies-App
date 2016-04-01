@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Popular Movies App</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_sort">Sort by…</string>
+    <string name="action_cancel">Cancel</string>
+
+    <string name="user_rating">User rating: %.1f</string>
+    <string name="release_date">Release date: %s</string>
+
+    <string name="title_activity_movie_details">MovieDetailsActivity</string>
+
+    <!-- Label for the "sort by" preference [CHAR LIMIT=30] -->
+    <string name="pref_sort_by_label">Sort by</string>
+    <!-- Key name for storing "sort by" preference in SharedPreferences [CHAR LIMIT=NONE] -->
+    <string name="pref_sort_by_key" translatable="false">sortBy</string>
+    <!-- Default value for "sort by" preference [CHAR LIMIT=NONE] -->
+    <string name="pref_sort_by_default" translatable="false">popularity.desc</string>
+    <!-- Value in SharedPreferences for "most popular" option [CHAR LIMIT=NONE] -->
+    <string name="pref_sort_by_most_popular" translatable="false">popularity.desc</string>
+    <!-- Value in SharedPreferences for "highest-rated" option [CHAR LIMIT=NONE] -->
+    <string name="pref_sort_by_highest_rated" translatable="false">vote_average.desc</string>
+    <!-- Label for "most popular" option in "sort by" preference [CHAR LIMIT=25] -->
+    <string name="pref_sort_by_most_popular_label">most popular</string>
+    <!-- Label for "highest-rated" option in "sort by" preference [CHAR LIMIT=25] -->
+    <string name="pref_sort_by_highest_rated_label">highest rated</string>
+
+
+    
+</resources>
