@@ -1,7 +1,6 @@
 package me.maxdev.popularmoviesapp.api;
 
-import me.maxdev.popularmoviesapp.model.DiscoverResponse;
-import me.maxdev.popularmoviesapp.model.Movie;
+import me.maxdev.popularmoviesapp.data.Movie;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

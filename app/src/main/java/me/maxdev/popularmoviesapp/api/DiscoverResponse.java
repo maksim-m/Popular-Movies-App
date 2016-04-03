@@ -1,4 +1,4 @@
-package me.maxdev.popularmoviesapp.model;
+package me.maxdev.popularmoviesapp.api;
 
 import com.google.gson.annotations.SerializedName;
 

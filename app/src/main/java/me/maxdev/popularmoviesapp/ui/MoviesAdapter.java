@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import me.maxdev.popularmoviesapp.R;
-import me.maxdev.popularmoviesapp.model.Movie;
+import me.maxdev.popularmoviesapp.data.Movie;
 import com.squareup.picasso.Picasso;
 
 public class MoviesAdapter extends ArrayAdapter<Movie> {

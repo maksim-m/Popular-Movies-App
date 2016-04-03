@@ -21,8 +21,8 @@ import android.widget.GridView;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.api.TheMovieDbClient;
 import me.maxdev.popularmoviesapp.api.TheMovieDbService;
-import me.maxdev.popularmoviesapp.model.DiscoverResponse;
-import me.maxdev.popularmoviesapp.model.Movie;
+import me.maxdev.popularmoviesapp.api.DiscoverResponse;
+import me.maxdev.popularmoviesapp.data.Movie;
 
 import java.util.Arrays;
 import java.util.List;
