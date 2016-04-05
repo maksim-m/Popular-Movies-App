@@ -1,5 +1,6 @@
 package me.maxdev.popularmoviesapp.data;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
@@ -80,5 +81,43 @@ public class TestDb extends AndroidTestCase {
         assertTrue("Error: The database doesn't contain all of the required location entry columns",
                 moviesColumnHashSet.isEmpty());
         db.close();
+    }
+
+    public void testMoviesTable() {
+        insertMovie();
+    }
+
+    public long insertMovie() {
+        MoviesDbHelper helper = new MoviesDbHelper(mContext);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues testValues = TestUtilities.createMovieValues();
+
+        long id = db.insert(MoviesContract.MovieEntry.TABLE_NAME, null,testValues);
+
+        if (id == -1) {
+            fail("Error by inserting contentValues into database.");
+        }
+
+        Cursor cursor = db.query(
+                MoviesContract.MovieEntry.TABLE_NAME,
+                null,       // all columns
+                null,       // Columns for the "where" clause
+                null,       // Values for the "where" clause
+                null,       // columns to group by
+                null,       // columns to filter by row groups
+                null        // sort order
+        );
+
+        assertTrue( "Error: No Records returned from movies query", cursor.moveToFirst() );
+
+        TestUtilities.validateCurrentRecord("Error: Movie Query Validation Failed", cursor, testValues);
+
+        assertFalse("Error: More than one record returned from location query", cursor.moveToNext());
+
+        cursor.close();
+        db.close();
+
+        return id;
     }
 }

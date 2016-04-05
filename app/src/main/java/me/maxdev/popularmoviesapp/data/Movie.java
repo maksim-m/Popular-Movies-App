@@ -39,7 +39,9 @@ public class Movie {
         this.title = title;
     }
 
-    public Movie(long id, String originalTitle, String overview, String releaseDate, String posterPath, double popularity, String title, double averageVote, long voteCount, String backdropPath) {
+    public Movie(long id, String originalTitle, String overview, String releaseDate,
+                 String posterPath, double popularity, String title, double averageVote,
+                 long voteCount, String backdropPath) {
         this.id = id;
         this.originalTitle = originalTitle;
         this.overview = overview;
