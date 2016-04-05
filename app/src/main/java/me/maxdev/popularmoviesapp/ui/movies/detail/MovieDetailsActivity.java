@@ -1,4 +1,4 @@
-package me.maxdev.popularmoviesapp.ui;
+package me.maxdev.popularmoviesapp.ui.movies.detail;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;

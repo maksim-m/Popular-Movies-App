@@ -7,7 +7,7 @@
     tools:showIn="@layout/activity_movie_details"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="me.maxdev.popularmoviesapp.ui.MovieDetailsActivity">
+    tools:context=".ui.movies.detail.MovieDetailsActivity">
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -28,8 +28,7 @@
                 android:id="@+id/image_movie_detail_poster"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:src="@drawable/sample_poster_1" />
+                android:adjustViewBounds="true" />
 
             <LinearLayout
                 android:layout_width="0dp"

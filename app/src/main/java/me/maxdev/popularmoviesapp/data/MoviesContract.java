@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
  */
 public class MoviesContract {
 
-    /* Inner class that defines the table contents of the movies table */
+    /* Inner class that defines the contents of the movies table */
     public static final class MovieEntry implements BaseColumns {
 
         public static final String TABLE_NAME = "movies";

@@ -43,4 +43,19 @@ public class TestUtilities extends AndroidTestCase {
         movieValues.put(MoviesContract.MovieEntry.COLUMN_BACKDROP_PATH, "https://image.tmdb.org/t/p/original/1O3tFuQsVgmjwx47xGKBjkSUiU6.jpg");
         return movieValues;
     }
+
+    static ContentValues createConflictedMovieValues() {
+        ContentValues movieValues = new ContentValues();
+        movieValues.put(MoviesContract.MovieEntry._ID, 10378);
+        movieValues.put(MoviesContract.MovieEntry.COLUMN_ORIGINAL_TITLE, "Another Title");
+        movieValues.put(MoviesContract.MovieEntry.COLUMN_OVERVIEW, "muse themselves by harassing helpless creatures by throwing fruits, nuts and rocks at them. After the deaths of two of Bunny's favorite butterflies, and an offensive attack on Bunny himself, Bunny sets aside his gentle nature and orchestrates a complex plan for revenge.");
+        movieValues.put(MoviesContract.MovieEntry.COLUMN_RELEASE_DATE, "2025-05-30");
+        movieValues.put(MoviesContract.MovieEntry.COLUMN_POSTER_PATH, "https://image.tmdb.org/t/p/original/abc.jpg");
+        movieValues.put(MoviesContract.MovieEntry.COLUMN_POPULARITY, 3.7);
+        movieValues.put(MoviesContract.MovieEntry.COLUMN_TITLE, "Another Title");
+        movieValues.put(MoviesContract.MovieEntry.COLUMN_AVERAGE_VOTE, 5.7);
+        movieValues.put(MoviesContract.MovieEntry.COLUMN_VOTE_COUNT, 42);
+        movieValues.put(MoviesContract.MovieEntry.COLUMN_BACKDROP_PATH, "https://image.tmdb.org/t/p/original/abcdef.jpg");
+        return movieValues;
+    }
 }

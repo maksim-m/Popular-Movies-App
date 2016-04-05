@@ -1,4 +1,4 @@
-package me.maxdev.popularmoviesapp.ui;
+package me.maxdev.popularmoviesapp.ui.movies;
 
 
 import android.content.DialogInterface;
@@ -27,6 +27,7 @@ import me.maxdev.popularmoviesapp.data.Movie;
 import java.util.Arrays;
 import java.util.List;
 
+import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailsActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

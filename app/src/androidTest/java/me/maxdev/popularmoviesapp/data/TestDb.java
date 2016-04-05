@@ -109,10 +109,30 @@ public class TestDb extends AndroidTestCase {
                 null        // sort order
         );
 
-        assertTrue( "Error: No Records returned from movies query", cursor.moveToFirst() );
+        assertTrue("Error: No Records returned from movies query", cursor.moveToFirst());
 
         TestUtilities.validateCurrentRecord("Error: Movie Query Validation Failed", cursor, testValues);
 
+        assertFalse("Error: More than one record returned from location query", cursor.moveToNext());
+
+        // Test replace on conflict strategy
+
+        ContentValues conflictedValues = TestUtilities.createConflictedMovieValues();
+        long conflictedId = db.insertWithOnConflict(MoviesContract.MovieEntry.TABLE_NAME, null, conflictedValues, SQLiteDatabase.CONFLICT_REPLACE);
+        if (conflictedId != id) {
+            fail("Error by replacing contentValues in database. ID " + conflictedId + " did not match the expected ID " + id);
+        }
+        cursor = db.query(
+                MoviesContract.MovieEntry.TABLE_NAME,
+                null,       // all columns
+                null,       // Columns for the "where" clause
+                null,       // Values for the "where" clause
+                null,       // columns to group by
+                null,       // columns to filter by row groups
+                null        // sort order
+        );
+        assertTrue("Error: No Records returned from movies query", cursor.moveToFirst());
+        TestUtilities.validateCurrentRecord("Error: Movie Query Validation Failed", cursor, conflictedValues);
         assertFalse("Error: More than one record returned from location query", cursor.moveToNext());
 
         cursor.close();

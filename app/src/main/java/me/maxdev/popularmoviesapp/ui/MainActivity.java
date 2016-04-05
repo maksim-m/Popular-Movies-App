@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import me.maxdev.popularmoviesapp.R;
+import me.maxdev.popularmoviesapp.ui.movies.MoviesGridFragment;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package me.maxdev.popularmoviesapp.ui;
+package me.maxdev.popularmoviesapp.ui.movies;
 
 
 import android.content.Context;
