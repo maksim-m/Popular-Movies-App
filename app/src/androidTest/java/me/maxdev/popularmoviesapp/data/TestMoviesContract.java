@@ -7,6 +7,20 @@ public class TestMoviesContract extends AndroidTestCase {
 
     private static final long TEST_MOVIE_ID = 157821;
 
+    public void testBaseContentUri() {
+        assertNotNull("Error: Null Uri returned.", MoviesContract.BASE_CONTENT_URI);
+        assertEquals("Error: Base Content Uri doesn't match expected result",
+                MoviesContract.BASE_CONTENT_URI.toString(),
+                "content://me.maxdev.popularmoviesapp");
+    }
+
+    public void testMoviesUri() {
+        assertNotNull("Error: Null Uri returned.", MoviesContract.MovieEntry.CONTENT_URI);
+        assertEquals("Error: Movies Uri doesn't match expected result",
+                MoviesContract.MovieEntry.CONTENT_URI.toString(),
+                "content://me.maxdev.popularmoviesapp/movies");
+    }
+
     public void testBuildMovieUri() {
 
         Uri movieUri = MoviesContract.MovieEntry.buildMovieUri(TEST_MOVIE_ID);
