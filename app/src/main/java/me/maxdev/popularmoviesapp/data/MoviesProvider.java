@@ -37,10 +37,17 @@ public class MoviesProvider extends ContentProvider {
         return null;
     }
 
-    @Nullable
     @Override
     public String getType(Uri uri) {
-        return null;
+        final int match = URI_MATCHER.match(uri);
+        switch (match) {
+            case MOVIES:
+                return MoviesContract.MovieEntry.CONTENT_DIR_TYPE;
+            case MOVIE_BY_ID:
+                return MoviesContract.MovieEntry.CONTENT_ITEM_TYPE;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
     }
 
     @Nullable

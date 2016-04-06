@@ -37,6 +37,21 @@ public class TestProvider extends AndroidTestCase {
         }
     }
 
+    public void testGetType() {
+        // content://me.maxdev.popularmoviesapp/movies
+        String type = mContext.getContentResolver().getType(MoviesContract.MovieEntry.CONTENT_URI);
+        // vnd.android.cursor.dir/me.maxdev.popularmoviesapp/movies
+        assertEquals("Error: the MOVIES CONTENT URI should return MovieEntry.CONTENT_DIR_TYPE",
+                MoviesContract.MovieEntry.CONTENT_DIR_TYPE, type);
+
+        long TEST_MOVIE_ID = 157821;
+        // content://me.maxdev.popularmoviesapp/movies/157821
+        type = mContext.getContentResolver().getType(MoviesContract.MovieEntry.buildMovieUri(TEST_MOVIE_ID));
+        // vnd.android.cursor.item/me.maxdev.popularmoviesapp/movies/157821
+        assertEquals("Error: the MOVIE BY ID CONTENT URI should return MovieEntry.CONTENT_ITEM_TYPE",
+                MoviesContract.MovieEntry.CONTENT_ITEM_TYPE, type);
+    }
+
     public void deleteAllRecordsFromProvider() {
         mContext.getContentResolver().delete(
                 MoviesContract.MovieEntry.CONTENT_URI,
