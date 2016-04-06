@@ -31,6 +31,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="me.maxdev.popularmoviesapp.ui.MainActivity" />
         </activity>
+        <provider
+            android:authorities="me.maxdev.popularmoviesapp"
+            android:name=".data.MoviesProvider"
+            android:exported="false" />
     </application>
 
 </manifest>
