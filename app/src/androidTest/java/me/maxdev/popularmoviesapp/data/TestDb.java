@@ -91,7 +91,7 @@ public class TestDb extends AndroidTestCase {
         MoviesDbHelper helper = new MoviesDbHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
 
-        ContentValues testValues = TestUtilities.createMovieValues();
+        ContentValues testValues = TestUtilities.createTestMovieValues();
 
         long id = db.insert(MoviesContract.MovieEntry.TABLE_NAME, null,testValues);
 

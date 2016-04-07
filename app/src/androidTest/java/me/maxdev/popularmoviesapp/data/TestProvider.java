@@ -1,10 +1,13 @@
 package me.maxdev.popularmoviesapp.data;
 
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.Build;
 import android.test.AndroidTestCase;
 
 public class TestProvider extends AndroidTestCase {
@@ -52,6 +55,51 @@ public class TestProvider extends AndroidTestCase {
                 MoviesContract.MovieEntry.CONTENT_ITEM_TYPE, type);
     }
 
+    public void testMoviesQuery() {
+        ContentValues testValues = insertTestValues();
+
+        Cursor movies = mContext.getContentResolver().query(
+                MoviesContract.MovieEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        if (movies == null) {
+            fail("Get empty cursor by querying movies.");
+        }
+        TestUtilities.validateCursor("Error by querying movies.", movies, testValues);
+
+        if ( Build.VERSION.SDK_INT >= 19 ) {
+            assertEquals("Error: Movies Query did not properly set NotificationUri",
+                    movies.getNotificationUri(), MoviesContract.MovieEntry.CONTENT_URI);
+        }
+    }
+
+    public void testMovieByIdQuery() {
+        ContentValues testValues = insertTestValues();
+        long testMovieId = testValues.getAsLong(MoviesContract.MovieEntry._ID);
+        Uri testMovieUri = MoviesContract.MovieEntry.buildMovieUri(testMovieId);
+
+        Cursor movie = mContext.getContentResolver().query(
+                testMovieUri,
+                null,
+                null,
+                null,
+                null
+        );
+        if (movie == null) {
+            fail("Get empty cursor by querying movie by id.");
+        }
+        TestUtilities.validateCursor("Error by querying movie by id.", movie, testValues);
+        assertEquals("Movie by ID query returned more than one entry. ", movie.getCount(), 1);
+
+        if ( Build.VERSION.SDK_INT >= 19 ) {
+            assertEquals("Error: Movie by ID Query did not properly set NotificationUri",
+                    movie.getNotificationUri(), testMovieUri);
+        }
+    }
+
     public void deleteAllRecordsFromProvider() {
         mContext.getContentResolver().delete(
                 MoviesContract.MovieEntry.CONTENT_URI,
@@ -85,5 +133,17 @@ public class TestProvider extends AndroidTestCase {
 
     public void deleteAllRecords() {
         deleteAllRecordsFromDB();
+    }
+
+    ContentValues insertTestValues() {
+        MoviesDbHelper dbHelper = new MoviesDbHelper(getContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues testValues = TestUtilities.createTestMovieValues();
+        long id = db.insert(MoviesContract.MovieEntry.TABLE_NAME, null, testValues);
+        if (id == -1) {
+            fail("Error by inserting contentValues into database.");
+        }
+        db.close();
+        return testValues;
     }
 }

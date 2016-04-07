@@ -29,7 +29,7 @@ public class TestUtilities extends AndroidTestCase {
         }
     }
 
-    static ContentValues createMovieValues() {
+    static ContentValues createTestMovieValues() {
         ContentValues movieValues = new ContentValues();
         movieValues.put(MoviesContract.MovieEntry._ID, 10378);
         movieValues.put(MoviesContract.MovieEntry.COLUMN_ORIGINAL_TITLE, "Big Buck Bunny");
@@ -57,5 +57,10 @@ public class TestUtilities extends AndroidTestCase {
         movieValues.put(MoviesContract.MovieEntry.COLUMN_VOTE_COUNT, 42);
         movieValues.put(MoviesContract.MovieEntry.COLUMN_BACKDROP_PATH, "https://image.tmdb.org/t/p/original/abcdef.jpg");
         return movieValues;
+    }
+
+    // Without this dummy test case Android Studio 2.0 shows TestUtilities as 'terminated', not as 'passed'
+    public void testTest() {
+        assertEquals(2 + 2, 4);
     }
 }

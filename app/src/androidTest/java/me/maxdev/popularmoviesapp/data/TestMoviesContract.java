@@ -34,4 +34,10 @@ public class TestMoviesContract extends AndroidTestCase {
                 movieUri.toString(),
                 "content://me.maxdev.popularmoviesapp/movies/157821");
     }
+
+    public void testGetIdFromUri() {
+        Uri movieUri = MoviesContract.MovieEntry.buildMovieUri(TEST_MOVIE_ID);
+        assertEquals("Error: Movie ID doesn't match expected result",
+                MoviesContract.MovieEntry.getIdFromUri(movieUri), TEST_MOVIE_ID);
+    }
 }
