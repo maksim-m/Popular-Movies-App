@@ -18,7 +18,7 @@ public class MoviesProvider extends ContentProvider {
     static final int MOVIE_BY_ID = 101;
 
     // movies._id = ?
-    private static final String MovieIdSelection =
+    private static final String MOVIE_ID_SELECTION =
             MoviesContract.MovieEntry.TABLE_NAME + "." + MoviesContract.MovieEntry._ID + " = ? ";
 
     static UriMatcher buildUriMatcher() {
@@ -100,13 +100,47 @@ public class MoviesProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final int match = URI_MATCHER.match(uri);
+        int rowsUpdated;
+        switch (match) {
+            case MOVIES:
+                rowsUpdated = db.update(MoviesContract.MovieEntry.TABLE_NAME, values,
+                        selection, selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsUpdated;
     }
 
     @Override
-    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final int match = URI_MATCHER.match(uri);
+        int rowsDeleted;
+        switch (match) {
+            case MOVIES:
+                rowsDeleted = db.delete(MoviesContract.MovieEntry.TABLE_NAME,
+                        selection, selectionArgs);
+                break;
+            case MOVIE_BY_ID:
+                long id = MoviesContract.MovieEntry.getIdFromUri(uri);
+                rowsDeleted = db.delete(MoviesContract.MovieEntry.TABLE_NAME,
+                            MOVIE_ID_SELECTION, new String[]{Long.toString(id)});
+
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsDeleted;
     }
 
     @Override
@@ -117,7 +151,7 @@ public class MoviesProvider extends ContentProvider {
 
     private Cursor getMovieById(Uri uri, String[] projection, String sortOrder) {
         long id = MoviesContract.MovieEntry.getIdFromUri(uri);
-        String selection = MovieIdSelection;
+        String selection = MOVIE_ID_SELECTION;
         String[] selectionArgs =  new String[]{Long.toString(id)};
         return dbHelper.getReadableDatabase().query(
                 MoviesContract.MovieEntry.TABLE_NAME,

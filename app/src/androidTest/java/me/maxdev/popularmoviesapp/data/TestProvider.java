@@ -75,6 +75,7 @@ public class TestProvider extends AndroidTestCase {
             assertEquals("Error: Movies Query did not properly set NotificationUri",
                     movies.getNotificationUri(), MoviesContract.MovieEntry.CONTENT_URI);
         }
+        movies.close();
     }
 
     public void testMovieByIdQuery() {
@@ -99,29 +100,31 @@ public class TestProvider extends AndroidTestCase {
             assertEquals("Error: Movie by ID Query did not properly set NotificationUri",
                     movie.getNotificationUri(), testMovieUri);
         }
+        movie.close();
     }
 
     public void testInsert() {
         ContentValues testValues = TestUtilities.createTestMovieValues();
 
         // Register a content observer for our insert.  This time, directly with the content resolver
-        TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
-        mContext.getContentResolver().registerContentObserver(MoviesContract.MovieEntry.CONTENT_URI, true, tco);
+        TestUtilities.TestContentObserver moviesObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MoviesContract.MovieEntry.CONTENT_URI, true, moviesObserver);
+
         Uri movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, testValues);
+        assertTrue(movieUri != null);
 
         // Did our content observer get called?
-        tco.waitForNotificationOrFail();
-        mContext.getContentResolver().unregisterContentObserver(tco);
+        moviesObserver.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(moviesObserver);
 
         long movieRowId = ContentUris.parseId(movieUri);
-
         // Verify we got a row back.
         assertTrue(movieRowId != -1);
+        assertEquals(MoviesContract.MovieEntry.buildMovieUri(movieRowId), movieUri);
 
         // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
         // the round trip.
-
-        Cursor cursor = mContext.getContentResolver().query(
+        Cursor movies = mContext.getContentResolver().query(
                 MoviesContract.MovieEntry.CONTENT_URI,
                 null, // leaving "columns" null just returns all the columns.
                 null, // cols for "where" clause
@@ -129,70 +132,149 @@ public class TestProvider extends AndroidTestCase {
                 null  // sort order
         );
         TestUtilities.validateCursor("testInsert. Error validating MovieEntry.",
-                cursor, testValues);
+                movies, testValues);
 
         // Test replace police
         ContentValues conflictedValues = TestUtilities.createConflictedMovieValues();
-        tco = TestUtilities.getTestContentObserver();
-        mContext.getContentResolver().registerContentObserver(MoviesContract.MovieEntry.CONTENT_URI, true, tco);
-        movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, conflictedValues);
 
-        // Did our content observer get called?
-        tco.waitForNotificationOrFail();
-        mContext.getContentResolver().unregisterContentObserver(tco);
+        moviesObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MoviesContract.MovieEntry.CONTENT_URI, true, moviesObserver);
+
+        TestUtilities.TestContentObserver movieByIdObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(movieUri, true, movieByIdObserver);
+
+        movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, conflictedValues);
+        assertTrue(movieUri != null);
 
         movieRowId = ContentUris.parseId(movieUri);
         assertTrue(movieRowId != -1);
+        assertEquals(MoviesContract.MovieEntry.buildMovieUri(movieRowId), movieUri);
 
-        cursor = mContext.getContentResolver().query(
+        // Did our content observer get called?
+        moviesObserver.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(moviesObserver);
+        movieByIdObserver.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(movieByIdObserver);
+
+        movies = mContext.getContentResolver().query(
                 MoviesContract.MovieEntry.CONTENT_URI,
                 null, // leaving "columns" null just returns all the columns.
                 null, // cols for "where" clause
                 null, // values for "where" clause
                 null  // sort order
         );
+        assertTrue(movies != null);
         TestUtilities.validateCursor("testInsert. Error validating MovieEntry.",
-                cursor, conflictedValues);
+                movies, conflictedValues);
+        movies.close();
     }
 
-    public void testInsert2() {
-        // Test content notification for MOVIE BY ID Uri
+    public void testUpdateMovie() {
         ContentValues testValues = TestUtilities.createTestMovieValues();
 
-        TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
         Uri movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, testValues);
         assertTrue(movieUri != null);
-        mContext.getContentResolver().registerContentObserver(movieUri, true, tco);
-        long movieId = MoviesContract.MovieEntry.getIdFromUri(movieUri);
+        long movieId = ContentUris.parseId(movieUri);
+        assertTrue(movieId != -1);
         assertEquals(movieUri, MoviesContract.MovieEntry.buildMovieUri(movieId));
 
+        ContentValues updatedValues = new ContentValues(testValues);
+        updatedValues.put(MoviesContract.MovieEntry._ID, movieId);
+        updatedValues.put(MoviesContract.MovieEntry.COLUMN_VOTE_COUNT, 100500);
+
+        // Create a cursor with observer to make sure that the content provider is notifying
+        // the observers as expected
+        Cursor movies = mContext.getContentResolver().query(
+                MoviesContract.MovieEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+        assertTrue(movies != null);
+
+        TestUtilities.TestContentObserver moviesObserver = TestUtilities.getTestContentObserver();
+        movies.registerContentObserver(moviesObserver);
+
+        TestUtilities.TestContentObserver movieByIdObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(movieUri, true, movieByIdObserver);
+
+        int count = mContext.getContentResolver().update(
+                MoviesContract.MovieEntry.CONTENT_URI, updatedValues,
+                MoviesContract.MovieEntry._ID + "= ?", new String[] { Long.toString(movieId)});
+        assertEquals(1, count);
+
+        // Test to make sure our observer is called.
+        moviesObserver.waitForNotificationOrFail();
+
+        movies.unregisterContentObserver(moviesObserver);
+        movies.close();
+
+        movieByIdObserver.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(movieByIdObserver);
+
+        // A cursor is your primary interface to the query results.
         Cursor cursor = mContext.getContentResolver().query(
-                MoviesContract.MovieEntry.buildMovieUri(movieId),
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null  // sort order
+                MoviesContract.MovieEntry.CONTENT_URI,
+                null,   // projection
+                MoviesContract.MovieEntry._ID + " = " + movieId,
+                null,   // Values for the "where" clause
+                null    // sort order
         );
-        TestUtilities.validateCursor("testInsert. Error validating MovieEntry.",
-                cursor, testValues);
+        assertTrue(cursor != null);
+        TestUtilities.validateCursor("testUpdateMovie.  Error validating movie entry update.",
+                cursor, updatedValues);
 
-        // Replace
-        ContentValues conflictedValues = TestUtilities.createConflictedMovieValues();
-        movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, conflictedValues);
+        cursor.close();
+    }
+
+    public void testDeleteAllMovies() {
+        ContentValues testValues = TestUtilities.createTestMovieValues();
+        Uri movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, testValues);
         assertTrue(movieUri != null);
+        long id = ContentUris.parseId(movieUri);
+        assertTrue(id != -1);
+        assertEquals(MoviesContract.MovieEntry.buildMovieUri(id), movieUri);
 
-        tco.waitForNotificationOrFail();
-        mContext.getContentResolver().unregisterContentObserver(tco);
+        TestUtilities.TestContentObserver moviesObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MoviesContract.MovieEntry.CONTENT_URI, true, moviesObserver);
 
-        cursor = mContext.getContentResolver().query(
-                movieUri,
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null  // sort order
+        TestUtilities.TestContentObserver movieByIdObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(movieUri, true, movieByIdObserver);
+
+        deleteAllRecordsFromProvider();
+
+        moviesObserver.waitForNotificationOrFail();
+        movieByIdObserver.waitForNotificationOrFail();
+
+        mContext.getContentResolver().unregisterContentObserver(moviesObserver);
+        mContext.getContentResolver().unregisterContentObserver(movieByIdObserver);
+    }
+
+    public void testDeleteMovieById() {
+        ContentValues testValues = TestUtilities.createTestMovieValues();
+        Uri movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, testValues);
+        assertTrue(movieUri != null);
+        long id = ContentUris.parseId(movieUri);
+        assertTrue(id != -1);
+        assertEquals(MoviesContract.MovieEntry.buildMovieUri(id), movieUri);
+
+        TestUtilities.TestContentObserver moviesObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MoviesContract.MovieEntry.CONTENT_URI, true, moviesObserver);
+
+        TestUtilities.TestContentObserver movieByIdObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(movieUri, true, movieByIdObserver);
+
+        mContext.getContentResolver().delete(
+                MoviesContract.MovieEntry.buildMovieUri(id),
+                null,
+                null
         );
-        TestUtilities.validateCursor("testInsert. Error validating MovieEntry.",
-                cursor, conflictedValues);
+
+        moviesObserver.waitForNotificationOrFail();
+        movieByIdObserver.waitForNotificationOrFail();
+
+        mContext.getContentResolver().unregisterContentObserver(moviesObserver);
+        mContext.getContentResolver().unregisterContentObserver(movieByIdObserver);
     }
 
     public void deleteAllRecordsFromProvider() {
@@ -209,6 +291,7 @@ public class TestProvider extends AndroidTestCase {
                 null,
                 null
         );
+        assertTrue(cursor != null);
         assertEquals("Error: Records not deleted from Movies table during delete", 0, cursor.getCount());
         cursor.close();
     }
