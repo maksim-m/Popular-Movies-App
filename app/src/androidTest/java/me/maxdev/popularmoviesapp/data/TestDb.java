@@ -93,7 +93,7 @@ public class TestDb extends AndroidTestCase {
 
         ContentValues testValues = TestUtilities.createTestMovieValues();
 
-        long id = db.insert(MoviesContract.MovieEntry.TABLE_NAME, null,testValues);
+        long id = db.insert(MoviesContract.MovieEntry.TABLE_NAME, null, testValues);
 
         if (id == -1) {
             fail("Error by inserting contentValues into database.");

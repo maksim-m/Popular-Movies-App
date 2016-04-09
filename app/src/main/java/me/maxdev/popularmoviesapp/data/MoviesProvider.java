@@ -4,6 +4,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,7 +37,19 @@ public class MoviesProvider extends ContentProvider {
         return true;
     }
 
-    @Nullable
+    @Override
+    public String getType(@NonNull Uri uri) {
+        final int match = URI_MATCHER.match(uri);
+        switch (match) {
+            case MOVIES:
+                return MoviesContract.MovieEntry.CONTENT_DIR_TYPE;
+            case MOVIE_BY_ID:
+                return MoviesContract.MovieEntry.CONTENT_ITEM_TYPE;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+    }
+
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         int match = URI_MATCHER.match(uri);
@@ -63,23 +76,27 @@ public class MoviesProvider extends ContentProvider {
         return cursor;
     }
 
-    @Override
-    public String getType(@NonNull Uri uri) {
-        final int match = URI_MATCHER.match(uri);
-        switch (match) {
-            case MOVIES:
-                return MoviesContract.MovieEntry.CONTENT_DIR_TYPE;
-            case MOVIE_BY_ID:
-                return MoviesContract.MovieEntry.CONTENT_ITEM_TYPE;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-        }
-    }
-
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
-        return null;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final int match = URI_MATCHER.match(uri);
+        Uri returnUri;
+        switch (match) {
+            case MOVIES:
+                long id = db.insertWithOnConflict(MoviesContract.MovieEntry.TABLE_NAME, null,
+                        values, SQLiteDatabase.CONFLICT_REPLACE);
+                if (id > 0) {
+                    returnUri = MoviesContract.MovieEntry.buildMovieUri(id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return returnUri;
     }
 
     @Override

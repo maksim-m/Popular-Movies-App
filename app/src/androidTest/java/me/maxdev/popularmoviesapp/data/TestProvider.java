@@ -1,6 +1,7 @@
 package me.maxdev.popularmoviesapp.data;
 
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
@@ -98,6 +99,100 @@ public class TestProvider extends AndroidTestCase {
             assertEquals("Error: Movie by ID Query did not properly set NotificationUri",
                     movie.getNotificationUri(), testMovieUri);
         }
+    }
+
+    public void testInsert() {
+        ContentValues testValues = TestUtilities.createTestMovieValues();
+
+        // Register a content observer for our insert.  This time, directly with the content resolver
+        TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MoviesContract.MovieEntry.CONTENT_URI, true, tco);
+        Uri movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, testValues);
+
+        // Did our content observer get called?
+        tco.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(tco);
+
+        long movieRowId = ContentUris.parseId(movieUri);
+
+        // Verify we got a row back.
+        assertTrue(movieRowId != -1);
+
+        // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
+        // the round trip.
+
+        Cursor cursor = mContext.getContentResolver().query(
+                MoviesContract.MovieEntry.CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+        TestUtilities.validateCursor("testInsert. Error validating MovieEntry.",
+                cursor, testValues);
+
+        // Test replace police
+        ContentValues conflictedValues = TestUtilities.createConflictedMovieValues();
+        tco = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MoviesContract.MovieEntry.CONTENT_URI, true, tco);
+        movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, conflictedValues);
+
+        // Did our content observer get called?
+        tco.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(tco);
+
+        movieRowId = ContentUris.parseId(movieUri);
+        assertTrue(movieRowId != -1);
+
+        cursor = mContext.getContentResolver().query(
+                MoviesContract.MovieEntry.CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+        TestUtilities.validateCursor("testInsert. Error validating MovieEntry.",
+                cursor, conflictedValues);
+    }
+
+    public void testInsert2() {
+        // Test content notification for MOVIE BY ID Uri
+        ContentValues testValues = TestUtilities.createTestMovieValues();
+
+        TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
+        Uri movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, testValues);
+        assertTrue(movieUri != null);
+        mContext.getContentResolver().registerContentObserver(movieUri, true, tco);
+        long movieId = MoviesContract.MovieEntry.getIdFromUri(movieUri);
+        assertEquals(movieUri, MoviesContract.MovieEntry.buildMovieUri(movieId));
+
+        Cursor cursor = mContext.getContentResolver().query(
+                MoviesContract.MovieEntry.buildMovieUri(movieId),
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+        TestUtilities.validateCursor("testInsert. Error validating MovieEntry.",
+                cursor, testValues);
+
+        // Replace
+        ContentValues conflictedValues = TestUtilities.createConflictedMovieValues();
+        movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, conflictedValues);
+        assertTrue(movieUri != null);
+
+        tco.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(tco);
+
+        cursor = mContext.getContentResolver().query(
+                movieUri,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+        TestUtilities.validateCursor("testInsert. Error validating MovieEntry.",
+                cursor, conflictedValues);
     }
 
     public void deleteAllRecordsFromProvider() {
