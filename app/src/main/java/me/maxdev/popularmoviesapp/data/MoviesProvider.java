@@ -51,7 +51,8 @@ public class MoviesProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection,
+                        String[] selectionArgs, String sortOrder) {
         int match = URI_MATCHER.match(uri);
         Cursor cursor;
         switch (match) {
@@ -76,7 +77,6 @@ public class MoviesProvider extends ContentProvider {
         return cursor;
     }
 
-    @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -100,7 +100,8 @@ public class MoviesProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int update(@NonNull Uri uri, ContentValues values, String selection,
+                      String[] selectionArgs) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         final int match = URI_MATCHER.match(uri);
         int rowsUpdated;
@@ -131,7 +132,7 @@ public class MoviesProvider extends ContentProvider {
             case MOVIE_BY_ID:
                 long id = MoviesContract.MovieEntry.getIdFromUri(uri);
                 rowsDeleted = db.delete(MoviesContract.MovieEntry.TABLE_NAME,
-                            MOVIE_ID_SELECTION, new String[]{Long.toString(id)});
+                        MOVIE_ID_SELECTION, new String[]{Long.toString(id)});
 
                 break;
             default:
