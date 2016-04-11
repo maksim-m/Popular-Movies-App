@@ -9,10 +9,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-
 public class MoviesProvider extends ContentProvider {
 
     private static final UriMatcher URI_MATCHER = buildUriMatcher();
@@ -57,7 +53,6 @@ public class MoviesProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        checkColumns(projection);
         int match = URI_MATCHER.match(uri);
         Cursor cursor;
         switch (match) {
@@ -168,16 +163,5 @@ public class MoviesProvider extends ContentProvider {
                 null,
                 sortOrder
         );
-    }
-
-    private void checkColumns(String[] projection) {
-        if (projection != null) {
-            HashSet<String> availableColumns = new HashSet<>(Arrays.asList(
-                    MoviesContract.MovieEntry.COLUMNS));
-            HashSet<String> requestedColumns = new HashSet<>(Arrays.asList(projection));
-            if (!availableColumns.containsAll(requestedColumns)) {
-                throw new  IllegalArgumentException("Unknown columns in projection.");
-            }
-        }
     }
 }
