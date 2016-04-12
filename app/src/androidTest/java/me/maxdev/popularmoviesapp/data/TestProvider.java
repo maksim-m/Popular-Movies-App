@@ -310,7 +310,7 @@ public class TestProvider extends AndroidTestCase {
     }
 
     public void deleteAllRecords() {
-        deleteAllRecordsFromDB();
+        deleteAllRecordsFromProvider();
     }
 
     ContentValues insertTestValues() {
