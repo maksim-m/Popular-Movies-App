@@ -7,11 +7,18 @@ import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.UnsupportedSchemeException;
 import android.net.Uri;
 import android.os.Build;
 import android.test.AndroidTestCase;
 
 public class TestProvider extends AndroidTestCase {
+
+    private static final Uri INVALID_URI = new Uri.Builder()
+            .scheme("http")
+            .authority("example.com")
+            .appendPath("test")
+            .build();
 
     @Override
     protected void setUp() throws Exception {
@@ -54,6 +61,8 @@ public class TestProvider extends AndroidTestCase {
         // vnd.android.cursor.item/me.maxdev.popularmoviesapp/movies/157821
         assertEquals("Error: the MOVIE BY ID CONTENT URI should return MovieEntry.CONTENT_ITEM_TYPE",
                 MoviesContract.MovieEntry.CONTENT_ITEM_TYPE, type);
+
+        assertTrue(mContext.getContentResolver().getType(INVALID_URI) == null);
     }
 
     public void testMoviesQuery() {
@@ -76,6 +85,29 @@ public class TestProvider extends AndroidTestCase {
                     movies.getNotificationUri(), MoviesContract.MovieEntry.CONTENT_URI);
         }
         movies.close();
+
+        try {
+            mContext.getContentResolver().query(
+                    MoviesContract.MovieEntry.CONTENT_URI,
+                    new String[] {"Invalid column"},
+                    null,
+                    null,
+                    null
+            );
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Unknown columns in projection.", e.getMessage());
+        }
+
+        assertNull(
+                mContext.getContentResolver().query(
+                        INVALID_URI,
+                        null,
+                        null,
+                        null,
+                        null
+                )
+        );
     }
 
     public void testMovieByIdQuery() {
@@ -310,7 +342,7 @@ public class TestProvider extends AndroidTestCase {
     }
 
     public void deleteAllRecords() {
-        deleteAllRecordsFromDB();
+        deleteAllRecordsFromProvider();
     }
 
     ContentValues insertTestValues() {
