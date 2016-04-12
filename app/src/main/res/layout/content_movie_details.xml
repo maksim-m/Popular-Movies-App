@@ -34,7 +34,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:paddingStart="8dp"
                 android:paddingLeft="8dp"
+                android:paddingEnd="8dp"
+                android:paddingRight="8dp"
                 android:layout_weight="1" >
 
                 <TextView
@@ -42,21 +45,21 @@
                     style="@android:style/TextAppearance.Medium"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Original movie title"/>
+                    tools:text="Original movie title"/>
 
                 <TextView
                     android:id="@+id/text_movie_user_rating"
                     android:paddingTop="4dp"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="User rating: 7.345"/>
+                    tools:text="User rating: 7.345"/>
 
                 <TextView
                     android:id="@+id/text_movie_release_date"
                     android:paddingTop="4dp"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Release date: 08.10.2015"/>
+                    tools:text="Release date: 08.10.2015"/>
 
             </LinearLayout>
 
@@ -67,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
-            android:text="A plot synopsis (called overview in the api)" />
+            tools:text="A plot synopsis (called overview in the api)" />
 
     </LinearLayout>
 

@@ -9,6 +9,9 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 public class MoviesProvider extends ContentProvider {
 
     private static final UriMatcher URI_MATCHER = buildUriMatcher();
@@ -46,7 +49,7 @@ public class MoviesProvider extends ContentProvider {
             case MOVIE_BY_ID:
                 return MoviesContract.MovieEntry.CONTENT_ITEM_TYPE;
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                return null;
         }
     }
 
@@ -55,6 +58,7 @@ public class MoviesProvider extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
         int match = URI_MATCHER.match(uri);
         Cursor cursor;
+        checkColumns(projection);
         switch (match) {
             case MOVIES:
                 cursor = dbHelper.getReadableDatabase().query(
@@ -71,7 +75,7 @@ public class MoviesProvider extends ContentProvider {
                 cursor = getMovieById(uri, projection, sortOrder);
                 break;
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                return null;
         }
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
@@ -164,4 +168,16 @@ public class MoviesProvider extends ContentProvider {
                 sortOrder
         );
     }
+
+    private void checkColumns(String[] projection) {
+        if (projection != null) {
+            HashSet<String> availableColumns = new HashSet<>(Arrays.asList(
+                    MoviesContract.MovieEntry.COLUMNS));
+            HashSet<String> requestedColumns = new HashSet<>(Arrays.asList(projection));
+            if (!availableColumns.containsAll(requestedColumns)) {
+                throw new  IllegalArgumentException("Unknown columns in projection.");
+            }
+        }
+    }
+
 }
