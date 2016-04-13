@@ -309,6 +309,59 @@ public class TestProvider extends AndroidTestCase {
         mContext.getContentResolver().unregisterContentObserver(movieByIdObserver);
     }
 
+    public void testBulkInsert() {
+        deleteAllRecords();
+        ContentValues[] bulkInsertContentValues = createBulkInsertValues();
+
+        TestUtilities.TestContentObserver moviesObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(
+                MoviesContract.MovieEntry.CONTENT_URI, true, moviesObserver);
+
+        int insertCount = mContext.getContentResolver().bulkInsert(
+                MoviesContract.MovieEntry.CONTENT_URI, bulkInsertContentValues);
+
+        moviesObserver.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(moviesObserver);
+
+        assertEquals(insertCount, BULK_INSERT_RECORDS_TO_INSERT);
+        Cursor cursor = mContext.getContentResolver().query(
+                MoviesContract.MovieEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        assertTrue(cursor != null);
+        assertEquals(BULK_INSERT_RECORDS_TO_INSERT, cursor.getCount());
+        cursor.moveToFirst();
+        for (int i = 0; i < BULK_INSERT_RECORDS_TO_INSERT; i++, cursor.moveToNext()) {
+            TestUtilities.validateCurrentRecord("testBulkInsert.  Error validating MovieEntry " + i,
+                    cursor, bulkInsertContentValues[i]);
+        }
+        cursor.close();
+    }
+
+    static private final int BULK_INSERT_RECORDS_TO_INSERT = 25;
+    static ContentValues[] createBulkInsertValues() {
+        ContentValues[] returnContentValues = new ContentValues[BULK_INSERT_RECORDS_TO_INSERT];
+
+        for ( int i = 0; i < BULK_INSERT_RECORDS_TO_INSERT; i++ ) {
+            ContentValues values = new ContentValues();
+            values.put(MoviesContract.MovieEntry._ID, i);
+            values.put(MoviesContract.MovieEntry.COLUMN_ORIGINAL_TITLE, "Test movie" + i);
+            values.put(MoviesContract.MovieEntry.COLUMN_OVERVIEW, "Test");
+            values.put(MoviesContract.MovieEntry.COLUMN_RELEASE_DATE, "13.04.2016");
+            values.put(MoviesContract.MovieEntry.COLUMN_POSTER_PATH, "http://example.com/" + i);
+            values.put(MoviesContract.MovieEntry.COLUMN_POPULARITY, 1.2 + i);
+            values.put(MoviesContract.MovieEntry.COLUMN_TITLE, "Test movie" + i);
+            values.put(MoviesContract.MovieEntry.COLUMN_AVERAGE_VOTE, 1.2 + i);
+            values.put(MoviesContract.MovieEntry.COLUMN_VOTE_COUNT, 5 * i + 1);
+            values.put(MoviesContract.MovieEntry.COLUMN_BACKDROP_PATH, "http://example.com/" + i);
+            returnContentValues[i] = values;
+        }
+        return returnContentValues;
+    }
+
     public void deleteAllRecordsFromProvider() {
         mContext.getContentResolver().delete(
                 MoviesContract.MovieEntry.CONTENT_URI,
