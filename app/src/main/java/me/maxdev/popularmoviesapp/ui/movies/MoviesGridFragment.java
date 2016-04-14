@@ -1,12 +1,17 @@
 package me.maxdev.popularmoviesapp.ui.movies;
 
 
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -33,9 +38,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class MoviesGridFragment extends Fragment {
+public class MoviesGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = "MoviesGridFragment";
+    private static final int LOADER_ID = 0;
     private MoviesAdapter adapter;
 
     public MoviesGridFragment() {
@@ -45,14 +51,19 @@ public class MoviesGridFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(LOADER_ID, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        updateMovies();
+        //updateMovies();
     }
 
     @Override
@@ -93,15 +104,7 @@ public class MoviesGridFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movies_grid, container, false);
 
-        Cursor cursor = getContext().getContentResolver().query(
-                MoviesContract.MovieEntry.CONTENT_URI,
-                null,
-                null,
-                null,
-                MoviesContract.MovieEntry.COLUMN_POPULARITY + " DESC"
-        );
-        adapter = new MoviesAdapter(getActivity(), cursor);
-
+        adapter = new MoviesAdapter(getActivity(), null);
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.movies_grid);
         recyclerView.setAdapter(adapter);
@@ -136,21 +139,12 @@ public class MoviesGridFragment extends Fragment {
                     DiscoverResponse<Movie> discoverResponse = response.body();
                     List<Movie> movies = discoverResponse.getResults();
                     Log.d(LOG_TAG, movies.toString());
-
-                    for (Movie movie : movies) {
-                        getContext().getContentResolver().insert(
-                                MoviesContract.MovieEntry.CONTENT_URI, movie.toContentValues());
-                        Log.d(LOG_TAG, "Inserted movie " + movie);
-                    }
-                    adapter.notifyDataSetChanged();
-
-                    /*ContentValues[] values = new ContentValues[movies.size()];
+                    ContentValues[] values = new ContentValues[movies.size()];
                     for (int i = 0; i < movies.size(); i++) {
                         values[i] = movies.get(i).toContentValues();
                     }
                     getContext().getContentResolver().bulkInsert(
-                            MoviesContract.MovieEntry.CONTENT_URI, values);*/
-
+                            MoviesContract.MovieEntry.CONTENT_URI, values);
                 }
             }
 
@@ -185,5 +179,26 @@ public class MoviesGridFragment extends Fragment {
                 sortByPreferencesValues[index]
         );
         editor.commit();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getActivity(),
+                MoviesContract.MovieEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                MoviesContract.MovieEntry.COLUMN_POPULARITY + " DESC"
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        adapter.changeCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        adapter.changeCursor(null);
     }
 }

@@ -26,10 +26,13 @@ public class MoviesAdapter extends CursorRecyclerViewAdapter<MovieGridItemViewHo
 
     @Override
     public void onBindViewHolder(MovieGridItemViewHolder viewHolder, Cursor cursor) {
-        Movie movie = Movie.fromCursor(cursor);
-        Picasso.with(context)
-                .load(POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + movie.getPosterPath())
-                .into(viewHolder.moviePoster);
+        if (cursor != null) {
+            Movie movie = Movie.fromCursor(cursor);
+            Picasso.with(context)
+                    .load(POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + movie.getPosterPath())
+                    .into(viewHolder.moviePoster);
+        }
+
     }
 
     @Override
