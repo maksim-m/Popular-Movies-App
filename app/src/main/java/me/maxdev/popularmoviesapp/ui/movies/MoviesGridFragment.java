@@ -2,12 +2,15 @@ package me.maxdev.popularmoviesapp.ui.movies;
 
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,19 +18,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
-
-import me.maxdev.popularmoviesapp.R;
-import me.maxdev.popularmoviesapp.api.TheMovieDbClient;
-import me.maxdev.popularmoviesapp.api.TheMovieDbService;
-import me.maxdev.popularmoviesapp.api.DiscoverResponse;
-import me.maxdev.popularmoviesapp.data.Movie;
 
 import java.util.Arrays;
 import java.util.List;
 
-import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailsActivity;
+import me.maxdev.popularmoviesapp.R;
+import me.maxdev.popularmoviesapp.api.DiscoverResponse;
+import me.maxdev.popularmoviesapp.api.TheMovieDbClient;
+import me.maxdev.popularmoviesapp.api.TheMovieDbService;
+import me.maxdev.popularmoviesapp.data.Movie;
+import me.maxdev.popularmoviesapp.data.MoviesContract;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -93,27 +93,20 @@ public class MoviesGridFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movies_grid, container, false);
 
-        adapter = new MoviesAdapter(getActivity(), 0);
+        Cursor cursor = getContext().getContentResolver().query(
+                MoviesContract.MovieEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                MoviesContract.MovieEntry.COLUMN_POPULARITY + " DESC"
+        );
+        adapter = new MoviesAdapter(getActivity(), cursor);
 
 
-        GridView gridView = (GridView) rootView.findViewById(R.id.movies_grid);
-        gridView.setAdapter(adapter);
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Movie movie = adapter.getItem(position);
-                Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
-                intent.putExtra("movieTitle", movie.getTitle());
-                intent.putExtra("movieOriginalTitle", movie.getOriginalTitle());
-                intent.putExtra("moviePosterPath", movie.getPosterPath());
-                intent.putExtra("movieUserRating", movie.getAverageVote());
-                intent.putExtra("movieReleaseDate", movie.getReleaseDate());
-                intent.putExtra("movieOverview", movie.getOverview());
-                intent.putExtra("movieBackdropPath", movie.getBackdropPath());
-                startActivity(intent);
-            }
-        });
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.movies_grid);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
         return rootView;
     }
@@ -143,8 +136,21 @@ public class MoviesGridFragment extends Fragment {
                     DiscoverResponse<Movie> discoverResponse = response.body();
                     List<Movie> movies = discoverResponse.getResults();
                     Log.d(LOG_TAG, movies.toString());
-                    adapter.clear();
-                    adapter.addAll(movies);
+
+                    for (Movie movie : movies) {
+                        getContext().getContentResolver().insert(
+                                MoviesContract.MovieEntry.CONTENT_URI, movie.toContentValues());
+                        Log.d(LOG_TAG, "Inserted movie " + movie);
+                    }
+                    adapter.notifyDataSetChanged();
+
+                    /*ContentValues[] values = new ContentValues[movies.size()];
+                    for (int i = 0; i < movies.size(); i++) {
+                        values[i] = movies.get(i).toContentValues();
+                    }
+                    getContext().getContentResolver().bulkInsert(
+                            MoviesContract.MovieEntry.CONTENT_URI, values);*/
+
                 }
             }
 

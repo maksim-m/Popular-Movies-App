@@ -1,5 +1,8 @@
 package me.maxdev.popularmoviesapp.data;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Movie {
@@ -33,6 +36,29 @@ public class Movie {
 
     @SerializedName("backdrop_path")
     private String backdropPath;
+
+    public static Movie fromCursor(Cursor cursor) {
+        long id = cursor.getLong(cursor.getColumnIndex(MoviesContract.MovieEntry._ID));
+        String title = cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_TITLE));
+        Movie movie = new Movie(id, title);
+        movie.setOriginalTitle(
+                cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_ORIGINAL_TITLE)));
+        movie.setOverview(
+                cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_OVERVIEW)));
+        movie.setReleaseDate(
+                cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_RELEASE_DATE)));
+        movie.setPosterPath(
+                cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_POSTER_PATH)));
+        movie.setPopularity(
+                cursor.getDouble(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_POPULARITY)));
+        movie.setAverageVote(
+                cursor.getDouble(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_AVERAGE_VOTE)));
+        movie.setVoteCount(
+                cursor.getLong(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_VOTE_COUNT)));
+        movie.setBackdropPath(
+                cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_BACKDROP_PATH)));
+        return movie;
+    }
 
     public Movie(long id, String title) {
         this.id = id;
@@ -142,5 +168,20 @@ public class Movie {
         builder.append("title: ");
         builder.append(this.title);
         return builder.toString();
+    }
+
+    public ContentValues toContentValues() {
+        ContentValues values = new ContentValues();
+        values.put(MoviesContract.MovieEntry._ID, id);
+        values.put(MoviesContract.MovieEntry.COLUMN_ORIGINAL_TITLE, originalTitle);
+        values.put(MoviesContract.MovieEntry.COLUMN_OVERVIEW, overview);
+        values.put(MoviesContract.MovieEntry.COLUMN_RELEASE_DATE, releaseDate);
+        values.put(MoviesContract.MovieEntry.COLUMN_POSTER_PATH, posterPath);
+        values.put(MoviesContract.MovieEntry.COLUMN_POPULARITY, popularity);
+        values.put(MoviesContract.MovieEntry.COLUMN_TITLE, title);
+        values.put(MoviesContract.MovieEntry.COLUMN_AVERAGE_VOTE, averageVote);
+        values.put(MoviesContract.MovieEntry.COLUMN_VOTE_COUNT, voteCount);
+        values.put(MoviesContract.MovieEntry.COLUMN_BACKDROP_PATH, backdropPath);
+        return values;
     }
 }
