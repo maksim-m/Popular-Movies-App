@@ -3,12 +3,8 @@
     android:id="@+id/movies_grid"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:columnWidth="150dp"
-    android:numColumns="auto_fit"
-    android:verticalSpacing="4dp"
-    android:horizontalSpacing="4dp"
-    android:stretchMode="columnWidth"
-    android:gravity="center">
+    android:padding="@dimen/movie_item_offset"
+    android:clipToPadding="false">
 
 
 </android.support.v7.widget.RecyclerView>

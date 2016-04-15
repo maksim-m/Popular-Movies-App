@@ -33,6 +33,7 @@ import me.maxdev.popularmoviesapp.api.TheMovieDbClient;
 import me.maxdev.popularmoviesapp.api.TheMovieDbService;
 import me.maxdev.popularmoviesapp.data.Movie;
 import me.maxdev.popularmoviesapp.data.MoviesContract;
+import me.maxdev.popularmoviesapp.ui.ItemOffsetDecoration;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -109,7 +110,9 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.movies_grid);
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        int columns = getResources().getInteger(R.integer.movies_columns);
+        recyclerView.addItemDecoration(new ItemOffsetDecoration(getActivity(), R.dimen.movie_item_offset));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columns));
 
         return rootView;
     }
