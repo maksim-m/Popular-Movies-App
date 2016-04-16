@@ -3,6 +3,7 @@ package me.maxdev.popularmoviesapp.ui.movies;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -34,16 +35,19 @@ import me.maxdev.popularmoviesapp.api.TheMovieDbService;
 import me.maxdev.popularmoviesapp.data.Movie;
 import me.maxdev.popularmoviesapp.data.MoviesContract;
 import me.maxdev.popularmoviesapp.ui.ItemOffsetDecoration;
+import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailsActivity;
+import me.maxdev.popularmoviesapp.util.OnItemClickListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class MoviesGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MoviesGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, OnItemClickListener {
 
     private static final String LOG_TAG = "MoviesGridFragment";
     private static final int LOADER_ID = 0;
     private MoviesAdapter adapter;
+    private RecyclerView recyclerView;
 
     public MoviesGridFragment() {
         // Required empty public constructor
@@ -104,17 +108,21 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movies_grid, container, false);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.movies_grid);
 
+        initMoviesGrid();
+
+        return rootView;
+    }
+
+    private void initMoviesGrid() {
         adapter = new MoviesAdapter(getActivity(), null);
-
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.movies_grid);
+        adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         int columns = getResources().getInteger(R.integer.movies_columns);
         recyclerView.addItemDecoration(new ItemOffsetDecoration(getActivity(), R.dimen.movie_item_offset));
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columns));
-
-        return rootView;
     }
 
     @Override
@@ -203,5 +211,12 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.changeCursor(null);
+    }
+
+    @Override
+    public void onItemClick(View itemView, int position) {
+        Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
+        intent.putExtra("movieId", adapter.getItemId(position));
+        startActivity(intent);
     }
 }
