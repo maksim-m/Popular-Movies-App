@@ -35,6 +35,9 @@
             android:authorities="me.maxdev.popularmoviesapp"
             android:name=".data.MoviesProvider"
             android:exported="false" />
+        <service
+            android:name=".data.MoviesService"
+            android:exported="false" />
     </application>
 
 </manifest>
