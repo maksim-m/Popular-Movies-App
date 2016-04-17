@@ -3,13 +3,10 @@ package me.maxdev.popularmoviesapp.data;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.List;
 
-import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.api.DiscoverResponse;
 import me.maxdev.popularmoviesapp.api.TheMovieDbClient;
 import me.maxdev.popularmoviesapp.api.TheMovieDbService;
@@ -34,7 +31,8 @@ public class MoviesService extends IntentService {
     private void updateMovies() {
         TheMovieDbService service = TheMovieDbClient.getTheMovieDbService(this);
 
-        Call<DiscoverResponse<Movie>> call = service.discoverMovies(getSortByPreference());
+        Call<DiscoverResponse<Movie>> call = service.discoverMovies(
+                PreferencesUtility.getSortByPreference(this));
 
         call.enqueue(new Callback<DiscoverResponse<Movie>>() {
             @Override
@@ -67,14 +65,6 @@ public class MoviesService extends IntentService {
                 Log.d(LOG_TAG, t.getMessage());
             }
         });
-    }
-
-    private String getSortByPreference() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        return prefs.getString(
-                getString(R.string.pref_sort_by_key),
-                getString(R.string.pref_sort_by_default)
-        );
     }
 
 }
