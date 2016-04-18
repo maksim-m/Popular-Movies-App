@@ -1,16 +1,15 @@
 package me.maxdev.popularmoviesapp.ui.movies;
 
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +23,6 @@ import android.view.ViewGroup;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.MoviesContract;
 import me.maxdev.popularmoviesapp.data.MoviesService;
-import me.maxdev.popularmoviesapp.data.PreferencesUtility;
 import me.maxdev.popularmoviesapp.ui.ItemOffsetDecoration;
 import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailsActivity;
 import me.maxdev.popularmoviesapp.util.OnItemClickListener;
@@ -75,22 +73,8 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     }
 
     private void showSortByDialog() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogStyle);
-        builder.setTitle(getString(R.string.pref_sort_by_label));
-        builder.setNegativeButton("Cancel", null);
-        builder.setSingleChoiceItems(
-                R.array.pref_sort_by_labels,
-                PreferencesUtility.getSortByPreferenceIndex(getActivity()),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        PreferencesUtility.saveSortByPreference(getActivity(), which);
-                        updateMovies();
-                        dialog.dismiss();
-                    }
-                });
-        final AlertDialog sortByDialog = builder.create();
-        sortByDialog.show();
+        DialogFragment sortingDialogFragment = new SortingDialogFragment();
+        sortingDialogFragment.show(getFragmentManager(), SortingDialogFragment.TAG);
     }
 
     @Override
