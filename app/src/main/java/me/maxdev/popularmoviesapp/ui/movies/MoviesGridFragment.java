@@ -1,7 +1,10 @@
 package me.maxdev.popularmoviesapp.ui.movies;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +13,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,12 +33,23 @@ import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailsActivity;
 import me.maxdev.popularmoviesapp.util.OnItemClickListener;
 
 
-public class MoviesGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, OnItemClickListener {
+public class MoviesGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+        OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String LOG_TAG = "MoviesGridFragment";
     private static final int LOADER_ID = 0;
     private MoviesAdapter adapter;
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(MoviesService.BROADCAST_UPDATE_FINISHED)) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }
+    };
 
     public MoviesGridFragment() {
         // Required empty public constructor
@@ -54,16 +70,21 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onResume() {
         super.onResume();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,
+                new IntentFilter(MoviesService.BROADCAST_UPDATE_FINISHED));
         //updateMovies();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_refresh:
-                updateMovies();
-                return true;
             case R.id.action_show_sort_by_dialog:
                 showSortByDialog();
                 return true;
@@ -81,8 +102,12 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movies_grid, container, false);
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.movies_grid);
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_layout);
+        recyclerView = (RecyclerView) swipeRefreshLayout.findViewById(R.id.movies_grid);
 
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeResources(R.color.primary_material_dark,
+                R.color.accent_material_light);
         initMoviesGrid();
 
         return rootView;
@@ -134,5 +159,10 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
         intent.putExtra("movieId", adapter.getItemId(position));
         startActivity(intent);
+    }
+
+    @Override
+    public void onRefresh() {
+        updateMovies();
     }
 }

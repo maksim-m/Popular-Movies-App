@@ -1,10 +1,16 @@
-<android.support.v7.widget.RecyclerView
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/movies_grid"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="@dimen/movie_item_offset"
-    android:clipToPadding="false">
+    android:id="@+id/swipe_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/movies_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/movie_item_offset"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"/>
 
-</android.support.v7.widget.RecyclerView>
+</android.support.v4.widget.SwipeRefreshLayout>

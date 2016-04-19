@@ -3,6 +3,7 @@ package me.maxdev.popularmoviesapp.data;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.List;
@@ -15,6 +16,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MoviesService extends IntentService implements Callback<DiscoverResponse<Movie>> {
+
+    public static final String BROADCAST_UPDATE_FINISHED = "UpdateFinished";
 
     private static final String SERVICE_NAME = "MoviesService";
     private static final String LOG_TAG = "MoviesService";
@@ -53,11 +56,18 @@ public class MoviesService extends IntentService implements Callback<DiscoverRes
             getContentResolver().bulkInsert(
                     MoviesContract.MovieEntry.CONTENT_URI, values);
         }
+        sendUpdateFinishedBroadcast();
     }
 
     @Override
     public void onFailure(Call<DiscoverResponse<Movie>> call, Throwable t) {
         Log.d(LOG_TAG, "Error!");
         Log.d(LOG_TAG, t.getMessage());
+        sendUpdateFinishedBroadcast();
+    }
+
+    private void sendUpdateFinishedBroadcast() {
+        Intent intent = new Intent(BROADCAST_UPDATE_FINISHED);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
