@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.Movie;
@@ -85,11 +85,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private void initViews() {
         setTitle(movie.getTitle());
-        Picasso.with(this)
+        Glide.with(this)
                 .load(POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + movie.getPosterPath())
+                .crossFade()
                 .into(movieImagePoster);
-        Picasso.with(this)
+        Glide.with(this)
                 .load(POSTER_IMAGE_BASE_URL + BACKDROP_IMAGE_SIZE + movie.getBackdropPath())
+                .crossFade()
                 .into(movieBackdropImage);
         movieOriginalTitle.setText(movie.getOriginalTitle());
         String userRating = String.format(getString(me.maxdev.popularmoviesapp.R.string.user_rating), movie.getAverageVote());

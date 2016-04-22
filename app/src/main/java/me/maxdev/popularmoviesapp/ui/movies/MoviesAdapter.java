@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.Movie;
@@ -34,8 +34,9 @@ public class MoviesAdapter extends CursorRecyclerViewAdapter<MovieGridItemViewHo
     public void onBindViewHolder(MovieGridItemViewHolder viewHolder, Cursor cursor) {
         if (cursor != null) {
             Movie movie = Movie.fromCursor(cursor);
-            Picasso.with(context)
+            Glide.with(context)
                     .load(POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + movie.getPosterPath())
+                    .crossFade()
                     .into(viewHolder.moviePoster);
         }
 
