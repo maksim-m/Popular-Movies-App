@@ -21,11 +21,13 @@
     <string name="pref_sort_by_most_popular" translatable="false">popularity.desc</string>
     <!-- Value in SharedPreferences for "highest-rated" option [CHAR LIMIT=NONE] -->
     <string name="pref_sort_by_highest_rated" translatable="false">vote_average.desc</string>
+    <!-- Value in SharedPreferences for "most rated" option [CHAR LIMIT=NONE] -->
+    <string name="pref_sort_by_most_rated" translatable="false">vote_count.desc</string>
     <!-- Label for "most popular" option in "sort by" preference [CHAR LIMIT=25] -->
     <string name="pref_sort_by_most_popular_label">most popular</string>
     <!-- Label for "highest-rated" option in "sort by" preference [CHAR LIMIT=25] -->
     <string name="pref_sort_by_highest_rated_label">highest rated</string>
+    <!-- Label for "most rated" option in "sort by" preference [CHAR LIMIT=25] -->
+    <string name="pref_sort_by_most_rated_label">most rated</string>
 
-
-    
 </resources>

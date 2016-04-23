@@ -35,4 +35,6 @@ public class PreferencesUtility {
         );
         editor.commit();
     }
+
+    private PreferencesUtility() { }
 }

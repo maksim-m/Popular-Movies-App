@@ -3,11 +3,13 @@ package me.maxdev.popularmoviesapp.ui.movies;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.Movie;
@@ -17,7 +19,7 @@ import me.maxdev.popularmoviesapp.util.OnItemClickListener;
 public class MoviesAdapter extends CursorRecyclerViewAdapter<MovieGridItemViewHolder> {
 
     private static String POSTER_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
-    private static String POSTER_IMAGE_SIZE = "w342";
+    private static String POSTER_IMAGE_SIZE = "w780";
     private Context context;
     private OnItemClickListener onItemClickListener;
 
@@ -36,6 +38,8 @@ public class MoviesAdapter extends CursorRecyclerViewAdapter<MovieGridItemViewHo
             Movie movie = Movie.fromCursor(cursor);
             Glide.with(context)
                     .load(POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + movie.getPosterPath())
+                    .placeholder(new ColorDrawable(context.getResources().getColor(R.color.accent_material_light)))
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .crossFade()
                     .into(viewHolder.moviePoster);
         }
