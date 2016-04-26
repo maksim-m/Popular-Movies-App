@@ -40,4 +40,25 @@ public class TestMoviesContract extends AndroidTestCase {
         assertEquals("Error: Movie ID doesn't match expected result",
                 MoviesContract.MovieEntry.getIdFromUri(movieUri), TEST_MOVIE_ID);
     }
+
+    public void testMostPopularMoviesUri() {
+        assertNotNull("Error: Null Uri returned.", MoviesContract.MostPopularMovies.CONTENT_URI);
+        assertEquals("Error: Most popular movies Uri doesn't match expected result",
+                MoviesContract.MostPopularMovies.CONTENT_URI.toString(),
+                "content://me.maxdev.popularmoviesapp/movies/most_popular");
+    }
+
+    public void testHighestRatedMoviesUri() {
+        assertNotNull("Error: Null Uri returned.", MoviesContract.HighestRatedMovies.CONTENT_URI);
+        assertEquals("Error: Highest rated movies Uri doesn't match expected result",
+                MoviesContract.HighestRatedMovies.CONTENT_URI.toString(),
+                "content://me.maxdev.popularmoviesapp/movies/highest_rated");
+    }
+
+    public void testMostRatedMoviesUri() {
+        assertNotNull("Error: Null Uri returned.", MoviesContract.MostRatedMovies.CONTENT_URI);
+        assertEquals("Error: Most rated movies Uri doesn't match expected result",
+                MoviesContract.MostRatedMovies.CONTENT_URI.toString(),
+                "content://me.maxdev.popularmoviesapp/movies/most_rated");
+    }
 }

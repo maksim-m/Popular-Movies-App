@@ -15,6 +15,8 @@ public class MoviesContract {
 
     public static final String PATH_MOVIES = "movies";
     public static final String PATH_MOST_POPULAR = "most_popular";
+    public static final String PATH_HIGHEST_RATED = "highest_rated";
+    public static final String PATH_MOST_RATED = "most_rated";
 
     private MoviesContract() { }
 
@@ -92,5 +94,55 @@ public class MoviesContract {
                         " );";
 
         private MostPopularMovies() { }
+    }
+
+    public static final class HighestRatedMovies implements BaseColumns {
+        public static final Uri CONTENT_URI = MovieEntry.CONTENT_URI.buildUpon()
+                .appendPath(PATH_HIGHEST_RATED)
+                .build();
+        public static final String CONTENT_DIR_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES
+                        + "/" + PATH_HIGHEST_RATED;
+
+        public static final String TABLE_NAME = "highest_rated_movies";
+        public static final String COLUMN_MOVIE_ID_KEY = "movie_id";
+        public static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
+
+        public static final String SQL_CREATE_TABLE =
+                "CREATE TABLE " + TABLE_NAME + " (" +
+                        _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        COLUMN_MOVIE_ID_KEY + " INTEGER NOT NULL, " +
+
+                        " FOREIGN KEY (" + COLUMN_MOVIE_ID_KEY + ") REFERENCES " +
+                        MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + ") " +
+
+                        " );";
+
+        private HighestRatedMovies() { }
+    }
+
+    public static final class MostRatedMovies implements BaseColumns {
+        public static final Uri CONTENT_URI = MovieEntry.CONTENT_URI.buildUpon()
+                .appendPath(PATH_MOST_RATED)
+                .build();
+        public static final String CONTENT_DIR_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES
+                        + "/" + PATH_MOST_RATED;
+
+        public static final String TABLE_NAME = "most_rated_movies";
+        public static final String COLUMN_MOVIE_ID_KEY = "movie_id";
+        public static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
+
+        public static final String SQL_CREATE_TABLE =
+                "CREATE TABLE " + TABLE_NAME + " (" +
+                        _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        COLUMN_MOVIE_ID_KEY + " INTEGER NOT NULL, " +
+
+                        " FOREIGN KEY (" + COLUMN_MOVIE_ID_KEY + ") REFERENCES " +
+                        MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + ") " +
+
+                        " );";
+
+        private MostRatedMovies() { }
     }
 }

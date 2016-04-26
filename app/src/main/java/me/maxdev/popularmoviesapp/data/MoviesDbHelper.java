@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MoviesDbHelper extends SQLiteOpenHelper {
 
     static final String DATABASE_NAME = "movies.db";
-    private static final int DATABASE_SCHEMA_VERSION = 2;
+    private static final int DATABASE_SCHEMA_VERSION = 3;
 
     public MoviesDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_SCHEMA_VERSION);
@@ -20,6 +20,8 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(MoviesContract.MovieEntry.SQL_CREATE_TABLE);
         db.execSQL(MoviesContract.MostPopularMovies.SQL_CREATE_TABLE);
+        db.execSQL(MoviesContract.HighestRatedMovies.SQL_CREATE_TABLE);
+        db.execSQL(MoviesContract.MostRatedMovies.SQL_CREATE_TABLE);
     }
 
     @Override
@@ -28,6 +30,8 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
 
         db.execSQL(SQL_DROP_TABLE_IF_EXISTS + MoviesContract.MovieEntry.TABLE_NAME);
         db.execSQL(SQL_DROP_TABLE_IF_EXISTS + MoviesContract.MostPopularMovies.TABLE_NAME);
+        db.execSQL(SQL_DROP_TABLE_IF_EXISTS + MoviesContract.HighestRatedMovies.TABLE_NAME);
+        db.execSQL(SQL_DROP_TABLE_IF_EXISTS + MoviesContract.MostRatedMovies.TABLE_NAME);
         onCreate(db);
     }
 }

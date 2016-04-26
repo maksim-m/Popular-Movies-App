@@ -30,16 +30,16 @@ public class TestDb extends AndroidTestCase {
         final HashSet<String> tableNameHashSet = new HashSet<String>();
         tableNameHashSet.add(MoviesContract.MovieEntry.TABLE_NAME);
         tableNameHashSet.add(MoviesContract.MostPopularMovies.TABLE_NAME);
+        tableNameHashSet.add(MoviesContract.HighestRatedMovies.TABLE_NAME);
+        tableNameHashSet.add(MoviesContract.MostRatedMovies.TABLE_NAME);
 
         SQLiteDatabase db = new MoviesDbHelper(this.mContext).getWritableDatabase();
         assertEquals(true, db.isOpen());
 
         // have we created the tables we want?
         Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
-
         assertTrue("Error: This means that the database has not been created correctly",
                 c.moveToFirst());
-
         // verify that the tables have been created
         do {
             tableNameHashSet.remove(c.getString(0));
@@ -49,27 +49,11 @@ public class TestDb extends AndroidTestCase {
         // now, do our tables contain the correct columns?
         checkTableColumns(db, MoviesContract.MovieEntry.TABLE_NAME, MoviesContract.MovieEntry.COLUMNS);
         checkTableColumns(db, MoviesContract.MostPopularMovies.TABLE_NAME, MoviesContract.MostPopularMovies.COLUMNS);
+        checkTableColumns(db, MoviesContract.HighestRatedMovies.TABLE_NAME, MoviesContract.HighestRatedMovies.COLUMNS);
+        checkTableColumns(db, MoviesContract.MostRatedMovies.TABLE_NAME, MoviesContract.MostRatedMovies.COLUMNS);
 
         c.close();
         db.close();
-    }
-
-    private void checkTableColumns(SQLiteDatabase db, String tableName, String[] tableColumns) {
-        Cursor c = db.rawQuery("PRAGMA table_info(" + tableName + ")", null);
-        assertTrue("Error: This means that we were unable to query the database for table information.",
-                c.moveToFirst());
-        // Build a HashSet of all of the column names we want to look for
-        final HashSet<String> columns = new HashSet<String>();
-        columns.addAll(Arrays.asList(tableColumns));
-        int columnNameIndex = c.getColumnIndex("name");
-        do {
-            String columnName = c.getString(columnNameIndex);
-            columns.remove(columnName);
-        } while(c.moveToNext());
-
-        assertTrue("Error: The table " + tableName + " doesn't contains all of the required columns",
-                columns.isEmpty());
-        c.close();
     }
 
     public void testMoviesTable() {
@@ -99,6 +83,62 @@ public class TestDb extends AndroidTestCase {
                 null        // sort order
         );
         contentValues.put(MoviesContract.MostPopularMovies._ID, id);
+        assertTrue("Error: No Records returned from query", cursor.moveToFirst());
+        TestUtilities.validateCurrentRecord("Error: Query Validation Failed", cursor, contentValues);
+        assertFalse("Error: More than one record returned from query", cursor.moveToNext());
+    }
+
+    public void testHighestRatedMoviesTable() {
+        long movieId = insertMovie();
+
+        MoviesDbHelper helper = new MoviesDbHelper(mContext);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MoviesContract.MostPopularMovies.COLUMN_MOVIE_ID_KEY, movieId);
+
+        long id = db.insert(MoviesContract.HighestRatedMovies.TABLE_NAME, null, contentValues);
+        if (id == -1) {
+            fail("Error by inserting contentValues into database.");
+        }
+        Cursor cursor = db.query(
+                MoviesContract.HighestRatedMovies.TABLE_NAME,
+                null,       // all columns
+                null,       // Columns for the "where" clause
+                null,       // Values for the "where" clause
+                null,       // columns to group by
+                null,       // columns to filter by row groups
+                null        // sort order
+        );
+        contentValues.put(MoviesContract.HighestRatedMovies._ID, id);
+        assertTrue("Error: No Records returned from query", cursor.moveToFirst());
+        TestUtilities.validateCurrentRecord("Error: Query Validation Failed", cursor, contentValues);
+        assertFalse("Error: More than one record returned from query", cursor.moveToNext());
+    }
+
+    public void testMostRatedMoviesTable() {
+        long movieId = insertMovie();
+
+        MoviesDbHelper helper = new MoviesDbHelper(mContext);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MoviesContract.MostPopularMovies.COLUMN_MOVIE_ID_KEY, movieId);
+
+        long id = db.insert(MoviesContract.MostRatedMovies.TABLE_NAME, null, contentValues);
+        if (id == -1) {
+            fail("Error by inserting contentValues into database.");
+        }
+        Cursor cursor = db.query(
+                MoviesContract.MostRatedMovies.TABLE_NAME,
+                null,       // all columns
+                null,       // Columns for the "where" clause
+                null,       // Values for the "where" clause
+                null,       // columns to group by
+                null,       // columns to filter by row groups
+                null        // sort order
+        );
+        contentValues.put(MoviesContract.MostRatedMovies._ID, id);
         assertTrue("Error: No Records returned from query", cursor.moveToFirst());
         TestUtilities.validateCurrentRecord("Error: Query Validation Failed", cursor, contentValues);
         assertFalse("Error: More than one record returned from query", cursor.moveToNext());
@@ -155,5 +195,23 @@ public class TestDb extends AndroidTestCase {
         db.close();
 
         return id;
+    }
+
+    private void checkTableColumns(SQLiteDatabase db, String tableName, String[] tableColumns) {
+        Cursor c = db.rawQuery("PRAGMA table_info(" + tableName + ")", null);
+        assertTrue("Error: This means that we were unable to query the database for table information.",
+                c.moveToFirst());
+        // Build a HashSet of all of the column names we want to look for
+        final HashSet<String> columns = new HashSet<String>();
+        columns.addAll(Arrays.asList(tableColumns));
+        int columnNameIndex = c.getColumnIndex("name");
+        do {
+            String columnName = c.getString(columnNameIndex);
+            columns.remove(columnName);
+        } while(c.moveToNext());
+
+        assertTrue("Error: The table " + tableName + " doesn't contains all of the required columns",
+                columns.isEmpty());
+        c.close();
     }
 }
