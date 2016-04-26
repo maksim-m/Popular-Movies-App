@@ -18,7 +18,7 @@ android:
 
 before_install:
   - chmod +x gradlew
- 
+
 # Emulator Management: Create, Start and Wait
 before_script:
   - echo no | android create avd --force -n test -t android-17 --abi armeabi-v7a
@@ -29,10 +29,10 @@ before_script:
 script:
   - android list target
   - sh build.sh
- 
- before_cache:
+
+before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
-  
+
 cache:
   directories:
     - $HOME/.gradle/caches/
