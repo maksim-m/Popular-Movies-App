@@ -14,6 +14,7 @@ public class MoviesContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static final String PATH_MOVIES = "movies";
+    public static final String PATH_MOST_POPULAR = "most_popular";
 
     private MoviesContract() { }
 
@@ -44,18 +45,18 @@ public class MoviesContract {
                 COLUMN_AVERAGE_VOTE, COLUMN_VOTE_COUNT, COLUMN_BACKDROP_PATH};
 
         public static final String SQL_CREATE_TABLE =
-                "CREATE TABLE " + MoviesContract.MovieEntry.TABLE_NAME + " (" +
-                MoviesContract.MovieEntry._ID + " INTEGER PRIMARY KEY, " +
-                MoviesContract.MovieEntry.COLUMN_ORIGINAL_TITLE + " TEXT, " +
-                MoviesContract.MovieEntry.COLUMN_OVERVIEW + " TEXT, " +
-                MoviesContract.MovieEntry.COLUMN_RELEASE_DATE + " TEXT, " +
-                MoviesContract.MovieEntry.COLUMN_POSTER_PATH + " TEXT, " +
-                MoviesContract.MovieEntry.COLUMN_POPULARITY + " REAL, " +
-                MoviesContract.MovieEntry.COLUMN_TITLE + " TEXT, " +
-                MoviesContract.MovieEntry.COLUMN_AVERAGE_VOTE + " REAL, " +
-                MoviesContract.MovieEntry.COLUMN_VOTE_COUNT + " INTEGER," +
-                MoviesContract.MovieEntry.COLUMN_BACKDROP_PATH + " TEXT " +
-                " );";
+                "CREATE TABLE " + TABLE_NAME + " (" +
+                        _ID + " INTEGER PRIMARY KEY, " +
+                        COLUMN_ORIGINAL_TITLE + " TEXT, " +
+                        COLUMN_OVERVIEW + " TEXT, " +
+                        COLUMN_RELEASE_DATE + " TEXT, " +
+                        COLUMN_POSTER_PATH + " TEXT, " +
+                        COLUMN_POPULARITY + " REAL, " +
+                        COLUMN_TITLE + " TEXT, " +
+                        COLUMN_AVERAGE_VOTE + " REAL, " +
+                        COLUMN_VOTE_COUNT + " INTEGER," +
+                        COLUMN_BACKDROP_PATH + " TEXT " +
+                        " );";
 
         public static Uri buildMovieUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
@@ -66,5 +67,30 @@ public class MoviesContract {
         }
 
         private MovieEntry() { }
+    }
+
+    public static final class MostPopularMovies implements BaseColumns {
+        public static final Uri CONTENT_URI = MovieEntry.CONTENT_URI.buildUpon()
+                .appendPath(PATH_MOST_POPULAR)
+                .build();
+        public static final String CONTENT_DIR_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES
+                        + "/" + PATH_MOST_POPULAR;
+
+        public static final String TABLE_NAME = "most_popular_movies";
+        public static final String COLUMN_MOVIE_ID_KEY = "movie_id";
+        public static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
+
+        public static final String SQL_CREATE_TABLE =
+                "CREATE TABLE " + TABLE_NAME + " (" +
+                        _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        COLUMN_MOVIE_ID_KEY + " INTEGER NOT NULL, " +
+
+                        " FOREIGN KEY (" + COLUMN_MOVIE_ID_KEY + ") REFERENCES " +
+                        MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + ") " +
+
+                        " );";
+
+        private MostPopularMovies() { }
     }
 }

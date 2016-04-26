@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 public class TestDb extends AndroidTestCase {
@@ -28,8 +29,7 @@ public class TestDb extends AndroidTestCase {
         // Android metadata (db version information)
         final HashSet<String> tableNameHashSet = new HashSet<String>();
         tableNameHashSet.add(MoviesContract.MovieEntry.TABLE_NAME);
-
-        //mContext.deleteDatabase(MoviesDbHelper.DATABASE_NAME);
+        tableNameHashSet.add(MoviesContract.MostPopularMovies.TABLE_NAME);
 
         SQLiteDatabase db = new MoviesDbHelper(this.mContext).getWritableDatabase();
         assertEquals(true, db.isOpen());
@@ -44,57 +44,73 @@ public class TestDb extends AndroidTestCase {
         do {
             tableNameHashSet.remove(c.getString(0));
         } while( c.moveToNext() );
-
-        // if this fails, it means that your database doesn't contain both the location entry
-        // and weather entry tables
-        assertTrue("Error: Your database was created without both the location entry and weather entry tables",
-                tableNameHashSet.isEmpty());
+        assertTrue("Error. The database doesn't contain all of the required tables", tableNameHashSet.isEmpty());
 
         // now, do our tables contain the correct columns?
-        c = db.rawQuery("PRAGMA table_info(" + MoviesContract.MovieEntry.TABLE_NAME + ")",
-                null);
+        checkTableColumns(db, MoviesContract.MovieEntry.TABLE_NAME, MoviesContract.MovieEntry.COLUMNS);
+        checkTableColumns(db, MoviesContract.MostPopularMovies.TABLE_NAME, MoviesContract.MostPopularMovies.COLUMNS);
 
+        c.close();
+        db.close();
+    }
+
+    private void checkTableColumns(SQLiteDatabase db, String tableName, String[] tableColumns) {
+        Cursor c = db.rawQuery("PRAGMA table_info(" + tableName + ")", null);
         assertTrue("Error: This means that we were unable to query the database for table information.",
                 c.moveToFirst());
-
         // Build a HashSet of all of the column names we want to look for
-        final HashSet<String> moviesColumnHashSet = new HashSet<String>();
-        moviesColumnHashSet.add(MoviesContract.MovieEntry._ID);
-        moviesColumnHashSet.add(MoviesContract.MovieEntry.COLUMN_ORIGINAL_TITLE);
-        moviesColumnHashSet.add(MoviesContract.MovieEntry.COLUMN_OVERVIEW);
-        moviesColumnHashSet.add(MoviesContract.MovieEntry.COLUMN_RELEASE_DATE);
-        moviesColumnHashSet.add(MoviesContract.MovieEntry.COLUMN_POSTER_PATH);
-        moviesColumnHashSet.add(MoviesContract.MovieEntry.COLUMN_POPULARITY);
-        moviesColumnHashSet.add(MoviesContract.MovieEntry.COLUMN_TITLE);
-        moviesColumnHashSet.add(MoviesContract.MovieEntry.COLUMN_AVERAGE_VOTE);
-        moviesColumnHashSet.add(MoviesContract.MovieEntry.COLUMN_VOTE_COUNT);
-        moviesColumnHashSet.add(MoviesContract.MovieEntry.COLUMN_BACKDROP_PATH);
-
+        final HashSet<String> columns = new HashSet<String>();
+        columns.addAll(Arrays.asList(tableColumns));
         int columnNameIndex = c.getColumnIndex("name");
         do {
             String columnName = c.getString(columnNameIndex);
-            moviesColumnHashSet.remove(columnName);
+            columns.remove(columnName);
         } while(c.moveToNext());
 
-        // if this fails, it means that your database doesn't contain all of the required location
-        // entry columns
-        assertTrue("Error: The database doesn't contain all of the required location entry columns",
-                moviesColumnHashSet.isEmpty());
-        db.close();
+        assertTrue("Error: The table " + tableName + " doesn't contains all of the required columns",
+                columns.isEmpty());
+        c.close();
     }
 
     public void testMoviesTable() {
         insertMovie();
     }
 
-    public long insertMovie() {
+    public void testMostPopularMoviesTable() {
+        long movieId = insertMovie();
+
+        MoviesDbHelper helper = new MoviesDbHelper(mContext);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MoviesContract.MostPopularMovies.COLUMN_MOVIE_ID_KEY, movieId);
+
+        long id = db.insert(MoviesContract.MostPopularMovies.TABLE_NAME, null, contentValues);
+        if (id == -1) {
+            fail("Error by inserting contentValues into database.");
+        }
+        Cursor cursor = db.query(
+                MoviesContract.MostPopularMovies.TABLE_NAME,
+                null,       // all columns
+                null,       // Columns for the "where" clause
+                null,       // Values for the "where" clause
+                null,       // columns to group by
+                null,       // columns to filter by row groups
+                null        // sort order
+        );
+        contentValues.put(MoviesContract.MostPopularMovies._ID, id);
+        assertTrue("Error: No Records returned from query", cursor.moveToFirst());
+        TestUtilities.validateCurrentRecord("Error: Query Validation Failed", cursor, contentValues);
+        assertFalse("Error: More than one record returned from query", cursor.moveToNext());
+    }
+
+    private long insertMovie() {
         MoviesDbHelper helper = new MoviesDbHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
 
         ContentValues testValues = TestUtilities.createTestMovieValues();
 
         long id = db.insert(MoviesContract.MovieEntry.TABLE_NAME, null, testValues);
-
         if (id == -1) {
             fail("Error by inserting contentValues into database.");
         }
@@ -113,7 +129,7 @@ public class TestDb extends AndroidTestCase {
 
         TestUtilities.validateCurrentRecord("Error: Movie Query Validation Failed", cursor, testValues);
 
-        assertFalse("Error: More than one record returned from location query", cursor.moveToNext());
+        assertFalse("Error: More than one record returned from query", cursor.moveToNext());
 
         // Test replace on conflict strategy
 
