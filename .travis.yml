@@ -3,11 +3,6 @@ sudo: false
 language: android
 jdk: oraclejdk8
 
-cache:
-  directories:
-    - $HOME/.m2
-    - $HOME/.gradle
-
 env:
   global:
     - CI=travis
@@ -34,3 +29,11 @@ before_script:
 script:
   - android list target
   - sh build.sh
+ 
+ before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
