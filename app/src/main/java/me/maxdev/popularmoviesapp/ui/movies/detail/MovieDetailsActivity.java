@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.Movie;
 import me.maxdev.popularmoviesapp.data.MoviesContract;
@@ -22,13 +24,20 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private static String POSTER_IMAGE_SIZE = "w780";
     private static String BACKDROP_IMAGE_SIZE = "w780";
 
-    private ImageView movieImagePoster;
-    private ImageView movieBackdropImage;
-    private TextView movieOriginalTitle;
-    private TextView movieUserRating;
-    private TextView movieReleaseDate;
-    private TextView movieOverview;
-    private Toolbar toolbar;
+    @BindView(R.id.image_movie_detail_poster)
+    ImageView movieImagePoster;
+    @BindView(R.id.backdrop_image)
+    ImageView movieBackdropImage;
+    @BindView(R.id.text_movie_original_title)
+    TextView movieOriginalTitle;
+    @BindView(R.id.text_movie_user_rating)
+    TextView movieUserRating;
+    @BindView(R.id.text_movie_release_date)
+    TextView movieReleaseDate;
+    @BindView(R.id.text_movie_overview)
+    TextView movieOverview;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     private Movie movie;
 
@@ -36,12 +45,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
-        movieImagePoster = (ImageView) findViewById(R.id.image_movie_detail_poster);
-        movieOriginalTitle = (TextView) findViewById(R.id.text_movie_original_title);
-        movieUserRating = (TextView) findViewById(R.id.text_movie_user_rating);
-        movieReleaseDate = (TextView) findViewById(R.id.text_movie_release_date);
-        movieOverview = (TextView) findViewById(R.id.text_movie_overview);
-        movieBackdropImage = (ImageView) findViewById(R.id.backdrop_image);
+        ButterKnife.bind(this);
         initToolbar();
         initMovie();
         initViews();
@@ -61,7 +65,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     private void initToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

@@ -25,6 +25,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.MoviesContract;
 import me.maxdev.popularmoviesapp.data.MoviesService;
@@ -39,8 +41,11 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     private static final String LOG_TAG = "MoviesGridFragment";
     private static final int LOADER_ID = 0;
     private MoviesAdapter adapter;
-    private RecyclerView recyclerView;
-    private SwipeRefreshLayout swipeRefreshLayout;
+
+    @BindView(R.id.movies_grid)
+    RecyclerView recyclerView;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -102,8 +107,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movies_grid, container, false);
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_layout);
-        recyclerView = (RecyclerView) swipeRefreshLayout.findViewById(R.id.movies_grid);
+        ButterKnife.bind(this, rootView);
 
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(R.color.primary_material_dark,
