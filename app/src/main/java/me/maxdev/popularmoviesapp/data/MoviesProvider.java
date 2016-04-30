@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,6 +18,9 @@ public class MoviesProvider extends ContentProvider {
 
     static final int MOVIES = 100;
     static final int MOVIE_BY_ID = 101;
+    static final int MOST_POPULAR_MOVIES = 201;
+    static final int HIGHEST_RATED_MOVIES = 202;
+    static final int MOST_RATED_MOVIES = 203;
 
     // movies._id = ?
     private static final String MOVIE_ID_SELECTION =
@@ -30,6 +32,13 @@ public class MoviesProvider extends ContentProvider {
 
         uriMatcher.addURI(authority, MoviesContract.PATH_MOVIES, MOVIES);
         uriMatcher.addURI(authority, MoviesContract.PATH_MOVIES + "/#", MOVIE_BY_ID);
+
+        uriMatcher.addURI(authority, MoviesContract.PATH_MOVIES + "/" +
+                MoviesContract.PATH_MOST_POPULAR, MOST_POPULAR_MOVIES);
+        uriMatcher.addURI(authority, MoviesContract.PATH_MOVIES + "/" +
+                MoviesContract.PATH_HIGHEST_RATED, HIGHEST_RATED_MOVIES);
+        uriMatcher.addURI(authority, MoviesContract.PATH_MOVIES + "/" +
+                MoviesContract.PATH_MOST_RATED, MOST_RATED_MOVIES);
 
         return uriMatcher;
     }
@@ -184,7 +193,7 @@ public class MoviesProvider extends ContentProvider {
     private Cursor getMovieById(Uri uri, String[] projection, String sortOrder) {
         long id = MoviesContract.MovieEntry.getIdFromUri(uri);
         String selection = MOVIE_ID_SELECTION;
-        String[] selectionArgs =  new String[]{Long.toString(id)};
+        String[] selectionArgs = new String[]{Long.toString(id)};
         return dbHelper.getReadableDatabase().query(
                 MoviesContract.MovieEntry.TABLE_NAME,
                 projection,
@@ -202,7 +211,7 @@ public class MoviesProvider extends ContentProvider {
                     MoviesContract.MovieEntry.COLUMNS));
             HashSet<String> requestedColumns = new HashSet<>(Arrays.asList(projection));
             if (!availableColumns.containsAll(requestedColumns)) {
-                throw new  IllegalArgumentException("Unknown columns in projection.");
+                throw new IllegalArgumentException("Unknown columns in projection.");
             }
         }
     }
