@@ -62,6 +62,21 @@ public class TestProvider extends AndroidTestCase {
         assertEquals("Error: the MOVIE BY ID CONTENT URI should return MovieEntry.CONTENT_ITEM_TYPE",
                 MoviesContract.MovieEntry.CONTENT_ITEM_TYPE, type);
 
+        // content://me.maxdev.popularmoviesapp/movies/most_popular
+        type = mContext.getContentResolver().getType(MoviesContract.MostPopularMovies.CONTENT_URI);
+        assertEquals("Error: the MOST POPULAR MOVIES CONTENT URI should return MostPopularMovies.CONTENT_DIR_TYPE",
+                MoviesContract.MostPopularMovies.CONTENT_DIR_TYPE, type);
+
+        // content://me.maxdev.popularmoviesapp/movies/highest_rated
+        type = mContext.getContentResolver().getType(MoviesContract.HighestRatedMovies.CONTENT_URI);
+        assertEquals("Error: the HIGHEST RATED MOVIES CONTENT URI should return HighestRatedMovies.CONTENT_DIR_TYPE",
+                MoviesContract.HighestRatedMovies.CONTENT_DIR_TYPE, type);
+
+        // content://me.maxdev.popularmoviesapp/movies/most_rated
+        type = mContext.getContentResolver().getType(MoviesContract.MostRatedMovies.CONTENT_URI);
+        assertEquals("Error: the MOST RATED MOVIES CONTENT URI should return MostRatedMovies.CONTENT_DIR_TYPE",
+                MoviesContract.MostRatedMovies.CONTENT_DIR_TYPE, type);
+
         assertTrue(mContext.getContentResolver().getType(INVALID_URI) == null);
     }
 

@@ -57,6 +57,12 @@ public class MoviesProvider extends ContentProvider {
                 return MoviesContract.MovieEntry.CONTENT_DIR_TYPE;
             case MOVIE_BY_ID:
                 return MoviesContract.MovieEntry.CONTENT_ITEM_TYPE;
+            case MOST_POPULAR_MOVIES:
+                return MoviesContract.MostPopularMovies.CONTENT_DIR_TYPE;
+            case HIGHEST_RATED_MOVIES:
+                return MoviesContract.HighestRatedMovies.CONTENT_DIR_TYPE;
+            case MOST_RATED_MOVIES:
+                return MoviesContract.MostRatedMovies.CONTENT_DIR_TYPE;
             default:
                 return null;
         }
