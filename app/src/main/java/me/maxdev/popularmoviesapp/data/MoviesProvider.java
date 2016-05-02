@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
@@ -25,6 +26,21 @@ public class MoviesProvider extends ContentProvider {
     // movies._id = ?
     private static final String MOVIE_ID_SELECTION =
             MoviesContract.MovieEntry.TABLE_NAME + "." + MoviesContract.MovieEntry._ID + " = ? ";
+
+    private static final SQLiteQueryBuilder mostPopularMoviesQueryBuilder;
+
+    static{
+        mostPopularMoviesQueryBuilder = new SQLiteQueryBuilder();
+        // This is an inner join which looks like
+        // most_popular INNER JOIN movies ON most_popular.movie_id = movies._id
+        mostPopularMoviesQueryBuilder.setTables(
+                MoviesContract.MostPopularMovies.TABLE_NAME + " INNER JOIN " +
+                        MoviesContract.MovieEntry.TABLE_NAME +
+                        " ON " + MoviesContract.MostPopularMovies.TABLE_NAME +
+                        "." + MoviesContract.MostPopularMovies.COLUMN_MOVIE_ID_KEY +
+                        " = " + MoviesContract.MovieEntry.TABLE_NAME +
+                        "." + MoviesContract.MovieEntry._ID);
+    }
 
     static UriMatcher buildUriMatcher() {
         final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -88,6 +104,9 @@ public class MoviesProvider extends ContentProvider {
                 break;
             case MOVIE_BY_ID:
                 cursor = getMovieById(uri, projection, sortOrder);
+                break;
+            case MOST_POPULAR_MOVIES:
+                cursor = getMostPopularMovies(projection, selection, selectionArgs, sortOrder);
                 break;
             default:
                 return null;
@@ -202,6 +221,19 @@ public class MoviesProvider extends ContentProvider {
         String[] selectionArgs = new String[]{Long.toString(id)};
         return dbHelper.getReadableDatabase().query(
                 MoviesContract.MovieEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
+    private Cursor getMostPopularMovies(String[] projection, String selection,
+                                        String[] selectionArgs, String sortOrder) {
+
+        return mostPopularMoviesQueryBuilder.query(dbHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,

@@ -150,6 +150,30 @@ public class TestProvider extends AndroidTestCase {
         movie.close();
     }
 
+    public void testMostPopularMoviesQuery() {
+        ContentValues testValues = insertTestValues();
+        long movieId = testValues.getAsLong(MoviesContract.MovieEntry._ID);
+        insertMostPopularMoviesTestValues(movieId);
+
+        Cursor movies = mContext.getContentResolver().query(
+                MoviesContract.MostPopularMovies.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        if (movies == null) {
+            fail("Get empty cursor by querying movies.");
+        }
+        TestUtilities.validateCursor("Error by querying movies.", movies, testValues);
+
+        if ( Build.VERSION.SDK_INT >= 19 ) {
+            assertEquals("Error: Movies Query did not properly set NotificationUri",
+                    movies.getNotificationUri(), MoviesContract.MostPopularMovies.CONTENT_URI);
+        }
+        movies.close();
+    }
+
     public void testInsert() {
         ContentValues testValues = TestUtilities.createTestMovieValues();
 
@@ -423,5 +447,17 @@ public class TestProvider extends AndroidTestCase {
         }
         db.close();
         return testValues;
+    }
+
+    void insertMostPopularMoviesTestValues(long movieId) {
+        MoviesDbHelper dbHelper = new MoviesDbHelper(getContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues testValues = new ContentValues();
+        testValues.put(MoviesContract.MostPopularMovies.COLUMN_MOVIE_ID_KEY, movieId);
+        long id = db.insert(MoviesContract.MostPopularMovies.TABLE_NAME, null, testValues);
+        if (id == -1) {
+            fail("Error by inserting contentValues into database.");
+        }
+        db.close();
     }
 }
