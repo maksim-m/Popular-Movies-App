@@ -1,9 +1,9 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorAccent">@color/accent_material_light</item>
+        <item name="colorAccent" tools:ignore="PrivateResource">@color/accent_material_light</item>
     </style>
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -14,7 +14,7 @@
 
     <style name="DialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <!-- buttons color -->
-        <item name="colorAccent">@color/accent_material_light</item>
+        <item name="colorAccent" tools:ignore="PrivateResource">@color/accent_material_light</item>
         <!-- title and message color -->
         <item name="android:textColorPrimary">@color/black</item>
         <!-- dialog background -->

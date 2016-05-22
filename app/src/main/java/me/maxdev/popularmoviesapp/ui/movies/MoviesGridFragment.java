@@ -1,6 +1,7 @@
 package me.maxdev.popularmoviesapp.ui.movies;
 
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -109,9 +110,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         View rootView = inflater.inflate(R.layout.fragment_movies_grid, container, false);
         ButterKnife.bind(this, rootView);
 
-        swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setColorSchemeResources(R.color.primary_material_dark,
-                R.color.accent_material_light);
+        initSwipeRefreshLayout();
         initMoviesGrid();
 
         return rootView;
@@ -127,9 +126,16 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columns));
     }
 
+    @SuppressLint("PrivateResource")
+    private void initSwipeRefreshLayout() {
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeResources(R.color.primary_material_dark,
+                R.color.accent_material_light);
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.moviesgridfragment, menu);
+        inflater.inflate(R.menu.fragment_movies_grid, menu);
     }
 
     private void updateMovies() {

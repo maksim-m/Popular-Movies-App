@@ -33,7 +33,7 @@ public class PreferencesUtility {
                 context.getString(R.string.pref_sort_by_key),
                 sortByPreferencesValues[index]
         );
-        editor.commit();
+        editor.apply();
     }
 
     private PreferencesUtility() { }

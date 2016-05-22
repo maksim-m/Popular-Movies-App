@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
@@ -24,7 +24,6 @@
         </activity>
         <activity
             android:name=".ui.movies.detail.MovieDetailsActivity"
-            android:label="@string/title_activity_movie_details"
             android:parentActivityName="me.maxdev.popularmoviesapp.ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" >
             <meta-data

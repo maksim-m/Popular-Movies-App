@@ -21,7 +21,7 @@ public class SortingDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogStyle);
         builder.setTitle(getString(R.string.pref_sort_by_label));
-        builder.setNegativeButton("Cancel", null);
+        builder.setNegativeButton(getString(R.string.action_cancel), null);
         builder.setSingleChoiceItems(
                 R.array.pref_sort_by_labels,
                 PreferencesUtility.getSortByPreferenceIndex(getActivity()),
