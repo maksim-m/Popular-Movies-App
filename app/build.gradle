@@ -54,6 +54,8 @@ android {
         disable 'GoogleAppIndexingWarning' // App does not have deep linking
         disable 'IconDipSize'
         abortOnError true
+        textReport true
+        textOutput 'stdout'
     }
 
     // Log instrumentation tests results.
