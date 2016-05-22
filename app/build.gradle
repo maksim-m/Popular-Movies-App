@@ -51,7 +51,7 @@ android {
 
     lintOptions {
         warning 'InvalidPackage'
-        abortOnError true
+        abortOnError false
     }
 
     // Log instrumentation tests results.
