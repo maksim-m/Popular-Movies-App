@@ -51,7 +51,7 @@ android {
 
     lintOptions {
         warning 'InvalidPackage'
-        abortOnError false
+        abortOnError true
     }
 
     // Log instrumentation tests results.
@@ -73,9 +73,9 @@ repositories {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:support-v4:23.3.0'
-    compile 'com.android.support:design:23.3.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:design:23.4.0'
 
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
