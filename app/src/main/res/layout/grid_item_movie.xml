@@ -4,6 +4,7 @@
     android:id="@+id/image_movie_poster"
     android:layout_width="match_parent"
     android:layout_height="270dp"
-    android:adjustViewBounds="true" >
+    android:adjustViewBounds="true"
+    android:contentDescription="@string/content_description_movie_poster" >
 
 </ImageView>

@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "me.maxdev.popularmoviesapp"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -50,8 +50,13 @@ android {
     }
 
     lintOptions {
-        warning 'InvalidPackage'
-        abortOnError false
+        disable 'InvalidPackage' // Okio references java.nio that does not presented in Android SDK
+        disable 'GoogleAppIndexingWarning' // App does not have deep linking
+        disable 'IconDipSize'
+        warningsAsErrors true
+        abortOnError true
+        textReport true
+        textOutput 'stdout'
     }
 
     // Log instrumentation tests results.

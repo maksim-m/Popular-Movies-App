@@ -1,6 +1,7 @@
 package me.maxdev.popularmoviesapp.ui.movies;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
@@ -32,10 +33,12 @@ public class MoviesAdapter extends CursorRecyclerViewAdapter<MovieGridItemViewHo
         this.onItemClickListener = listener;
     }
 
+    @SuppressLint("PrivateResource")
     @Override
     public void onBindViewHolder(MovieGridItemViewHolder viewHolder, Cursor cursor) {
         if (cursor != null) {
             Movie movie = Movie.fromCursor(cursor);
+            viewHolder.moviePoster.setContentDescription(movie.getTitle());
             Glide.with(context)
                     .load(POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + movie.getPosterPath())
                     .placeholder(new ColorDrawable(context.getResources().getColor(R.color.accent_material_light)))

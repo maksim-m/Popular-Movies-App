@@ -13,10 +13,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin" >
+        android:padding="@dimen/text_margin" >
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -28,7 +25,8 @@
                 android:id="@+id/image_movie_detail_poster"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true" />
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/content_description_movie_poster"/>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -69,7 +67,7 @@
             android:id="@+id/text_movie_overview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
+            android:paddingTop="@dimen/text_margin"
             tools:text="A plot synopsis (called overview in the api)" />
 
     </LinearLayout>
