@@ -8,7 +8,7 @@ import android.provider.BaseColumns;
 /**
  * Defines table and column names for the movies database.
  */
-public class MoviesContract {
+public final class MoviesContract {
 
     public static final String CONTENT_AUTHORITY = "me.maxdev.popularmoviesapp";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
@@ -18,7 +18,8 @@ public class MoviesContract {
     public static final String PATH_HIGHEST_RATED = "highest_rated";
     public static final String PATH_MOST_RATED = "most_rated";
 
-    private MoviesContract() { }
+    private MoviesContract() {
+    }
 
     /* Inner class that defines the contents of the movies table */
     public static final class MovieEntry implements BaseColumns {
@@ -43,7 +44,7 @@ public class MoviesContract {
         public static final String COLUMN_BACKDROP_PATH = "backdrop_path";
 
         public static final String[] COLUMNS = {_ID, COLUMN_ORIGINAL_TITLE, COLUMN_OVERVIEW,
-                COLUMN_RELEASE_DATE, COLUMN_POSTER_PATH, COLUMN_POPULARITY, COLUMN_TITLE,
+            COLUMN_RELEASE_DATE, COLUMN_POSTER_PATH, COLUMN_POPULARITY, COLUMN_TITLE,
                 COLUMN_AVERAGE_VOTE, COLUMN_VOTE_COUNT, COLUMN_BACKDROP_PATH};
 
         public static final String SQL_CREATE_TABLE =
@@ -60,6 +61,9 @@ public class MoviesContract {
                         COLUMN_BACKDROP_PATH + " TEXT " +
                         " );";
 
+        private MovieEntry() {
+        }
+
         public static Uri buildMovieUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
@@ -67,8 +71,6 @@ public class MoviesContract {
         public static long getIdFromUri(Uri uri) {
             return ContentUris.parseId(uri);
         }
-
-        private MovieEntry() { }
     }
 
     public static final class MostPopularMovies implements BaseColumns {
@@ -93,7 +95,8 @@ public class MoviesContract {
 
                         " );";
 
-        private MostPopularMovies() { }
+        private MostPopularMovies() {
+        }
     }
 
     public static final class HighestRatedMovies implements BaseColumns {
@@ -118,7 +121,8 @@ public class MoviesContract {
 
                         " );";
 
-        private HighestRatedMovies() { }
+        private HighestRatedMovies() {
+        }
     }
 
     public static final class MostRatedMovies implements BaseColumns {
@@ -143,6 +147,7 @@ public class MoviesContract {
 
                         " );";
 
-        private MostRatedMovies() { }
+        private MostRatedMovies() {
+        }
     }
 }

@@ -20,9 +20,9 @@ import me.maxdev.popularmoviesapp.data.MoviesContract;
 
 public class MovieDetailsActivity extends AppCompatActivity {
 
-    private static String POSTER_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
-    private static String POSTER_IMAGE_SIZE = "w780";
-    private static String BACKDROP_IMAGE_SIZE = "w780";
+    private static final String POSTER_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
+    private static final String POSTER_IMAGE_SIZE = "w780";
+    private static final String BACKDROP_IMAGE_SIZE = "w780";
 
     @BindView(R.id.image_movie_detail_poster)
     ImageView movieImagePoster;

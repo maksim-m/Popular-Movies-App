@@ -19,8 +19,8 @@ import me.maxdev.popularmoviesapp.util.OnItemClickListener;
 
 public class MoviesAdapter extends CursorRecyclerViewAdapter<MovieGridItemViewHolder> {
 
-    private static String POSTER_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
-    private static String POSTER_IMAGE_SIZE = "w780";
+    private static final String POSTER_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
+    private static final String POSTER_IMAGE_SIZE = "w780";
     private Context context;
     private OnItemClickListener onItemClickListener;
 

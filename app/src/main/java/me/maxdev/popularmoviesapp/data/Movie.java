@@ -37,6 +37,11 @@ public class Movie {
     @SerializedName("backdrop_path")
     private String backdropPath;
 
+    public Movie(long id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
     public static Movie fromCursor(Cursor cursor) {
         long id = cursor.getLong(cursor.getColumnIndex(MoviesContract.MovieEntry._ID));
         String title = cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_TITLE));
@@ -58,26 +63,6 @@ public class Movie {
         movie.setBackdropPath(
                 cursor.getString(cursor.getColumnIndex(MoviesContract.MovieEntry.COLUMN_BACKDROP_PATH)));
         return movie;
-    }
-
-    public Movie(long id, String title) {
-        this.id = id;
-        this.title = title;
-    }
-
-    public Movie(long id, String originalTitle, String overview, String releaseDate,
-                 String posterPath, double popularity, String title, double averageVote,
-                 long voteCount, String backdropPath) {
-        this.id = id;
-        this.originalTitle = originalTitle;
-        this.overview = overview;
-        this.releaseDate = releaseDate;
-        this.posterPath = posterPath;
-        this.popularity = popularity;
-        this.title = title;
-        this.averageVote = averageVote;
-        this.voteCount = voteCount;
-        this.backdropPath = backdropPath;
     }
 
     public long getId() {

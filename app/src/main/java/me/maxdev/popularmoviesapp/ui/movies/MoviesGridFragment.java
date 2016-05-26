@@ -41,12 +41,13 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
 
     private static final String LOG_TAG = "MoviesGridFragment";
     private static final int LOADER_ID = 0;
-    private MoviesAdapter adapter;
 
     @BindView(R.id.movies_grid)
     RecyclerView recyclerView;
     @BindView(R.id.swipe_layout)
     SwipeRefreshLayout swipeRefreshLayout;
+
+    private MoviesAdapter adapter;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override

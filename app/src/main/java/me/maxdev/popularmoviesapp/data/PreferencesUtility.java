@@ -9,7 +9,9 @@ import java.util.List;
 
 import me.maxdev.popularmoviesapp.R;
 
-public class PreferencesUtility {
+public final class PreferencesUtility {
+
+    private PreferencesUtility() { }
 
     public static String getSortByPreference(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -35,6 +37,4 @@ public class PreferencesUtility {
         );
         editor.apply();
     }
-
-    private PreferencesUtility() { }
 }

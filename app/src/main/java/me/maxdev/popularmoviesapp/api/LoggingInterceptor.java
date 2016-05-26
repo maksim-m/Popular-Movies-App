@@ -2,8 +2,6 @@ package me.maxdev.popularmoviesapp.api;
 
 import android.util.Log;
 
-
-
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -11,7 +9,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class LoggingInterceptor implements Interceptor {
-    @Override public Response intercept(Chain chain) throws IOException {
+
+    public static final double TIME_DIVIDER = 1e6d;
+
+    @Override
+    public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
 
         long t1 = System.nanoTime();
@@ -22,7 +24,7 @@ public class LoggingInterceptor implements Interceptor {
 
         long t2 = System.nanoTime();
         Log.i("OkHTTP_Response", String.format("Received response for %s in %.1fms%n%s",
-                response.request().url(), (t2 - t1) / 1e6d, response.headers()));
+                response.request().url(), (t2 - t1) / TIME_DIVIDER, response.headers()));
 
         return response;
     }

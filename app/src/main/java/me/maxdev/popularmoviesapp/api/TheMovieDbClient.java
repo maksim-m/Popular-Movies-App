@@ -11,17 +11,19 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class TheMovieDbClient {
+public final class TheMovieDbClient {
 
     private static final String BASE_URL = "http://api.themoviedb.org/3/";
     private static final String CACHE_DIR = "HttpResponseCache";
-    private static final long CACHE_SIZE = 10 * 1024 * 1024; // 10 MB
+    private static final long CACHE_SIZE = 10 * 1024 * 1024;    // 10 MB
     private static final int CONNECT_TIMEOUT = 15;
     private static final int WRITE_TIMEOUT = 60;
     private static final int TIMEOUT = 60;
 
     private static OkHttpClient client;
     private static TheMovieDbService theMovieDbService;
+
+    private TheMovieDbClient() { }
 
     public static TheMovieDbService getTheMovieDbService(Context context) {
         if (client == null) {

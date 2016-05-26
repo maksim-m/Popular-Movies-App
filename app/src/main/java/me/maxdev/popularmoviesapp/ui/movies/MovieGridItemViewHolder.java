@@ -10,7 +10,7 @@ import me.maxdev.popularmoviesapp.util.OnItemClickListener;
 
 public class MovieGridItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    public ImageView moviePoster;
+    ImageView moviePoster;
     private OnItemClickListener onItemClickListener;
 
     public MovieGridItemViewHolder(View itemView, @Nullable OnItemClickListener onItemClickListener) {

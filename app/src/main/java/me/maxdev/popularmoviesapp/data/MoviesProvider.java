@@ -14,26 +14,25 @@ import java.util.HashSet;
 
 public class MoviesProvider extends ContentProvider {
 
-    private static final UriMatcher URI_MATCHER = buildUriMatcher();
-    private MoviesDbHelper dbHelper;
-
     static final int MOVIES = 100;
     static final int MOVIE_BY_ID = 101;
     static final int MOST_POPULAR_MOVIES = 201;
     static final int HIGHEST_RATED_MOVIES = 202;
     static final int MOST_RATED_MOVIES = 203;
 
+    private static final UriMatcher URI_MATCHER = buildUriMatcher();
+
     // movies._id = ?
     private static final String MOVIE_ID_SELECTION =
             MoviesContract.MovieEntry.TABLE_NAME + "." + MoviesContract.MovieEntry._ID + " = ? ";
 
-    private static final SQLiteQueryBuilder mostPopularMoviesQueryBuilder;
+    private static final SQLiteQueryBuilder MOST_POPULAR_MOVIES_QUERY_BUILDER;
 
-    static{
-        mostPopularMoviesQueryBuilder = new SQLiteQueryBuilder();
+    static {
+        MOST_POPULAR_MOVIES_QUERY_BUILDER = new SQLiteQueryBuilder();
         // This is an inner join which looks like
         // most_popular INNER JOIN movies ON most_popular.movie_id = movies._id
-        mostPopularMoviesQueryBuilder.setTables(
+        MOST_POPULAR_MOVIES_QUERY_BUILDER.setTables(
                 MoviesContract.MostPopularMovies.TABLE_NAME + " INNER JOIN " +
                         MoviesContract.MovieEntry.TABLE_NAME +
                         " ON " + MoviesContract.MostPopularMovies.TABLE_NAME +
@@ -41,6 +40,8 @@ public class MoviesProvider extends ContentProvider {
                         " = " + MoviesContract.MovieEntry.TABLE_NAME +
                         "." + MoviesContract.MovieEntry._ID);
     }
+
+    private MoviesDbHelper dbHelper;
 
     static UriMatcher buildUriMatcher() {
         final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -233,7 +234,7 @@ public class MoviesProvider extends ContentProvider {
     private Cursor getMostPopularMovies(String[] projection, String selection,
                                         String[] selectionArgs, String sortOrder) {
 
-        return mostPopularMoviesQueryBuilder.query(dbHelper.getReadableDatabase(),
+        return MOST_POPULAR_MOVIES_QUERY_BUILDER.query(dbHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,
