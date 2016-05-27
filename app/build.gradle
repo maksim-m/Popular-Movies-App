@@ -1,7 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 
-apply from : '../quality/checkstyle.gradle'
+apply from: '../quality/checkstyle.gradle'
+apply from: '../quality/findbugs.gradle'
 
 def isOnCi() {
     def ci = System.getenv("CI")
@@ -92,7 +93,7 @@ dependencies {
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
 
     compile 'com.github.bumptech.glide:glide:3.7.0'
-	
-	testCompile 'junit:junit:4.12'
+
+    testCompile 'junit:junit:4.12'
 
 }

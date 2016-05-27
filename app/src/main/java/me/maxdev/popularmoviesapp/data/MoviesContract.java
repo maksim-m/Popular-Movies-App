@@ -43,10 +43,6 @@ public final class MoviesContract {
         public static final String COLUMN_VOTE_COUNT = "vote_count";
         public static final String COLUMN_BACKDROP_PATH = "backdrop_path";
 
-        public static final String[] COLUMNS = {_ID, COLUMN_ORIGINAL_TITLE, COLUMN_OVERVIEW,
-            COLUMN_RELEASE_DATE, COLUMN_POSTER_PATH, COLUMN_POPULARITY, COLUMN_TITLE,
-                COLUMN_AVERAGE_VOTE, COLUMN_VOTE_COUNT, COLUMN_BACKDROP_PATH};
-
         public static final String SQL_CREATE_TABLE =
                 "CREATE TABLE " + TABLE_NAME + " (" +
                         _ID + " INTEGER PRIMARY KEY, " +
@@ -61,6 +57,10 @@ public final class MoviesContract {
                         COLUMN_BACKDROP_PATH + " TEXT " +
                         " );";
 
+        private static final String[] COLUMNS = {_ID, COLUMN_ORIGINAL_TITLE, COLUMN_OVERVIEW,
+                COLUMN_RELEASE_DATE, COLUMN_POSTER_PATH, COLUMN_POPULARITY, COLUMN_TITLE,
+                COLUMN_AVERAGE_VOTE, COLUMN_VOTE_COUNT, COLUMN_BACKDROP_PATH};
+
         private MovieEntry() {
         }
 
@@ -70,6 +70,10 @@ public final class MoviesContract {
 
         public static long getIdFromUri(Uri uri) {
             return ContentUris.parseId(uri);
+        }
+
+        public static String[] getColumns() {
+            return COLUMNS.clone();
         }
     }
 

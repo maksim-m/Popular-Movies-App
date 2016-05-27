@@ -247,7 +247,7 @@ public class MoviesProvider extends ContentProvider {
     private void checkColumns(String[] projection) {
         if (projection != null) {
             HashSet<String> availableColumns = new HashSet<>(Arrays.asList(
-                    MoviesContract.MovieEntry.COLUMNS));
+                    MoviesContract.MovieEntry.getColumns()));
             HashSet<String> requestedColumns = new HashSet<>(Arrays.asList(projection));
             if (!availableColumns.containsAll(requestedColumns)) {
                 throw new IllegalArgumentException("Unknown columns in projection.");

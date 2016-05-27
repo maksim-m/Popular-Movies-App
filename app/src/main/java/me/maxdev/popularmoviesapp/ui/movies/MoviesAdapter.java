@@ -25,7 +25,7 @@ public class MoviesAdapter extends CursorRecyclerViewAdapter<MovieGridItemViewHo
     private OnItemClickListener onItemClickListener;
 
     public MoviesAdapter(Context context, Cursor cursor) {
-        super(context, cursor);
+        super(cursor);
         this.context = context;
     }
 

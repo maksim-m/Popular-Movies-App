@@ -47,7 +47,7 @@ public class TestDb extends AndroidTestCase {
         assertTrue("Error. The database doesn't contain all of the required tables", tableNameHashSet.isEmpty());
 
         // now, do our tables contain the correct columns?
-        checkTableColumns(db, MoviesContract.MovieEntry.TABLE_NAME, MoviesContract.MovieEntry.COLUMNS);
+        checkTableColumns(db, MoviesContract.MovieEntry.TABLE_NAME, MoviesContract.MovieEntry.getColumns());
         checkTableColumns(db, MoviesContract.MostPopularMovies.TABLE_NAME, MoviesContract.MostPopularMovies.COLUMNS);
         checkTableColumns(db, MoviesContract.HighestRatedMovies.TABLE_NAME, MoviesContract.HighestRatedMovies.COLUMNS);
         checkTableColumns(db, MoviesContract.MostRatedMovies.TABLE_NAME, MoviesContract.MostRatedMovies.COLUMNS);
