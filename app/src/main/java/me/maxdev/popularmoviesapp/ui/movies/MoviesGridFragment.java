@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -31,6 +32,7 @@ import butterknife.ButterKnife;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.MoviesContract;
 import me.maxdev.popularmoviesapp.data.MoviesService;
+import me.maxdev.popularmoviesapp.data.SortingUtil;
 import me.maxdev.popularmoviesapp.ui.ItemOffsetDecoration;
 import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailsActivity;
 import me.maxdev.popularmoviesapp.util.OnItemClickListener;
@@ -47,12 +49,14 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     @BindView(R.id.swipe_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
+    private Uri contentUri;
     private MoviesAdapter adapter;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(MoviesService.BROADCAST_UPDATE_FINISHED)) {
+                getLoaderManager().restartLoader(LOADER_ID, null, MoviesGridFragment.this);
                 swipeRefreshLayout.setRefreshing(false);
             }
         }
@@ -70,6 +74,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        contentUri = SortingUtil.getSortedMoviesUri(getContext());
         getLoaderManager().initLoader(LOADER_ID, null, this);
         super.onActivityCreated(savedInstanceState);
     }
@@ -147,11 +152,11 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(getActivity(),
-                MoviesContract.MovieEntry.CONTENT_URI,
+                contentUri,
                 null,
                 null,
                 null,
-                MoviesContract.MovieEntry.COLUMN_POPULARITY + " DESC"
+                null
         );
     }
 

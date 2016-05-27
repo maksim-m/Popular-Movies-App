@@ -3,6 +3,7 @@ package me.maxdev.popularmoviesapp.data;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -43,6 +44,7 @@ public class MoviesService extends IntentService implements Callback<DiscoverRes
     @Override
     public void onResponse(Call<DiscoverResponse<Movie>> call, Response<DiscoverResponse<Movie>> response) {
         if (response != null && response.isSuccessful()) {
+            Uri uri = SortingUtil.getSortedMoviesUri(this);
             Log.d(LOG_TAG, "Successful!");
             Log.d(LOG_TAG, response.message());
             DiscoverResponse<Movie> discoverResponse = response.body();
@@ -54,7 +56,7 @@ public class MoviesService extends IntentService implements Callback<DiscoverRes
                 values[i] = movies.get(i).toContentValues();
             }
             getContentResolver().bulkInsert(
-                    MoviesContract.MovieEntry.CONTENT_URI, values);
+                    uri, values);
         }
         sendUpdateFinishedBroadcast();
     }
