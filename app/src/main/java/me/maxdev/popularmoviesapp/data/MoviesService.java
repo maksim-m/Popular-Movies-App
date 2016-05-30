@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -43,22 +44,7 @@ public class MoviesService extends IntentService implements Callback<DiscoverRes
 
     @Override
     public void onResponse(Call<DiscoverResponse<Movie>> call, Response<DiscoverResponse<Movie>> response) {
-        if (response != null && response.isSuccessful()) {
-            Uri uri = SortingUtil.getSortedMoviesUri(this);
-            Log.d(LOG_TAG, "Successful!");
-            Log.d(LOG_TAG, response.message());
-            DiscoverResponse<Movie> discoverResponse = response.body();
-            List<Movie> movies = discoverResponse.getResults();
-            Log.d(LOG_TAG, movies.toString());
-
-            ContentValues[] values = new ContentValues[movies.size()];
-            for (int i = 0; i < movies.size(); i++) {
-                values[i] = movies.get(i).toContentValues();
-            }
-            getContentResolver().bulkInsert(
-                    uri, values);
-        }
-        sendUpdateFinishedBroadcast();
+        new SaveMoviesToDbTask().execute(response);
     }
 
     @Override
@@ -71,5 +57,39 @@ public class MoviesService extends IntentService implements Callback<DiscoverRes
     private void sendUpdateFinishedBroadcast() {
         Intent intent = new Intent(BROADCAST_UPDATE_FINISHED);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private class SaveMoviesToDbTask extends AsyncTask<Response, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Response... params) {
+            Response<DiscoverResponse<Movie>> response = params[0];
+            if (response != null && response.isSuccessful()) {
+                Uri uri = SortingUtil.getSortedMoviesUri(MoviesService.this);
+                if (uri == null) {
+                    Log.w(LOG_TAG, "Wrong sorting.");
+                    return null;
+                }
+                Log.d(LOG_TAG, "Successful!");
+                Log.d(LOG_TAG, response.message());
+
+                DiscoverResponse<Movie> discoverResponse = response.body();
+                List<Movie> movies = discoverResponse.getResults();
+                Log.d(LOG_TAG, movies.toString());
+
+                for (int i = 0; i < movies.size(); i++) {
+                    Uri movieUri = getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, movies.get(i).toContentValues());
+                    long id = MoviesContract.MovieEntry.getIdFromUri(movieUri);
+                    ContentValues entry = new ContentValues();
+                    entry.put(MoviesContract.COLUMN_MOVIE_ID_KEY, id);
+                    getContentResolver().insert(uri, entry);
+                }
+
+            }
+            sendUpdateFinishedBroadcast();
+
+
+            return null;
+        }
     }
 }

@@ -30,7 +30,6 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.maxdev.popularmoviesapp.R;
-import me.maxdev.popularmoviesapp.data.MoviesContract;
 import me.maxdev.popularmoviesapp.data.MoviesService;
 import me.maxdev.popularmoviesapp.data.SortingUtil;
 import me.maxdev.popularmoviesapp.ui.ItemOffsetDecoration;

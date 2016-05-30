@@ -67,7 +67,7 @@ public class TestDb extends AndroidTestCase {
         SQLiteDatabase db = helper.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(MoviesContract.MostPopularMovies.COLUMN_MOVIE_ID_KEY, movieId);
+        contentValues.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movieId);
 
         long id = db.insert(MoviesContract.MostPopularMovies.TABLE_NAME, null, contentValues);
         if (id == -1) {
@@ -95,7 +95,7 @@ public class TestDb extends AndroidTestCase {
         SQLiteDatabase db = helper.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(MoviesContract.MostPopularMovies.COLUMN_MOVIE_ID_KEY, movieId);
+        contentValues.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movieId);
 
         long id = db.insert(MoviesContract.HighestRatedMovies.TABLE_NAME, null, contentValues);
         if (id == -1) {
@@ -123,7 +123,7 @@ public class TestDb extends AndroidTestCase {
         SQLiteDatabase db = helper.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(MoviesContract.MostPopularMovies.COLUMN_MOVIE_ID_KEY, movieId);
+        contentValues.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movieId);
 
         long id = db.insert(MoviesContract.MostRatedMovies.TABLE_NAME, null, contentValues);
         if (id == -1) {

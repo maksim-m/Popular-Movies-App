@@ -18,6 +18,8 @@ public final class MoviesContract {
     public static final String PATH_HIGHEST_RATED = "highest_rated";
     public static final String PATH_MOST_RATED = "most_rated";
 
+    static final String COLUMN_MOVIE_ID_KEY = "movie_id";
+
     private MoviesContract() {
     }
 
@@ -86,7 +88,6 @@ public final class MoviesContract {
                         + "/" + PATH_MOST_POPULAR;
 
         public static final String TABLE_NAME = "most_popular_movies";
-        public static final String COLUMN_MOVIE_ID_KEY = "movie_id";
         public static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
 
         public static final String SQL_CREATE_TABLE =
@@ -112,7 +113,6 @@ public final class MoviesContract {
                         + "/" + PATH_HIGHEST_RATED;
 
         public static final String TABLE_NAME = "highest_rated_movies";
-        public static final String COLUMN_MOVIE_ID_KEY = "movie_id";
         public static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
 
         public static final String SQL_CREATE_TABLE =
@@ -138,7 +138,6 @@ public final class MoviesContract {
                         + "/" + PATH_MOST_RATED;
 
         public static final String TABLE_NAME = "most_rated_movies";
-        public static final String COLUMN_MOVIE_ID_KEY = "movie_id";
         public static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
 
         public static final String SQL_CREATE_TABLE =

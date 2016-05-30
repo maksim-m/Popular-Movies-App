@@ -1,8 +1,11 @@
 package me.maxdev.popularmoviesapp.api;
 
 import android.content.Context;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 
 import java.io.File;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
@@ -34,6 +37,7 @@ public final class TheMovieDbClient {
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
+                    //.callbackExecutor(new BackgroundThreadExecutor())
                     .build();
             theMovieDbService = retrofit.create(TheMovieDbService.class);
         }
@@ -58,4 +62,13 @@ public final class TheMovieDbClient {
         return builder.build();
     }
 
+    private static class BackgroundThreadExecutor implements Executor {
+
+        private static Handler handler = new Handler();
+
+        @Override
+        public void execute(@NonNull  Runnable command) {
+            handler.post(command);
+        }
+    }
 }

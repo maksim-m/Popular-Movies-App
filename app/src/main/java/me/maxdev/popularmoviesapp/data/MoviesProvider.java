@@ -36,7 +36,7 @@ public class MoviesProvider extends ContentProvider {
                 MoviesContract.MostPopularMovies.TABLE_NAME + " INNER JOIN " +
                         MoviesContract.MovieEntry.TABLE_NAME +
                         " ON " + MoviesContract.MostPopularMovies.TABLE_NAME +
-                        "." + MoviesContract.MostPopularMovies.COLUMN_MOVIE_ID_KEY +
+                        "." + MoviesContract.COLUMN_MOVIE_ID_KEY +
                         " = " + MoviesContract.MovieEntry.TABLE_NAME +
                         "." + MoviesContract.MovieEntry._ID);
     }
@@ -121,12 +121,21 @@ public class MoviesProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         final int match = URI_MATCHER.match(uri);
         Uri returnUri;
+        long id;
         switch (match) {
             case MOVIES:
-                long id = db.insertWithOnConflict(MoviesContract.MovieEntry.TABLE_NAME, null,
+                id = db.insertWithOnConflict(MoviesContract.MovieEntry.TABLE_NAME, null,
                         values, SQLiteDatabase.CONFLICT_REPLACE);
                 if (id > 0) {
                     returnUri = MoviesContract.MovieEntry.buildMovieUri(id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            case MOST_POPULAR_MOVIES:
+                id = db.insert(MoviesContract.MostPopularMovies.TABLE_NAME, null, values);
+                if (id > 0) {
+                    returnUri = MoviesContract.MostPopularMovies.CONTENT_URI;
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
@@ -139,8 +148,7 @@ public class MoviesProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NonNull Uri uri, ContentValues values, String selection,
-                      String[] selectionArgs) {
+    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         final int match = URI_MATCHER.match(uri);
         int rowsUpdated;
