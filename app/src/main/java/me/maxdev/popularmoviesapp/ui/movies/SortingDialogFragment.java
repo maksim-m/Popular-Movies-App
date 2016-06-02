@@ -2,14 +2,12 @@ package me.maxdev.popularmoviesapp.ui.movies;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
 import me.maxdev.popularmoviesapp.R;
-import me.maxdev.popularmoviesapp.data.MoviesService;
 import me.maxdev.popularmoviesapp.data.PreferencesUtility;
 
 public class SortingDialogFragment extends DialogFragment {
@@ -29,8 +27,7 @@ public class SortingDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         PreferencesUtility.saveSortByPreference(getActivity(), which);
-                        Intent intent = new Intent(getActivity(), MoviesService.class);
-                        getActivity().startService(intent);
+                        // TODO: update movies
                         dialog.dismiss();
                     }
                 });

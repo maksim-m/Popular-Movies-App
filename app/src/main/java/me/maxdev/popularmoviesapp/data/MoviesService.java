@@ -1,7 +1,7 @@
 package me.maxdev.popularmoviesapp.data;
 
-import android.app.IntentService;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,27 +17,39 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MoviesService extends IntentService implements Callback<DiscoverResponse<Movie>> {
+/**
+ * Created by Max on 01.06.2016.
+ */
+public class MoviesService implements Callback<DiscoverResponse<Movie>> {
 
     public static final String BROADCAST_UPDATE_FINISHED = "UpdateFinished";
 
-    private static final String SERVICE_NAME = "MoviesService";
+    private static final int PAGE_SIZE = 20;
     private static final String LOG_TAG = "MoviesService";
+    private static volatile MoviesService instance = null;
 
-    public MoviesService() {
-        super(SERVICE_NAME);
+    private Context context;
+
+    public MoviesService(Context context) {
+        if (instance != null) {
+            throw new IllegalStateException("Already instantiated.");
+        }
+        this.context = context.getApplicationContext();
     }
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        updateMovies();
+    public static MoviesService getInstance(Context context) {
+        synchronized (MoviesService.class) {
+            if (instance == null) {
+                instance = new MoviesService(context);
+            }
+        }
+        return instance;
     }
 
-    private void updateMovies() {
-        TheMovieDbService service = TheMovieDbClient.getTheMovieDbService(this);
+    public void updateMovies() {
+        TheMovieDbService service = TheMovieDbClient.getTheMovieDbService(context);
 
-        Call<DiscoverResponse<Movie>> call = service.discoverMovies(
-                PreferencesUtility.getSortByPreference(this));
+        Call<DiscoverResponse<Movie>> call = service.discoverMovies(PreferencesUtility.getSortByPreference(context));
 
         call.enqueue(this);
     }
@@ -49,14 +61,12 @@ public class MoviesService extends IntentService implements Callback<DiscoverRes
 
     @Override
     public void onFailure(Call<DiscoverResponse<Movie>> call, Throwable t) {
-        Log.d(LOG_TAG, "Error!");
-        Log.d(LOG_TAG, t.getMessage());
         sendUpdateFinishedBroadcast();
     }
 
     private void sendUpdateFinishedBroadcast() {
         Intent intent = new Intent(BROADCAST_UPDATE_FINISHED);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     private class SaveMoviesToDbTask extends AsyncTask<Response, Void, Void> {
@@ -65,7 +75,7 @@ public class MoviesService extends IntentService implements Callback<DiscoverRes
         protected Void doInBackground(Response... params) {
             Response<DiscoverResponse<Movie>> response = params[0];
             if (response != null && response.isSuccessful()) {
-                Uri uri = SortingUtil.getSortedMoviesUri(MoviesService.this);
+                Uri uri = SortingUtil.getSortedMoviesUri(context);
                 if (uri == null) {
                     Log.w(LOG_TAG, "Wrong sorting.");
                     return null;
@@ -78,18 +88,22 @@ public class MoviesService extends IntentService implements Callback<DiscoverRes
                 Log.d(LOG_TAG, movies.toString());
 
                 for (int i = 0; i < movies.size(); i++) {
-                    Uri movieUri = getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, movies.get(i).toContentValues());
+                    Uri movieUri = context.getContentResolver()
+                            .insert(MoviesContract.MovieEntry.CONTENT_URI, movies.get(i).toContentValues());
                     long id = MoviesContract.MovieEntry.getIdFromUri(movieUri);
                     ContentValues entry = new ContentValues();
                     entry.put(MoviesContract.COLUMN_MOVIE_ID_KEY, id);
-                    getContentResolver().insert(uri, entry);
+                    context.getContentResolver().insert(uri, entry);
                 }
 
             }
-            sendUpdateFinishedBroadcast();
-
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            sendUpdateFinishedBroadcast();
         }
     }
 }

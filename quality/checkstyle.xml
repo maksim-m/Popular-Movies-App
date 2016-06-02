@@ -4,68 +4,67 @@
     "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 <module name="Checker">
 
-    <module name="FileTabCharacter" />
+    <module name="FileTabCharacter"/>
 
     <module name="TreeWalker">
 
         <!-- Naming Conventions -->
         <module name="AbbreviationAsWordInName">
-            <property name="allowedAbbreviationLength" value="1" />
+            <property name="allowedAbbreviationLength" value="1"/>
         </module>
-        <module name="CatchParameterName" />
+        <module name="CatchParameterName"/>
         <module name="ClassTypeParameterName">
-            <property name="format" value="^[A-Z][A-Z0-9]*" />
+            <property name="format" value="^[A-Z][A-Z0-9]*"/>
         </module>
-        <module name="ConstantName" />
-        <module name="InterfaceTypeParameterName" />
-        <module name="LocalFinalVariableName" />
-        <module name="LocalVariableName" />
-        <module name="MemberName" />
-        <module name="MethodName" />
-        <module name="MethodTypeParameterName" />
-        <module name="PackageName" />
-        <module name="ParameterName" />
-        <module name="StaticVariableName" />
-        <module name="TypeName" />
+        <module name="ConstantName"/>
+        <module name="InterfaceTypeParameterName"/>
+        <module name="LocalFinalVariableName"/>
+        <module name="LocalVariableName"/>
+        <module name="MemberName"/>
+        <module name="MethodName"/>
+        <module name="MethodTypeParameterName"/>
+        <module name="PackageName"/>
+        <module name="ParameterName"/>
+        <module name="StaticVariableName"/>
+        <module name="TypeName"/>
 
         <!-- Annotations -->
-        <module name="AnnotationLocation" />
-        <module name="AnnotationUseStyle" />
-        <module name="MissingDeprecated" />
-        <module name="MissingOverride" />
+        <module name="AnnotationLocation"/>
+        <module name="AnnotationUseStyle"/>
+        <module name="MissingDeprecated"/>
+        <module name="MissingOverride"/>
 
         <!-- Block Checks -->
-        <module name="AvoidNestedBlocks" />
-        <module name="EmptyBlock" />
+        <module name="AvoidNestedBlocks"/>
+        <module name="EmptyBlock"/>
         <module name="EmptyCatchBlock">
-            <property name="exceptionVariableName" value="expected" />
+            <property name="exceptionVariableName" value="expected"/>
         </module>
-        <module name="LeftCurly" />
-        <module name="RightCurly" />
-        <module name="NeedBraces" />
+        <module name="LeftCurly"/>
+        <module name="RightCurly"/>
+        <module name="NeedBraces"/>
 
         <!-- Class design -->
-        <module name="FinalClass" />
-        <module name="HideUtilityClassConstructor" />
-        <module name="InnerTypeLast" />
-        <module name="InterfaceIsType" />
-        <module name="MutableException" />
-        <module name="OneTopLevelClass" />
+        <module name="FinalClass"/>
+        <module name="HideUtilityClassConstructor"/>
+        <module name="InnerTypeLast"/>
+        <module name="InterfaceIsType"/>
+        <module name="MutableException"/>
+        <module name="OneTopLevelClass"/>
         <module name="VisibilityModifier">
-            <property name="packageAllowed" value="true" />
+            <property name="packageAllowed" value="true"/>
         </module>
 
         <!-- Coding -->
-        <module name="CovariantEquals" />
-        <module name="DeclarationOrder" />
+        <module name="CovariantEquals"/>
+        <module name="DeclarationOrder"/>
         <module name="DefaultComesLast"/>
-        <module name="EmptyStatement" />
-        <module name="EqualsHashCode" />
-        <module name="ExplicitInitialization"/>
+        <module name="EmptyStatement"/>
+        <module name="EqualsHashCode"/>
         <module name="FallThrough"/>
         <module name="IllegalCatch"/>
         <module name="IllegalThrows"/>
-        <module name="IllegalInstantiation" />
+        <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MagicNumber"/>
         <module name="MissingSwitchDefault"/>
@@ -94,9 +93,9 @@
 
         <!-- Imports -->
         <module name="AvoidStarImport"/>
-        <module name="IllegalImport" />
-        <module name="RedundantImport" />
-        <module name="UnusedImports" />
+        <module name="IllegalImport"/>
+        <module name="RedundantImport"/>
+        <module name="UnusedImports"/>
 
         <!-- Metrics -->
         <module name="CyclomaticComplexity"/>
@@ -107,22 +106,22 @@
 
         <!-- Sizes -->
         <module name="LineLength">
-            <property name="max" value="180" />
+            <property name="max" value="140"/>
         </module>
         <module name="MethodCount"/>
-        <module name="MethodLength" />
+        <module name="MethodLength"/>
         <module name="ParameterNumber"/>
 
         <!-- Whitespaces -->
         <module name="EmptyLineSeparator">
             <property name="allowNoEmptyLineBetweenFields" value="true"/>
         </module>
-        <module name="GenericWhitespace" />
-        <module name="MethodParamPad" />
+        <module name="GenericWhitespace"/>
+        <module name="MethodParamPad"/>
         <module name="NoLineWrap"/>
-        <module name="NoWhitespaceAfter" />
-        <module name="NoWhitespaceBefore" />
-        <module name="ParenPad" />
+        <module name="NoWhitespaceAfter"/>
+        <module name="NoWhitespaceBefore"/>
+        <module name="ParenPad"/>
         <module name="SeparatorWrap">
             <property name="tokens" value="DOT"/>
             <property name="option" value="nl"/>
@@ -131,15 +130,15 @@
             <property name="tokens" value="COMMA"/>
             <property name="option" value="EOL"/>
         </module>
-        <module name="TypecastParenPad" />
-        <module name="WhitespaceAfter" />
+        <module name="TypecastParenPad"/>
+        <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround">
             <property name="allowEmptyConstructors" value="true"/>
             <property name="allowEmptyMethods" value="true"/>
             <property name="allowEmptyTypes" value="true"/>
             <property name="allowEmptyLoops" value="true"/>
         </module>
-        <module name="EmptyForIteratorPad" />
+        <module name="EmptyForIteratorPad"/>
 
         <!-- Misc -->
         <module name="ArrayTypeStyle"/>
@@ -152,8 +151,8 @@
         </module>
         <module name="OuterTypeFilename"/>
         <module name="TodoComment">
-            <property name="format" value="(TODO)|(FIXME)" />
-            <property name="severity" value="info" />
+            <property name="format" value="(TODO)|(FIXME)"/>
+            <property name="severity" value="info"/>
         </module>
         <module name="UpperEll"/>
 

@@ -48,6 +48,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     @BindView(R.id.swipe_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
+    private MoviesService moviesService;
     private Uri contentUri;
     private MoviesAdapter adapter;
 
@@ -69,6 +70,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        moviesService = MoviesService.getInstance(getContext());
     }
 
     @Override
@@ -144,8 +146,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     }
 
     private void updateMovies() {
-        Intent intent = new Intent(getActivity(), MoviesService.class);
-        getActivity().startService(intent);
+        moviesService.updateMovies();
     }
 
     @Override
