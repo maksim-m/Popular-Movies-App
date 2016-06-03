@@ -8,7 +8,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
 import me.maxdev.popularmoviesapp.R;
-import me.maxdev.popularmoviesapp.data.PreferencesUtility;
+import me.maxdev.popularmoviesapp.data.Sort;
+import me.maxdev.popularmoviesapp.data.SortUtil;
 
 public class SortingDialogFragment extends DialogFragment {
 
@@ -22,11 +23,11 @@ public class SortingDialogFragment extends DialogFragment {
         builder.setNegativeButton(getString(R.string.action_cancel), null);
         builder.setSingleChoiceItems(
                 R.array.pref_sort_by_labels,
-                PreferencesUtility.getSortByPreferenceIndex(getActivity()),
+                SortUtil.getSortByPreference(getContext()).ordinal(),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        PreferencesUtility.saveSortByPreference(getActivity(), which);
+                        SortUtil.saveSortByPreference(getContext(), Sort.values()[which]);
                         // TODO: update movies
                         dialog.dismiss();
                     }

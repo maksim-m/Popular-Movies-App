@@ -31,7 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.MoviesService;
-import me.maxdev.popularmoviesapp.data.SortingUtil;
+import me.maxdev.popularmoviesapp.data.SortUtil;
 import me.maxdev.popularmoviesapp.ui.ItemOffsetDecoration;
 import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailsActivity;
 import me.maxdev.popularmoviesapp.util.OnItemClickListener;
@@ -75,7 +75,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        contentUri = SortingUtil.getSortedMoviesUri(getContext());
+        contentUri = SortUtil.getSortedMoviesUri(getContext());
         getLoaderManager().initLoader(LOADER_ID, null, this);
         super.onActivityCreated(savedInstanceState);
     }

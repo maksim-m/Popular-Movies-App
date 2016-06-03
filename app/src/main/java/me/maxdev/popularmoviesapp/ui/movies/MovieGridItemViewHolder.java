@@ -5,17 +5,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.util.OnItemClickListener;
 
 public class MovieGridItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+    @BindView(R.id.image_movie_poster)
     ImageView moviePoster;
+
     private OnItemClickListener onItemClickListener;
 
     public MovieGridItemViewHolder(View itemView, @Nullable OnItemClickListener onItemClickListener) {
         super(itemView);
-        moviePoster = (ImageView) itemView.findViewById(R.id.image_movie_poster);
+        ButterKnife.bind(this, itemView);
         this.onItemClickListener = onItemClickListener;
         itemView.setOnClickListener(this);
     }

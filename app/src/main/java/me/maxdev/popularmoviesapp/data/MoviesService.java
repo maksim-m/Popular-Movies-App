@@ -49,7 +49,7 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
     public void updateMovies() {
         TheMovieDbService service = TheMovieDbClient.getTheMovieDbService(context);
 
-        Call<DiscoverResponse<Movie>> call = service.discoverMovies(PreferencesUtility.getSortByPreference(context));
+        Call<DiscoverResponse<Movie>> call = service.discoverMovies(SortUtil.getSortByPreference(context).toString());
 
         call.enqueue(this);
     }
@@ -75,7 +75,7 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
         protected Void doInBackground(Response... params) {
             Response<DiscoverResponse<Movie>> response = params[0];
             if (response != null && response.isSuccessful()) {
-                Uri uri = SortingUtil.getSortedMoviesUri(context);
+                Uri uri = SortUtil.getSortedMoviesUri(context);
                 if (uri == null) {
                     Log.w(LOG_TAG, "Wrong sorting.");
                     return null;

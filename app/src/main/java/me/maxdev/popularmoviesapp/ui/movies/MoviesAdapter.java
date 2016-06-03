@@ -42,7 +42,7 @@ public class MoviesAdapter extends CursorRecyclerViewAdapter<MovieGridItemViewHo
             Glide.with(context)
                     .load(POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + movie.getPosterPath())
                     .placeholder(new ColorDrawable(context.getResources().getColor(R.color.accent_material_light)))
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .centerCrop()
                     .crossFade()
                     .into(viewHolder.moviePoster);
