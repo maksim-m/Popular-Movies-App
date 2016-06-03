@@ -46,7 +46,7 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
         return instance;
     }
 
-    public void updateMovies() {
+    public void refreshMovies() {
         TheMovieDbService service = TheMovieDbClient.getTheMovieDbService(context);
 
         Call<DiscoverResponse<Movie>> call = service.discoverMovies(SortUtil.getSortByPreference(context).toString());

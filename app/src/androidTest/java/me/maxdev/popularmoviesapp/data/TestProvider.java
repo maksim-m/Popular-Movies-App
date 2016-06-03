@@ -25,6 +25,12 @@ public class TestProvider extends AndroidTestCase {
         deleteAllRecords();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        deleteAllRecords();
+    }
+
     public void testProviderRegistry() {
         PackageManager pm = mContext.getPackageManager();
 
@@ -152,7 +158,7 @@ public class TestProvider extends AndroidTestCase {
     public void testMostPopularMoviesQuery() {
         ContentValues testValues = insertTestValues();
         long movieId = testValues.getAsLong(MoviesContract.MovieEntry._ID);
-        insertMostPopularMoviesTestValues(movieId);
+        insertSortTableTestValues(MoviesContract.MostPopularMovies.TABLE_NAME, movieId);
 
         Cursor movies = mContext.getContentResolver().query(
                 MoviesContract.MostPopularMovies.CONTENT_URI,
@@ -168,7 +174,55 @@ public class TestProvider extends AndroidTestCase {
 
         if (Build.VERSION.SDK_INT >= 19) {
             assertEquals("Error: Movies Query did not properly set NotificationUri",
-                    movies.getNotificationUri(), MoviesContract.MostPopularMovies.CONTENT_URI);
+                    MoviesContract.MostPopularMovies.CONTENT_URI, movies.getNotificationUri());
+        }
+        movies.close();
+    }
+
+    public void testHighestRatedMoviesQuery() {
+        ContentValues testValues = insertTestValues();
+        long movieId = testValues.getAsLong(MoviesContract.MovieEntry._ID);
+        insertSortTableTestValues(MoviesContract.HighestRatedMovies.TABLE_NAME, movieId);
+
+        Cursor movies = mContext.getContentResolver().query(
+                MoviesContract.HighestRatedMovies.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        if (movies == null) {
+            fail("Get empty cursor by querying movies.");
+        }
+        TestUtilities.validateCursor("Error by querying movies.", movies, testValues);
+
+        if (Build.VERSION.SDK_INT >= 19) {
+            assertEquals("Error: Movies Query did not properly set NotificationUri",
+                    MoviesContract.HighestRatedMovies.CONTENT_URI, movies.getNotificationUri());
+        }
+        movies.close();
+    }
+
+    public void testMostRatedMoviesQuery() {
+        ContentValues testValues = insertTestValues();
+        long movieId = testValues.getAsLong(MoviesContract.MovieEntry._ID);
+        insertSortTableTestValues(MoviesContract.MostRatedMovies.TABLE_NAME, movieId);
+
+        Cursor movies = mContext.getContentResolver().query(
+                MoviesContract.MostRatedMovies.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        if (movies == null) {
+            fail("Get empty cursor by querying movies.");
+        }
+        TestUtilities.validateCursor("Error by querying movies.", movies, testValues);
+
+        if (Build.VERSION.SDK_INT >= 19) {
+            assertEquals("Error: Movies Query did not properly set NotificationUri",
+                    MoviesContract.MostRatedMovies.CONTENT_URI, movies.getNotificationUri());
         }
         movies.close();
     }
@@ -246,8 +300,8 @@ public class TestProvider extends AndroidTestCase {
         long movieRowId = ContentUris.parseId(movieUri);
         assertTrue(movieRowId != -1);
 
-        TestUtilities.TestContentObserver mostPopularMoviesObserver = TestUtilities.getTestContentObserver();
-        mContext.getContentResolver().registerContentObserver(MoviesContract.MostPopularMovies.CONTENT_URI, true, mostPopularMoviesObserver);
+        TestUtilities.TestContentObserver observer = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MoviesContract.MostPopularMovies.CONTENT_URI, true, observer);
 
         ContentValues entryValues = new ContentValues();
         entryValues.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movieRowId);
@@ -256,21 +310,86 @@ public class TestProvider extends AndroidTestCase {
         assertTrue(entryUri != null);
 
         // Did our content observer get called?
-        mostPopularMoviesObserver.waitForNotificationOrFail();
-        mContext.getContentResolver().unregisterContentObserver(mostPopularMoviesObserver);
+        observer.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(observer);
 
-        Cursor mostPopularMovies = mContext.getContentResolver().query(
+        Cursor movies = mContext.getContentResolver().query(
                 MoviesContract.MostPopularMovies.CONTENT_URI,
                 null, // leaving "columns" null just returns all the columns.
                 null, // cols for "where" clause
                 null, // values for "where" clause
                 null  // sort order
         );
-        TestUtilities.validateCursor("Error validating MovieEntry.",
-                mostPopularMovies, entryValues);
+        assertNotNull(movies);
+        TestUtilities.validateCursor("Error validating MovieEntry.", movies, entryValues);
 
+        movies.close();
+    }
 
-        mostPopularMovies.close();
+    public void testInsertHighestRatedMovie() {
+        ContentValues testValues = TestUtilities.createTestMovieValues();
+        Uri movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, testValues);
+        assertTrue(movieUri != null);
+        long movieRowId = ContentUris.parseId(movieUri);
+        assertTrue(movieRowId != -1);
+
+        TestUtilities.TestContentObserver observer = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MoviesContract.HighestRatedMovies.CONTENT_URI, true, observer);
+
+        ContentValues entryValues = new ContentValues();
+        entryValues.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movieRowId);
+
+        Uri entryUri = mContext.getContentResolver().insert(MoviesContract.HighestRatedMovies.CONTENT_URI, entryValues);
+        assertTrue(entryUri != null);
+
+        // Did our content observer get called?
+        observer.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(observer);
+
+        Cursor movies = mContext.getContentResolver().query(
+                MoviesContract.HighestRatedMovies.CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+        assertNotNull(movies);
+        TestUtilities.validateCursor("Error validating MovieEntry", movies, entryValues);
+
+        movies.close();
+    }
+
+    public void testInsertMostRatedMovie() {
+        ContentValues testValues = TestUtilities.createTestMovieValues();
+        Uri movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, testValues);
+        assertTrue(movieUri != null);
+        long movieRowId = ContentUris.parseId(movieUri);
+        assertTrue(movieRowId != -1);
+
+        TestUtilities.TestContentObserver observer = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MoviesContract.MostRatedMovies.CONTENT_URI, true, observer);
+
+        ContentValues entryValues = new ContentValues();
+        entryValues.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movieRowId);
+
+        Uri entryUri = mContext.getContentResolver().insert(MoviesContract.MostRatedMovies.CONTENT_URI, entryValues);
+        assertTrue(entryUri != null);
+
+        // Did our content observer get called?
+        observer.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(observer);
+
+        Cursor movies = mContext.getContentResolver().query(
+                MoviesContract.MostRatedMovies.CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+        assertNotNull(movies);
+        TestUtilities.validateCursor("Error validating MovieEntry", movies, entryValues);
+
+        movies.close();
     }
 
     public void testUpdateMovie() {
@@ -483,14 +602,14 @@ public class TestProvider extends AndroidTestCase {
         return testValues;
     }
 
-    void insertMostPopularMoviesTestValues(long movieId) {
+    void insertSortTableTestValues(String tableName, long movieId) {
         MoviesDbHelper dbHelper = new MoviesDbHelper(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues testValues = new ContentValues();
         testValues.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movieId);
-        long id = db.insert(MoviesContract.MostPopularMovies.TABLE_NAME, null, testValues);
+        long id = db.insert(tableName, null, testValues);
         if (id == -1) {
-            fail("Error by inserting contentValues into database.");
+            fail("Error by inserting contentValues into " + tableName);
         }
         db.close();
     }

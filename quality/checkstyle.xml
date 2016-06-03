@@ -106,7 +106,7 @@
 
         <!-- Sizes -->
         <module name="LineLength">
-            <property name="max" value="140"/>
+            <property name="max" value="120"/>
         </module>
         <module name="MethodCount"/>
         <module name="MethodLength"/>

@@ -26,21 +26,6 @@ public class MoviesProvider extends ContentProvider {
     private static final String MOVIE_ID_SELECTION =
             MoviesContract.MovieEntry.TABLE_NAME + "." + MoviesContract.MovieEntry._ID + " = ? ";
 
-    private static final SQLiteQueryBuilder MOST_POPULAR_MOVIES_QUERY_BUILDER;
-
-    static {
-        MOST_POPULAR_MOVIES_QUERY_BUILDER = new SQLiteQueryBuilder();
-        // This is an inner join which looks like
-        // most_popular INNER JOIN movies ON most_popular.movie_id = movies._id
-        MOST_POPULAR_MOVIES_QUERY_BUILDER.setTables(
-                MoviesContract.MostPopularMovies.TABLE_NAME + " INNER JOIN " +
-                        MoviesContract.MovieEntry.TABLE_NAME +
-                        " ON " + MoviesContract.MostPopularMovies.TABLE_NAME +
-                        "." + MoviesContract.COLUMN_MOVIE_ID_KEY +
-                        " = " + MoviesContract.MovieEntry.TABLE_NAME +
-                        "." + MoviesContract.MovieEntry._ID);
-    }
-
     private MoviesDbHelper dbHelper;
 
     static UriMatcher buildUriMatcher() {
@@ -107,7 +92,16 @@ public class MoviesProvider extends ContentProvider {
                 cursor = getMovieById(uri, projection, sortOrder);
                 break;
             case MOST_POPULAR_MOVIES:
-                cursor = getMostPopularMovies(projection, selection, selectionArgs, sortOrder);
+                cursor = getMoviesFromSortTable(MoviesContract.MostPopularMovies.TABLE_NAME,
+                        projection, selection, selectionArgs, sortOrder);
+                break;
+            case HIGHEST_RATED_MOVIES:
+                cursor = getMoviesFromSortTable(MoviesContract.HighestRatedMovies.TABLE_NAME,
+                        projection, selection, selectionArgs, sortOrder);
+                break;
+            case MOST_RATED_MOVIES:
+                cursor = getMoviesFromSortTable(MoviesContract.MostRatedMovies.TABLE_NAME,
+                        projection, selection, selectionArgs, sortOrder);
                 break;
             default:
                 return null;
@@ -136,6 +130,22 @@ public class MoviesProvider extends ContentProvider {
                 id = db.insert(MoviesContract.MostPopularMovies.TABLE_NAME, null, values);
                 if (id > 0) {
                     returnUri = MoviesContract.MostPopularMovies.CONTENT_URI;
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            case HIGHEST_RATED_MOVIES:
+                id = db.insert(MoviesContract.HighestRatedMovies.TABLE_NAME, null, values);
+                if (id > 0) {
+                    returnUri = MoviesContract.HighestRatedMovies.CONTENT_URI;
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            case MOST_RATED_MOVIES:
+                id = db.insert(MoviesContract.MostRatedMovies.TABLE_NAME, null, values);
+                if (id > 0) {
+                    returnUri = MoviesContract.MostRatedMovies.CONTENT_URI;
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
@@ -239,10 +249,19 @@ public class MoviesProvider extends ContentProvider {
         );
     }
 
-    private Cursor getMostPopularMovies(String[] projection, String selection,
-                                        String[] selectionArgs, String sortOrder) {
+    private Cursor getMoviesFromSortTable(String tableName, String[] projection, String selection,
+                                          String[] selectionArgs, String sortOrder) {
 
-        return MOST_POPULAR_MOVIES_QUERY_BUILDER.query(dbHelper.getReadableDatabase(),
+        SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
+
+        // tableName INNER JOIN movies ON tableName.movie_id = movies._id
+        sqLiteQueryBuilder.setTables(
+                tableName + " INNER JOIN " + MoviesContract.MovieEntry.TABLE_NAME +
+                        " ON " + tableName + "." + MoviesContract.COLUMN_MOVIE_ID_KEY +
+                        " = " + MoviesContract.MovieEntry.TABLE_NAME + "." + MoviesContract.MovieEntry._ID
+        );
+
+        return sqLiteQueryBuilder.query(dbHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,

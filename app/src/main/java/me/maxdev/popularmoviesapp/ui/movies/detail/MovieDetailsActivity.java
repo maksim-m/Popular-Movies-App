@@ -100,9 +100,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 .crossFade()
                 .into(movieBackdropImage);
         movieOriginalTitle.setText(movie.getOriginalTitle());
-        String userRating = String.format(getString(me.maxdev.popularmoviesapp.R.string.user_rating), movie.getAverageVote());
+        String userRating = String.format(getString(me.maxdev.popularmoviesapp.R.string.user_rating),
+                movie.getAverageVote());
         movieUserRating.setText(userRating);
-        String releaseDate = String.format(getString(me.maxdev.popularmoviesapp.R.string.release_date), movie.getReleaseDate());
+        String releaseDate = String.format(getString(me.maxdev.popularmoviesapp.R.string.release_date),
+                movie.getReleaseDate());
         movieReleaseDate.setText(releaseDate);
         movieOverview.setText(movie.getOverview());
     }

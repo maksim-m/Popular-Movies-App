@@ -2,9 +2,11 @@ package me.maxdev.popularmoviesapp.ui.movies;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 
 import me.maxdev.popularmoviesapp.R;
@@ -12,6 +14,8 @@ import me.maxdev.popularmoviesapp.data.Sort;
 import me.maxdev.popularmoviesapp.data.SortUtil;
 
 public class SortingDialogFragment extends DialogFragment {
+
+    public static final String BROADCAST_SORT_PREFERENCE_CHANGED = "SortPreferenceChanged";
 
     public static final String TAG = "SortingDialogFragment";
 
@@ -28,11 +32,16 @@ public class SortingDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         SortUtil.saveSortByPreference(getContext(), Sort.values()[which]);
-                        // TODO: update movies
+                        sendSortPreferenceChangedBroadcast();
                         dialog.dismiss();
                     }
                 });
 
         return builder.create();
+    }
+
+    private void sendSortPreferenceChangedBroadcast() {
+        Intent intent = new Intent(BROADCAST_SORT_PREFERENCE_CHANGED);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 }

@@ -48,9 +48,9 @@ public class TestDb extends AndroidTestCase {
 
         // now, do our tables contain the correct columns?
         checkTableColumns(db, MoviesContract.MovieEntry.TABLE_NAME, MoviesContract.MovieEntry.getColumns());
-        checkTableColumns(db, MoviesContract.MostPopularMovies.TABLE_NAME, MoviesContract.MostPopularMovies.COLUMNS);
-        checkTableColumns(db, MoviesContract.HighestRatedMovies.TABLE_NAME, MoviesContract.HighestRatedMovies.COLUMNS);
-        checkTableColumns(db, MoviesContract.MostRatedMovies.TABLE_NAME, MoviesContract.MostRatedMovies.COLUMNS);
+        checkTableColumns(db, MoviesContract.MostPopularMovies.TABLE_NAME, MoviesContract.MostPopularMovies.getColumns());
+        checkTableColumns(db, MoviesContract.HighestRatedMovies.TABLE_NAME, MoviesContract.HighestRatedMovies.getColumns());
+        checkTableColumns(db, MoviesContract.MostRatedMovies.TABLE_NAME, MoviesContract.MostRatedMovies.getColumns());
 
         c.close();
         db.close();

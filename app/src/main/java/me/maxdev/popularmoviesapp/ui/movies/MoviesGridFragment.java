@@ -55,9 +55,13 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(MoviesService.BROADCAST_UPDATE_FINISHED)) {
+            String action = intent.getAction();
+            if (action.equals(MoviesService.BROADCAST_UPDATE_FINISHED)) {
                 getLoaderManager().restartLoader(LOADER_ID, null, MoviesGridFragment.this);
                 swipeRefreshLayout.setRefreshing(false);
+            } else if (action.equals(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED)) {
+                contentUri = SortUtil.getSortedMoviesUri(getContext());
+                getLoaderManager().restartLoader(LOADER_ID, null, MoviesGridFragment.this);
             }
         }
     };
@@ -83,9 +87,10 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,
-                new IntentFilter(MoviesService.BROADCAST_UPDATE_FINISHED));
-        //updateMovies();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(MoviesService.BROADCAST_UPDATE_FINISHED);
+        intentFilter.addAction(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, intentFilter);
     }
 
     @Override
@@ -145,8 +150,9 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         inflater.inflate(R.menu.fragment_movies_grid, menu);
     }
 
-    private void updateMovies() {
-        moviesService.updateMovies();
+    private void refreshMovies() {
+        swipeRefreshLayout.setRefreshing(true);
+        moviesService.refreshMovies();
     }
 
     @Override
@@ -163,6 +169,9 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         adapter.changeCursor(data);
+        if (data == null || data.getCount() == 0) {
+            refreshMovies();
+        }
     }
 
     @Override
@@ -179,6 +188,6 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onRefresh() {
-        updateMovies();
+        refreshMovies();
     }
 }

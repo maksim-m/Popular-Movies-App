@@ -88,7 +88,6 @@ public final class MoviesContract {
                         + "/" + PATH_MOST_POPULAR;
 
         public static final String TABLE_NAME = "most_popular_movies";
-        public static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
 
         public static final String SQL_CREATE_TABLE =
                 "CREATE TABLE " + TABLE_NAME + " (" +
@@ -100,7 +99,13 @@ public final class MoviesContract {
 
                         " );";
 
+        private static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
+
         private MostPopularMovies() {
+        }
+
+        public static String[] getColumns() {
+            return COLUMNS.clone();
         }
     }
 
@@ -113,7 +118,6 @@ public final class MoviesContract {
                         + "/" + PATH_HIGHEST_RATED;
 
         public static final String TABLE_NAME = "highest_rated_movies";
-        public static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
 
         public static final String SQL_CREATE_TABLE =
                 "CREATE TABLE " + TABLE_NAME + " (" +
@@ -125,7 +129,13 @@ public final class MoviesContract {
 
                         " );";
 
+        private static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
+
         private HighestRatedMovies() {
+        }
+
+        public static String[] getColumns() {
+            return COLUMNS.clone();
         }
     }
 
@@ -138,7 +148,6 @@ public final class MoviesContract {
                         + "/" + PATH_MOST_RATED;
 
         public static final String TABLE_NAME = "most_rated_movies";
-        public static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
 
         public static final String SQL_CREATE_TABLE =
                 "CREATE TABLE " + TABLE_NAME + " (" +
@@ -150,7 +159,13 @@ public final class MoviesContract {
 
                         " );";
 
+        private static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
+
         private MostRatedMovies() {
+        }
+
+        public static String[] getColumns() {
+            return COLUMNS.clone();
         }
     }
 }
