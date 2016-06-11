@@ -24,11 +24,11 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
 
     public static final String BROADCAST_UPDATE_FINISHED = "UpdateFinished";
 
-    private static final int PAGE_SIZE = 20;
+    //private static final int PAGE_SIZE = 20;
     private static final String LOG_TAG = "MoviesService";
     private static volatile MoviesService instance = null;
 
-    private Context context;
+    private final Context context;
 
     public MoviesService(Context context) {
         if (instance != null) {
@@ -47,7 +47,7 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
     }
 
     public void refreshMovies() {
-        TheMovieDbService service = TheMovieDbClient.getTheMovieDbService(context);
+        TheMovieDbService service = TheMovieDbClient.getInstance(context);
 
         Call<DiscoverResponse<Movie>> call = service.discoverMovies(SortUtil.getSortByPreference(context).toString());
 

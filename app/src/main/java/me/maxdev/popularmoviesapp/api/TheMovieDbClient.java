@@ -23,26 +23,24 @@ public final class TheMovieDbClient {
     private static final int WRITE_TIMEOUT = 60;
     private static final int TIMEOUT = 60;
 
-    private static OkHttpClient client;
-    private static TheMovieDbService theMovieDbService;
+    private static volatile TheMovieDbService instance;
 
-    private TheMovieDbClient() { }
+    private TheMovieDbClient() {
+    }
 
-    public static TheMovieDbService getTheMovieDbService(Context context) {
-        if (client == null) {
-            client = getClient(context);
+    public static TheMovieDbService getInstance(Context context) {
+        synchronized (TheMovieDbService.class) {
+            if (instance == null) {
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(BASE_URL)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .client(getClient(context))
+                        //.callbackExecutor(new BackgroundThreadExecutor())
+                        .build();
+                instance = retrofit.create(TheMovieDbService.class);
+            }
         }
-        if (theMovieDbService == null) {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(client)
-                    //.callbackExecutor(new BackgroundThreadExecutor())
-                    .build();
-            theMovieDbService = retrofit.create(TheMovieDbService.class);
-        }
-
-        return theMovieDbService;
+        return instance;
     }
 
     private static OkHttpClient getClient(Context context) {
@@ -67,7 +65,7 @@ public final class TheMovieDbClient {
         private static Handler handler = new Handler();
 
         @Override
-        public void execute(@NonNull  Runnable command) {
+        public void execute(@NonNull Runnable command) {
             handler.post(command);
         }
     }

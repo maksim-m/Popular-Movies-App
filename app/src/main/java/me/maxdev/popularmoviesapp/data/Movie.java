@@ -147,12 +147,7 @@ public class Movie {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("[MOVIE]: ");
-        builder.append("id: ");
-        builder.append(this.id);
-        builder.append("title: ");
-        builder.append(this.title);
-        return builder.toString();
+        return "[MOVIE]: " + "id: " + this.id + "title: " + this.title;
     }
 
     public ContentValues toContentValues() {

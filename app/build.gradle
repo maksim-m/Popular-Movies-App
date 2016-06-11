@@ -3,6 +3,7 @@ apply plugin: 'com.neenbedankt.android-apt'
 
 apply from: '../quality/checkstyle.gradle'
 apply from: '../quality/findbugs.gradle'
+apply from: '../quality/pmd.gradle'
 
 def isOnCi() {
     def ci = System.getenv("CI")

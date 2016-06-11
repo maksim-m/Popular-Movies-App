@@ -1,0 +1,29 @@
+apply plugin: 'pmd'
+
+def qualityConfigFolder = "${project.rootDir}/quality/"
+
+pmd {
+    toolVersion = '5.4.2'
+}
+
+task pmd(type: Pmd) {
+    ignoreFailures = false
+    consoleOutput = true
+
+    ruleSets = []
+    ruleSetFiles = files(qualityConfigFolder + "pmd-ruleset.xml")
+    classpath = files()
+    source 'src/main'
+    include '**/*.java'
+    exclude '**/gen/**'
+    exclude '**/R.java'
+    exclude '**/BuildConfig.java'
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+
+}
+
+check.dependsOn 'pmd'

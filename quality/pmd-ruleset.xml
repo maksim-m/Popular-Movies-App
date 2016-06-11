@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         name="Custom ruleset"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+
+    <description>Custom PMD ruleset</description>
+
+    <rule ref="rulesets/java/basic.xml"/>
+    <rule ref="rulesets/java/braces.xml"/>
+    <rule ref="rulesets/java/design.xml">
+        <exclude name="TooFewBranchesForASwitchStatement"/>
+        <exclude name="UseVarargs"/>
+        <exclude name="ImmutableField"/>
+        <exclude name="CompareObjectsWithEquals"/>
+        <exclude name="ConfusingTernary"/>
+    </rule>
+    <rule ref="rulesets/java/strings.xml">
+        <exclude name="AvoidDuplicateLiterals"/>
+    </rule>
+    <rule ref="rulesets/java/unusedcode.xml"/>
+
+</ruleset>

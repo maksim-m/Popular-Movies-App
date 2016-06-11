@@ -21,10 +21,12 @@ public class MoviesProvider extends ContentProvider {
     static final int MOST_RATED_MOVIES = 203;
 
     private static final UriMatcher URI_MATCHER = buildUriMatcher();
+    private static final String FAILED_TO_INSERT_ROW_INTO = "Failed to insert row into ";
 
     // movies._id = ?
     private static final String MOVIE_ID_SELECTION =
             MoviesContract.MovieEntry.TABLE_NAME + "." + MoviesContract.MovieEntry._ID + " = ? ";
+
 
     private MoviesDbHelper dbHelper;
 
@@ -123,7 +125,7 @@ public class MoviesProvider extends ContentProvider {
                 if (id > 0) {
                     returnUri = MoviesContract.MovieEntry.buildMovieUri(id);
                 } else {
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                    throw new android.database.SQLException(FAILED_TO_INSERT_ROW_INTO + uri);
                 }
                 break;
             case MOST_POPULAR_MOVIES:
@@ -131,7 +133,7 @@ public class MoviesProvider extends ContentProvider {
                 if (id > 0) {
                     returnUri = MoviesContract.MostPopularMovies.CONTENT_URI;
                 } else {
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                    throw new android.database.SQLException(FAILED_TO_INSERT_ROW_INTO + uri);
                 }
                 break;
             case HIGHEST_RATED_MOVIES:
@@ -139,7 +141,7 @@ public class MoviesProvider extends ContentProvider {
                 if (id > 0) {
                     returnUri = MoviesContract.HighestRatedMovies.CONTENT_URI;
                 } else {
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                    throw new android.database.SQLException(FAILED_TO_INSERT_ROW_INTO + uri);
                 }
                 break;
             case MOST_RATED_MOVIES:
@@ -147,7 +149,7 @@ public class MoviesProvider extends ContentProvider {
                 if (id > 0) {
                     returnUri = MoviesContract.MostRatedMovies.CONTENT_URI;
                 } else {
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                    throw new android.database.SQLException(FAILED_TO_INSERT_ROW_INTO + uri);
                 }
                 break;
             default:

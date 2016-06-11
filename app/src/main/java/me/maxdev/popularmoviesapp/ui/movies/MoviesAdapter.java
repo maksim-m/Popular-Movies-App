@@ -21,7 +21,7 @@ public class MoviesAdapter extends CursorRecyclerViewAdapter<MovieGridItemViewHo
 
     private static final String POSTER_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
     private static final String POSTER_IMAGE_SIZE = "w780";
-    private Context context;
+    private final Context context;
     private OnItemClickListener onItemClickListener;
 
     public MoviesAdapter(Context context, Cursor cursor) {
