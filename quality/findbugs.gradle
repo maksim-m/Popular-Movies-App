@@ -20,7 +20,6 @@ task findbugs(type: FindBugs, dependsOn: assemble) {
         xml.enabled = false
         html {
             enabled = true
-            stylesheet = resources.text.fromFile(qualityConfigFolder + "findbugs-fancy-hist.xsl")
         }
     }
 
