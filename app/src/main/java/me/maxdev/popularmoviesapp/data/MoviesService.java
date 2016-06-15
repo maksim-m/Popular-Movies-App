@@ -23,6 +23,7 @@ import retrofit2.Response;
 public class MoviesService implements Callback<DiscoverResponse<Movie>> {
 
     public static final String BROADCAST_UPDATE_FINISHED = "UpdateFinished";
+    public static final String EXTRA_IS_SUCCESSFUL_UPDATED = "isSuccessfulUpdated";
 
     //private static final int PAGE_SIZE = 20;
     private static final String LOG_TAG = "MoviesService";
@@ -61,11 +62,12 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
 
     @Override
     public void onFailure(Call<DiscoverResponse<Movie>> call, Throwable t) {
-        sendUpdateFinishedBroadcast();
+        sendUpdateFinishedBroadcast(false);
     }
 
-    private void sendUpdateFinishedBroadcast() {
+    private void sendUpdateFinishedBroadcast(boolean isSuccessfulUpdated) {
         Intent intent = new Intent(BROADCAST_UPDATE_FINISHED);
+        intent.putExtra(EXTRA_IS_SUCCESSFUL_UPDATED, isSuccessfulUpdated);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
@@ -96,6 +98,8 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
                     context.getContentResolver().insert(uri, entry);
                 }
 
+            } else {
+                sendUpdateFinishedBroadcast(false);
             }
 
             return null;
@@ -103,7 +107,7 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            sendUpdateFinishedBroadcast();
+            sendUpdateFinishedBroadcast(true);
         }
     }
 }

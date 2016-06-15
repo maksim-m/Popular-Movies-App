@@ -11,6 +11,8 @@
     <string name="content_description_movie_backdrop">Movie backdrop image</string>
     <string name="content_description_movie_poster">Movie poster image</string>
 
+    <string name="snackbar_failed_to_update_movies">Failed to update movies.</string>
+
     <!-- Label for the "sort by" preference [CHAR LIMIT=30] -->
     <string name="pref_sort_by_label">Sort by</string>
 

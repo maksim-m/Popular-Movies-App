@@ -93,6 +93,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         Glide.with(this)
                 .load(POSTER_IMAGE_BASE_URL + POSTER_IMAGE_SIZE + movie.getPosterPath())
                 .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(movieImagePoster);
         Glide.with(this)
                 .load(POSTER_IMAGE_BASE_URL + BACKDROP_IMAGE_SIZE + movie.getBackdropPath())

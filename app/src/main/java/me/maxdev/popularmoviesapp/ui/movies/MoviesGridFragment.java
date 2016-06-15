@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -43,10 +44,10 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     private static final String LOG_TAG = "MoviesGridFragment";
     private static final int LOADER_ID = 0;
 
-    @BindView(R.id.movies_grid)
-    RecyclerView recyclerView;
     @BindView(R.id.swipe_layout)
     SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.movies_grid)
+    RecyclerView recyclerView;
 
     private MoviesService moviesService;
     private Uri contentUri;
@@ -57,7 +58,11 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(MoviesService.BROADCAST_UPDATE_FINISHED)) {
-                getLoaderManager().restartLoader(LOADER_ID, null, MoviesGridFragment.this);
+                if (!intent.getBooleanExtra(MoviesService.EXTRA_IS_SUCCESSFUL_UPDATED, true)) {
+                    Snackbar.make(swipeRefreshLayout, R.string.snackbar_failed_to_update_movies,
+                            Snackbar.LENGTH_LONG)
+                            .show();
+                }
                 swipeRefreshLayout.setRefreshing(false);
             } else if (action.equals(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED)) {
                 contentUri = SortUtil.getSortedMoviesUri(getContext());
@@ -129,7 +134,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     }
 
     private void initMoviesGrid() {
-        adapter = new MoviesAdapter(getActivity(), null);
+        adapter = new MoviesAdapter(getContext(), null);
         adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
