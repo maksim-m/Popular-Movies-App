@@ -5,7 +5,6 @@ jdk: oraclejdk8
 
 env:
   global:
-    - CI=travis
     - ADB_INSTALL_TIMEOUT=10
 
 android:

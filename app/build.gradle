@@ -5,11 +5,6 @@ apply from: '../quality/checkstyle.gradle'
 apply from: '../quality/findbugs.gradle'
 apply from: '../quality/pmd.gradle'
 
-def isOnCi() {
-    def ci = System.getenv("CI")
-    return (ci != null && ci == "travis")
-}
-
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.0"
@@ -24,12 +19,13 @@ android {
     }
 
     def STRING = "String"
-
     def THE_MOVIE_DB_API_KEY = "THE_MOVIE_DB_API_KEY"
 
-    def UNDEFINED = '"UNDEFINED"'
-
     buildTypes {
+        debug {
+            minifyEnabled false
+            testCoverageEnabled = true
+        }
 
         release {
             minifyEnabled false
@@ -38,19 +34,10 @@ android {
                     'proguard-glide.pro',
                     'proguard-square-retrofit.pro'
         }
-
-        debug {
-            minifyEnabled false
-            testCoverageEnabled = true
-        }
     }
 
     buildTypes.each {
-        if (!isOnCi()) {
-            it.buildConfigField STRING, THE_MOVIE_DB_API_KEY, MY_MOVIE_DB_API_KEY
-        } else {
-            it.buildConfigField STRING, THE_MOVIE_DB_API_KEY, UNDEFINED
-        }
+        it.buildConfigField STRING, THE_MOVIE_DB_API_KEY, MY_MOVIE_DB_API_KEY
     }
 
     lintOptions {
@@ -96,5 +83,4 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
 
     testCompile 'junit:junit:4.12'
-
 }
