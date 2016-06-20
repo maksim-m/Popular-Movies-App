@@ -19,6 +19,7 @@ android {
     }
 
     def STRING = "String"
+    def UNDEFINED = '"UNDEFINED"'
     def THE_MOVIE_DB_API_KEY = "THE_MOVIE_DB_API_KEY"
 
     buildTypes {
@@ -37,7 +38,11 @@ android {
     }
 
     buildTypes.each {
-        it.buildConfigField STRING, THE_MOVIE_DB_API_KEY, MY_MOVIE_DB_API_KEY
+        if (project.hasProperty('MY_MOVIE_DB_API_KEY')) {
+            it.buildConfigField STRING, THE_MOVIE_DB_API_KEY, MY_MOVIE_DB_API_KEY
+        } else {
+            it.buildConfigField STRING, THE_MOVIE_DB_API_KEY, UNDEFINED
+        }
     }
 
     lintOptions {
