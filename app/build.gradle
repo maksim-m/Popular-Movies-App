@@ -5,6 +5,11 @@ apply from: '../quality/checkstyle.gradle'
 apply from: '../quality/findbugs.gradle'
 apply from: '../quality/pmd.gradle'
 
+def isOnCi() {
+    def ci = System.getenv("CI")
+    return (ci != null && ci == "true")
+}
+
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.0"
@@ -25,7 +30,7 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-            testCoverageEnabled = true
+            testCoverageEnabled true
         }
 
         release {
@@ -38,7 +43,7 @@ android {
     }
 
     buildTypes.each {
-        if (project.hasProperty('MY_MOVIE_DB_API_KEY')) {
+        if (!isOnCi()) {
             it.buildConfigField STRING, THE_MOVIE_DB_API_KEY, MY_MOVIE_DB_API_KEY
         } else {
             it.buildConfigField STRING, THE_MOVIE_DB_API_KEY, UNDEFINED
