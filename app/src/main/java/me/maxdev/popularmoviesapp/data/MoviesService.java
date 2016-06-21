@@ -17,9 +17,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by Max on 01.06.2016.
- */
 public class MoviesService implements Callback<DiscoverResponse<Movie>> {
 
     public static final String BROADCAST_UPDATE_FINISHED = "UpdateFinished";
@@ -50,7 +47,10 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
     public void refreshMovies() {
         TheMovieDbService service = TheMovieDbClient.getInstance(context);
 
-        Call<DiscoverResponse<Movie>> call = service.discoverMovies(SortUtil.getSortByPreference(context).toString());
+        Call<DiscoverResponse<Movie>> call = service.discoverMovies(
+                SortUtil.getSortByPreference(context).toString(),
+                null
+        );
 
         call.enqueue(this);
     }

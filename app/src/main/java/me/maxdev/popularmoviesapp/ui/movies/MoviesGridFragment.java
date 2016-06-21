@@ -1,6 +1,5 @@
 package me.maxdev.popularmoviesapp.ui.movies;
 
-
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,6 +8,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -21,6 +21,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,7 +38,6 @@ import me.maxdev.popularmoviesapp.ui.ItemOffsetDecoration;
 import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailsActivity;
 import me.maxdev.popularmoviesapp.util.OnItemClickListener;
 
-
 public class MoviesGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
         OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -52,6 +52,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     private MoviesService moviesService;
     private Uri contentUri;
     private MoviesAdapter adapter;
+    private EndlessRecyclerViewOnScrollListener endlessRecyclerViewOnScrollListener;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -66,6 +67,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
                 swipeRefreshLayout.setRefreshing(false);
             } else if (action.equals(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED)) {
                 contentUri = SortUtil.getSortedMoviesUri(getContext());
+                recyclerView.smoothScrollToPosition(0);
                 getLoaderManager().restartLoader(LOADER_ID, null, MoviesGridFragment.this);
             }
         }
@@ -140,7 +142,23 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         int columns = getResources().getInteger(R.integer.movies_columns);
         recyclerView.addItemDecoration(new ItemOffsetDecoration(getActivity(), R.dimen.movie_item_offset));
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columns));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), columns);
+        recyclerView.setLayoutManager(gridLayoutManager);
+        endlessRecyclerViewOnScrollListener = new EndlessRecyclerViewOnScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore() {
+                Log.e("xxx", "Start loading more.");
+                Handler h = new Handler();
+                h.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e("xxx", "Loaded.");
+                        endlessRecyclerViewOnScrollListener.onLoadingDone();
+                    }
+                }, 3000);
+            }
+        };
+        recyclerView.addOnScrollListener(endlessRecyclerViewOnScrollListener);
     }
 
     @SuppressLint("PrivateResource")
