@@ -3,6 +3,7 @@ package me.maxdev.popularmoviesapp.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
@@ -22,7 +23,7 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
     public static final String BROADCAST_UPDATE_FINISHED = "UpdateFinished";
     public static final String EXTRA_IS_SUCCESSFUL_UPDATED = "isSuccessfulUpdated";
 
-    //private static final int PAGE_SIZE = 20;
+    private static final int PAGE_SIZE = 20;
     private static final String LOG_TAG = "MoviesService";
     private static volatile MoviesService instance = null;
 
@@ -46,11 +47,38 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
 
     public void refreshMovies() {
         TheMovieDbService service = TheMovieDbClient.getInstance(context);
+        String sort = SortUtil.getSortByPreference(context).toString();
 
-        Call<DiscoverResponse<Movie>> call = service.discoverMovies(
-                SortUtil.getSortByPreference(context).toString(),
-                null
+        Call<DiscoverResponse<Movie>> call = service.discoverMovies(sort, null);
+
+        call.enqueue(this);
+    }
+
+    public void loadMoreMovies() {
+        TheMovieDbService service = TheMovieDbClient.getInstance(context);
+        String sort = SortUtil.getSortByPreference(context).toString();
+        Uri uri = SortUtil.getSortedMoviesUri(context);
+        if (uri == null) {
+            return;
+        }
+
+        // TODO: make this query in background thread
+        Cursor movies = context.getContentResolver().query(
+                uri,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
         );
+
+        int currentPage = 1;
+        if (movies != null) {
+            currentPage = (movies.getCount() - 1) / PAGE_SIZE + 1;
+            movies.close();
+        }
+
+        Log.e("xxx", "Load movies. page = " + (currentPage + 1));
+        Call<DiscoverResponse<Movie>> call = service.discoverMovies(sort, currentPage + 1);
 
         call.enqueue(this);
     }
@@ -79,13 +107,17 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
             if (response != null && response.isSuccessful()) {
                 Uri uri = SortUtil.getSortedMoviesUri(context);
                 if (uri == null) {
-                    Log.w(LOG_TAG, "Wrong sorting.");
                     return null;
                 }
                 Log.d(LOG_TAG, "Successful!");
                 Log.d(LOG_TAG, response.message());
 
                 DiscoverResponse<Movie> discoverResponse = response.body();
+                int page = discoverResponse.getPage();
+                if (page == 1) {
+                    // TODO: clear table by uri
+                }
+
                 List<Movie> movies = discoverResponse.getResults();
                 Log.d(LOG_TAG, movies.toString());
 
@@ -93,6 +125,7 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
                     Uri movieUri = context.getContentResolver()
                             .insert(MoviesContract.MovieEntry.CONTENT_URI, movies.get(i).toContentValues());
                     long id = MoviesContract.MovieEntry.getIdFromUri(movieUri);
+
                     ContentValues entry = new ContentValues();
                     entry.put(MoviesContract.COLUMN_MOVIE_ID_KEY, id);
                     context.getContentResolver().insert(uri, entry);

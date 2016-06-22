@@ -35,7 +35,7 @@ public final class SortUtil {
             case MOST_RATED:
                 return MoviesContract.MostRatedMovies.CONTENT_URI;
             default:
-                return null;
+                throw new IllegalStateException("Unknown sort.");
         }
     }
 

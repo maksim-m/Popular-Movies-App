@@ -65,6 +65,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
                             .show();
                 }
                 swipeRefreshLayout.setRefreshing(false);
+                endlessRecyclerViewOnScrollListener.onLoadingDone();
             } else if (action.equals(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED)) {
                 contentUri = SortUtil.getSortedMoviesUri(getContext());
                 recyclerView.smoothScrollToPosition(0);
@@ -147,15 +148,8 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         endlessRecyclerViewOnScrollListener = new EndlessRecyclerViewOnScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore() {
-                Log.e("xxx", "Start loading more.");
-                Handler h = new Handler();
-                h.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.e("xxx", "Loaded.");
-                        endlessRecyclerViewOnScrollListener.onLoadingDone();
-                    }
-                }, 3000);
+                swipeRefreshLayout.setRefreshing(true);
+                moviesService.loadMoreMovies();
             }
         };
         recyclerView.addOnScrollListener(endlessRecyclerViewOnScrollListener);

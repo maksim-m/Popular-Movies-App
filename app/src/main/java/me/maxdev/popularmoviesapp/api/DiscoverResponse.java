@@ -7,7 +7,7 @@ import java.util.List;
 public class DiscoverResponse<T> {
 
     @SerializedName("page")
-    private long page;
+    private int page;
 
     @SerializedName("results")
     private List<T> results;
@@ -18,18 +18,18 @@ public class DiscoverResponse<T> {
     @SerializedName("total_results")
     private long totalResults;
 
-    public DiscoverResponse(long page, List<T> results, long totalPages, long totalResults) {
+    public DiscoverResponse(int page, List<T> results, long totalPages, long totalResults) {
         this.page = page;
         this.results = results;
         this.totalPages = totalPages;
         this.totalResults = totalResults;
     }
 
-    public long getPage() {
+    public int getPage() {
         return page;
     }
 
-    public void setPage(long page) {
+    public void setPage(int page) {
         this.page = page;
     }
 
