@@ -89,7 +89,6 @@
         <module name="SimplifyBooleanReturn"/>
         <module name="StringLiteralEquality"/>
         <module name="UnnecessaryParentheses"/>
-        <module name="VariableDeclarationUsageDistance"/>
 
         <!-- Imports -->
         <module name="AvoidStarImport"/>

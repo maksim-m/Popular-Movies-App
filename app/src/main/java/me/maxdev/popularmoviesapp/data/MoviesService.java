@@ -28,6 +28,7 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
     private static volatile MoviesService instance = null;
 
     private final Context context;
+    private volatile boolean loading = false;
 
     public MoviesService(Context context) {
         if (instance != null) {
@@ -46,6 +47,10 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
     }
 
     public void refreshMovies() {
+        if (loading) {
+            return;
+        }
+        loading = true;
         TheMovieDbService service = TheMovieDbClient.getInstance(context);
         String sort = SortUtil.getSortByPreference(context).toString();
 
@@ -54,7 +59,15 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
         call.enqueue(this);
     }
 
+    public boolean isLoading() {
+        return loading;
+    }
+
     public void loadMoreMovies() {
+        if (loading) {
+            return;
+        }
+        loading = true;
         TheMovieDbService service = TheMovieDbClient.getInstance(context);
         String sort = SortUtil.getSortByPreference(context).toString();
         Uri uri = SortUtil.getSortedMoviesUri(context);
@@ -62,13 +75,12 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
             return;
         }
 
-        // TODO: make this query in background thread
         Cursor movies = context.getContentResolver().query(
                 uri,
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null  // sort order
+                null,
+                null,
+                null,
+                null
         );
 
         int currentPage = 1;
@@ -77,7 +89,6 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
             movies.close();
         }
 
-        Log.e("xxx", "Load movies. page = " + (currentPage + 1));
         Call<DiscoverResponse<Movie>> call = service.discoverMovies(sort, currentPage + 1);
 
         call.enqueue(this);
@@ -91,6 +102,7 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
     @Override
     public void onFailure(Call<DiscoverResponse<Movie>> call, Throwable t) {
         sendUpdateFinishedBroadcast(false);
+        loading = false;
     }
 
     private void sendUpdateFinishedBroadcast(boolean isSuccessfulUpdated) {
@@ -115,7 +127,11 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
                 DiscoverResponse<Movie> discoverResponse = response.body();
                 int page = discoverResponse.getPage();
                 if (page == 1) {
-                    // TODO: clear table by uri
+                    context.getContentResolver().delete(
+                            uri,
+                            null,
+                            null
+                    );
                 }
 
                 List<Movie> movies = discoverResponse.getResults();
@@ -140,6 +156,7 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            loading = false;
             sendUpdateFinishedBroadcast(true);
         }
     }

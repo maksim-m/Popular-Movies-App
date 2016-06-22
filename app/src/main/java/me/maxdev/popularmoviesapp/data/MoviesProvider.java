@@ -185,14 +185,22 @@ public class MoviesProvider extends ContentProvider {
         int rowsDeleted;
         switch (match) {
             case MOVIES:
-                rowsDeleted = db.delete(MoviesContract.MovieEntry.TABLE_NAME,
-                        selection, selectionArgs);
+                rowsDeleted = db.delete(MoviesContract.MovieEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case MOVIE_BY_ID:
                 long id = MoviesContract.MovieEntry.getIdFromUri(uri);
                 rowsDeleted = db.delete(MoviesContract.MovieEntry.TABLE_NAME,
                         MOVIE_ID_SELECTION, new String[]{Long.toString(id)});
 
+                break;
+            case MOST_POPULAR_MOVIES:
+                rowsDeleted = db.delete(MoviesContract.MostPopularMovies.TABLE_NAME, selection, selectionArgs);
+                break;
+            case HIGHEST_RATED_MOVIES:
+                rowsDeleted = db.delete(MoviesContract.HighestRatedMovies.TABLE_NAME, selection, selectionArgs);
+                break;
+            case MOST_RATED_MOVIES:
+                rowsDeleted = db.delete(MoviesContract.MostRatedMovies.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

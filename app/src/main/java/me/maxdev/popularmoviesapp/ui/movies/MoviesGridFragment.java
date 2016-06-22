@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -21,7 +20,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,7 +39,6 @@ import me.maxdev.popularmoviesapp.util.OnItemClickListener;
 public class MoviesGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
         OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
-    private static final String LOG_TAG = "MoviesGridFragment";
     private static final int LOADER_ID = 0;
 
     @BindView(R.id.swipe_layout)
@@ -65,7 +62,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
                             .show();
                 }
                 swipeRefreshLayout.setRefreshing(false);
-                endlessRecyclerViewOnScrollListener.onLoadingDone();
+                endlessRecyclerViewOnScrollListener.setLoading(false);
             } else if (action.equals(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED)) {
                 contentUri = SortUtil.getSortedMoviesUri(getContext());
                 recyclerView.smoothScrollToPosition(0);
@@ -99,6 +96,8 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         intentFilter.addAction(MoviesService.BROADCAST_UPDATE_FINISHED);
         intentFilter.addAction(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, intentFilter);
+        endlessRecyclerViewOnScrollListener.setLoading(moviesService.isLoading());
+        swipeRefreshLayout.setRefreshing(moviesService.isLoading());
     }
 
     @Override

@@ -500,6 +500,123 @@ public class TestProvider extends AndroidTestCase {
         mContext.getContentResolver().unregisterContentObserver(movieByIdObserver);
     }
 
+    public void testDeleteMostPopularMovies() {
+        ContentValues testValues = TestUtilities.createTestMovieValues();
+        Uri movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, testValues);
+        assertTrue(movieUri != null);
+        long movieRowId = ContentUris.parseId(movieUri);
+        assertTrue(movieRowId != -1);
+
+        ContentValues entryValues = new ContentValues();
+        entryValues.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movieRowId);
+
+        Uri entryUri = mContext.getContentResolver().insert(MoviesContract.MostPopularMovies.CONTENT_URI, entryValues);
+        assertTrue(entryUri != null);
+
+        TestUtilities.TestContentObserver observer = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MoviesContract.MostPopularMovies.CONTENT_URI, true, observer);
+
+        mContext.getContentResolver().delete(
+                MoviesContract.MostPopularMovies.CONTENT_URI,
+                null,
+                null
+        );
+
+        // Did our content observer get called?
+        observer.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(observer);
+
+        Cursor movies = mContext.getContentResolver().query(
+                MoviesContract.MostPopularMovies.CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+        assertNotNull(movies);
+        assertTrue(movies.getCount() == 0);
+
+        movies.close();
+    }
+
+    public void testDeleteHighestRatedMovies() {
+        ContentValues testValues = TestUtilities.createTestMovieValues();
+        Uri movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, testValues);
+        assertTrue(movieUri != null);
+        long movieRowId = ContentUris.parseId(movieUri);
+        assertTrue(movieRowId != -1);
+
+        ContentValues entryValues = new ContentValues();
+        entryValues.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movieRowId);
+
+        Uri entryUri = mContext.getContentResolver().insert(MoviesContract.HighestRatedMovies.CONTENT_URI, entryValues);
+        assertTrue(entryUri != null);
+
+        TestUtilities.TestContentObserver observer = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MoviesContract.HighestRatedMovies.CONTENT_URI, true, observer);
+
+        mContext.getContentResolver().delete(
+                MoviesContract.HighestRatedMovies.CONTENT_URI,
+                null,
+                null
+        );
+
+        // Did our content observer get called?
+        observer.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(observer);
+
+        Cursor movies = mContext.getContentResolver().query(
+                MoviesContract.HighestRatedMovies.CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+        assertNotNull(movies);
+        assertTrue(movies.getCount() == 0);
+
+        movies.close();
+    }
+
+    public void testDeleteMostRatedMovies() {
+        ContentValues testValues = TestUtilities.createTestMovieValues();
+        Uri movieUri = mContext.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, testValues);
+        assertTrue(movieUri != null);
+        long movieRowId = ContentUris.parseId(movieUri);
+        assertTrue(movieRowId != -1);
+
+        ContentValues entryValues = new ContentValues();
+        entryValues.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movieRowId);
+
+        Uri entryUri = mContext.getContentResolver().insert(MoviesContract.MostRatedMovies.CONTENT_URI, entryValues);
+        assertTrue(entryUri != null);
+
+        TestUtilities.TestContentObserver observer = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MoviesContract.MostRatedMovies.CONTENT_URI, true, observer);
+
+        mContext.getContentResolver().delete(
+                MoviesContract.MostRatedMovies.CONTENT_URI,
+                null,
+                null
+        );
+
+        // Did our content observer get called?
+        observer.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(observer);
+
+        Cursor movies = mContext.getContentResolver().query(
+                MoviesContract.MostRatedMovies.CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+        assertNotNull(movies);
+        assertTrue(movies.getCount() == 0);
+
+        movies.close();
+    }
+
     public void testBulkInsert() {
         deleteAllRecords();
         ContentValues[] bulkInsertContentValues = createBulkInsertValues();
@@ -555,21 +672,27 @@ public class TestProvider extends AndroidTestCase {
     }
 
     public void deleteAllRecordsFromProvider() {
+        clearTableByUri(MoviesContract.MovieEntry.CONTENT_URI);
+        clearTableByUri(MoviesContract.MostPopularMovies.CONTENT_URI);
+        clearTableByUri(MoviesContract.HighestRatedMovies.CONTENT_URI);
+        clearTableByUri(MoviesContract.MostRatedMovies.CONTENT_URI);
+    }
+
+    public void clearTableByUri(Uri uri) {
         mContext.getContentResolver().delete(
-                MoviesContract.MovieEntry.CONTENT_URI,
+                uri,
                 null,
                 null
         );
-
         Cursor cursor = mContext.getContentResolver().query(
-                MoviesContract.MovieEntry.CONTENT_URI,
+                uri,
                 null,
                 null,
                 null,
                 null
         );
         assertTrue(cursor != null);
-        assertEquals("Error: Records not deleted from Movies table during delete", 0, cursor.getCount());
+        assertEquals("Error: Records not deleted", 0, cursor.getCount());
         cursor.close();
     }
 
@@ -590,7 +713,7 @@ public class TestProvider extends AndroidTestCase {
         deleteAllRecordsFromProvider();
     }
 
-    ContentValues insertTestValues() {
+    private ContentValues insertTestValues() {
         MoviesDbHelper dbHelper = new MoviesDbHelper(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues testValues = TestUtilities.createTestMovieValues();
@@ -602,7 +725,7 @@ public class TestProvider extends AndroidTestCase {
         return testValues;
     }
 
-    void insertSortTableTestValues(String tableName, long movieId) {
+    private void insertSortTableTestValues(String tableName, long movieId) {
         MoviesDbHelper dbHelper = new MoviesDbHelper(getContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues testValues = new ContentValues();
