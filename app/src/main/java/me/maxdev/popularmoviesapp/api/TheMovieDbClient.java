@@ -1,18 +1,15 @@
 package me.maxdev.popularmoviesapp.api;
 
 import android.content.Context;
-import android.os.Handler;
-import android.support.annotation.NonNull;
 
 import java.io.File;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 
 public final class TheMovieDbClient {
 
@@ -35,7 +32,6 @@ public final class TheMovieDbClient {
                         .baseUrl(BASE_URL)
                         .addConverterFactory(GsonConverterFactory.create())
                         .client(getClient(context))
-                        //.callbackExecutor(new BackgroundThreadExecutor())
                         .build();
                 instance = retrofit.create(TheMovieDbService.class);
             }
@@ -44,11 +40,14 @@ public final class TheMovieDbClient {
     }
 
     private static OkHttpClient getClient(Context context) {
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(TIMEOUT, TimeUnit.SECONDS)
-                .addInterceptor(new LoggingInterceptor())
+                .addInterceptor(loggingInterceptor)
                 .addInterceptor(new AuthorizationInterceptor());
 
         final File baseDir = context.getCacheDir();
@@ -58,15 +57,5 @@ public final class TheMovieDbClient {
         }
 
         return builder.build();
-    }
-
-    private static class BackgroundThreadExecutor implements Executor {
-
-        private static Handler handler = new Handler();
-
-        @Override
-        public void execute(@NonNull Runnable command) {
-            handler.post(command);
-        }
     }
 }
