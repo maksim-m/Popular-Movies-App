@@ -105,21 +105,21 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
         loading = false;
     }
 
-    private void sendUpdateFinishedBroadcast(boolean isSuccessfulUpdated) {
+    private void sendUpdateFinishedBroadcast(boolean successfulUpdated) {
         Intent intent = new Intent(BROADCAST_UPDATE_FINISHED);
-        intent.putExtra(EXTRA_IS_SUCCESSFUL_UPDATED, isSuccessfulUpdated);
+        intent.putExtra(EXTRA_IS_SUCCESSFUL_UPDATED, successfulUpdated);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    private class SaveMoviesToDbTask extends AsyncTask<Response, Void, Void> {
+    private class SaveMoviesToDbTask extends AsyncTask<Response, Void, Boolean> {
 
         @Override
-        protected Void doInBackground(Response... params) {
+        protected Boolean doInBackground(Response... params) {
             Response<DiscoverResponse<Movie>> response = params[0];
             if (response != null && response.isSuccessful()) {
                 Uri uri = SortUtil.getSortedMoviesUri(context);
                 if (uri == null) {
-                    return null;
+                    return false;
                 }
                 Log.d(LOG_TAG, "Successful!");
                 Log.d(LOG_TAG, response.message());
@@ -147,17 +147,17 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
                     context.getContentResolver().insert(uri, entry);
                 }
 
-            } else {
-                sendUpdateFinishedBroadcast(false);
-            }
+                return true;
 
-            return null;
+            } else {
+                return false;
+            }
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Boolean successfulUpdated) {
             loading = false;
-            sendUpdateFinishedBroadcast(true);
+            sendUpdateFinishedBroadcast(successfulUpdated);
         }
     }
 }
