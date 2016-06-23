@@ -74,6 +74,7 @@ android {
 ext {
     supportLibraryVersion = "24.0.0"
     okHttpVersion = "3.3.1"
+    retrofitVersion = "2.1.0"
 }
 
 dependencies {
@@ -83,8 +84,9 @@ dependencies {
     compile "com.android.support:support-v4:${supportLibraryVersion}"
     compile "com.android.support:design:${supportLibraryVersion}"
 
-    compile 'com.squareup.retrofit2:retrofit:2.0.2'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+
     compile "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     compile "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
 
