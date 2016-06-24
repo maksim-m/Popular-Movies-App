@@ -5,4 +5,5 @@
 
     <integer name="movies_columns">2</integer>
     <dimen name="movie_item_offset">4dp</dimen>
+    <dimen name="movie_poster_height">270dp</dimen>
 </resources>

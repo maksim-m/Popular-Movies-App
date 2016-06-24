@@ -33,7 +33,7 @@ import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.MoviesService;
 import me.maxdev.popularmoviesapp.data.SortUtil;
 import me.maxdev.popularmoviesapp.ui.ItemOffsetDecoration;
-import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailsActivity;
+import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailActivity;
 import me.maxdev.popularmoviesapp.util.OnItemClickListener;
 
 public class MoviesGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
@@ -197,7 +197,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onItemClick(View itemView, int position) {
-        Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
+        Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
         intent.putExtra("movieId", adapter.getItemId(position));
         startActivity(intent);
     }
