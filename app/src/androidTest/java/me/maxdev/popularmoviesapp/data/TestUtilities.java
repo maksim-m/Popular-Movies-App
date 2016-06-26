@@ -65,11 +65,6 @@ public class TestUtilities extends AndroidTestCase {
         return movieValues;
     }
 
-    // Without this dummy test case Android Studio 2.0 shows TestUtilities as 'terminated', not as 'passed'
-    public void testTest() {
-        assertEquals(2 + 2, 4);
-    }
-
     static class TestContentObserver extends ContentObserver {
         final HandlerThread mHT;
         boolean mContentChanged;

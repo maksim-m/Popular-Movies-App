@@ -1,6 +1,7 @@
 package me.maxdev.popularmoviesapp.ui.movies.detail;
 
-import android.database.Cursor;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,10 +17,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.Movie;
-import me.maxdev.popularmoviesapp.data.MoviesContract;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
+    private static final String ARG_MOVIE = "argMovie";
     private static final String POSTER_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
     private static final String BACKDROP_IMAGE_SIZE = "w780";
 
@@ -28,19 +29,23 @@ public class MovieDetailActivity extends AppCompatActivity {
     @BindView(R.id.backdrop_image)
     ImageView movieBackdropImage;
 
-    private long movieId;
     private Movie movie;
+
+    public static void start(Context context, Movie movie) {
+        Intent intent = new Intent(context, MovieDetailActivity.class);
+        intent.putExtra(ARG_MOVIE, movie);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
         ButterKnife.bind(this);
-        movieId = getIntent().getLongExtra("movieId", 0);
-        initMovie();
+        movie = getIntent().getParcelableExtra(ARG_MOVIE);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, MovieDetailFragment.create(movieId))
+                    .add(R.id.container, MovieDetailFragment.create(movie))
                     .commit();
         }
         initToolbar();
@@ -51,21 +56,6 @@ public class MovieDetailActivity extends AppCompatActivity {
     void onFabClicked(View view) {
         Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
-    }
-
-    private void initMovie() {
-        Cursor cursor = getContentResolver().query(
-                MoviesContract.MovieEntry.buildMovieUri(movieId),
-                null,
-                null,
-                null,
-                null
-        );
-        if (cursor != null) {
-            cursor.moveToFirst();
-            movie = Movie.fromCursor(cursor);
-            cursor.close();
-        }
     }
 
     private void initToolbar() {

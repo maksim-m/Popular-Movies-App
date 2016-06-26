@@ -197,9 +197,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onItemClick(View itemView, int position) {
-        Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
-        intent.putExtra("movieId", adapter.getItemId(position));
-        startActivity(intent);
+        MovieDetailActivity.start(getContext(), adapter.getItem(position));
     }
 
     @Override

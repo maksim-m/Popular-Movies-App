@@ -155,5 +155,10 @@
         </module>
         <module name="UpperEll"/>
 
+        <module name="FileContentsHolder"/>
+
     </module>
+
+    <module name="SuppressionCommentFilter"/>
+
 </module>

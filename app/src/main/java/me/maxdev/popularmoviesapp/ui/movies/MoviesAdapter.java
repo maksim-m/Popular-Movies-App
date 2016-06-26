@@ -1,6 +1,5 @@
 package me.maxdev.popularmoviesapp.ui.movies;
 
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
@@ -33,8 +32,8 @@ public class MoviesAdapter extends CursorRecyclerViewAdapter<MovieGridItemViewHo
         this.onItemClickListener = listener;
     }
 
-    @SuppressLint("PrivateResource")
     @Override
+    @SuppressLint("PrivateResource")
     public void onBindViewHolder(MovieGridItemViewHolder viewHolder, Cursor cursor) {
         if (cursor != null) {
             Movie movie = Movie.fromCursor(cursor);
@@ -55,6 +54,21 @@ public class MoviesAdapter extends CursorRecyclerViewAdapter<MovieGridItemViewHo
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.grid_item_movie, parent, false);
         return new MovieGridItemViewHolder(itemView, onItemClickListener);
+    }
+
+    public Movie getItem(int position) {
+        Cursor cursor = getCursor();
+        if (cursor == null) {
+            return null;
+        }
+        if (position < 0 || position > cursor.getCount()) {
+            return null;
+        }
+        cursor.moveToFirst();
+        for (int i = 0; i < position; i++) {
+            cursor.moveToNext();
+        }
+        return Movie.fromCursor(cursor);
     }
 
 }

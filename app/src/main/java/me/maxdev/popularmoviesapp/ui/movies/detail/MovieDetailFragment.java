@@ -1,6 +1,5 @@
 package me.maxdev.popularmoviesapp.ui.movies.detail;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,14 +16,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.Movie;
-import me.maxdev.popularmoviesapp.data.MoviesContract;
 
 public class MovieDetailFragment extends Fragment {
 
     private static final String POSTER_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
     private static final String POSTER_IMAGE_SIZE = "w780";
 
-    private static final String ARG_MOVIE_ID = "ArgMovieId";
+    private static final String ARG_MOVIE = "ArgMovie";
 
     @BindView(R.id.image_movie_detail_poster)
     ImageView movieImagePoster;
@@ -37,17 +35,16 @@ public class MovieDetailFragment extends Fragment {
     @BindView(R.id.text_movie_overview)
     TextView movieOverview;
 
-    private long movieId;
     private Movie movie;
 
     public MovieDetailFragment() {
         // Required empty public constructor
     }
 
-    public static MovieDetailFragment create(long movieId) {
+    public static MovieDetailFragment create(Movie movie) {
         MovieDetailFragment fragment = new MovieDetailFragment();
         Bundle args = new Bundle();
-        args.putLong(ARG_MOVIE_ID, movieId);
+        args.putParcelable(ARG_MOVIE, movie);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,7 +53,7 @@ public class MovieDetailFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            movieId = getArguments().getLong(ARG_MOVIE_ID);
+            movie = getArguments().getParcelable(ARG_MOVIE);
         }
     }
 
@@ -64,24 +61,8 @@ public class MovieDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         ButterKnife.bind(this, rootView);
-        initMovie();
         initViews();
         return rootView;
-    }
-
-    private void initMovie() {
-        Cursor cursor = getContext().getContentResolver().query(
-                MoviesContract.MovieEntry.buildMovieUri(movieId),
-                null,
-                null,
-                null,
-                null
-        );
-        if (cursor != null) {
-            cursor.moveToFirst();
-            movie = Movie.fromCursor(cursor);
-            cursor.close();
-        }
     }
 
     private void initViews() {
