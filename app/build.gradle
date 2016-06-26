@@ -82,6 +82,7 @@ android {
 
 ext {
     supportLibraryVersion = "24.0.0"
+    testingSupportLibraryVersion = "0.5"
     okHttpVersion = "3.3.1"
     retrofitVersion = "2.1.0"
     butterknifeVersion = "8.1.0"
@@ -110,7 +111,6 @@ dependencies {
     testCompile 'org.mockito:mockito-core:1.10.19'
 
     androidTestCompile "com.android.support:support-annotations:${supportLibraryVersion}"
-    androidTestCompile 'com.android.support.test:runner:0.4'
-    androidTestCompile 'com.android.support.test:rules:0.4' // use JUnit 4 rules
-
+    androidTestCompile "com.android.support.test:runner:${testingSupportLibraryVersion}"
+    androidTestCompile "com.android.support.test:rules:${testingSupportLibraryVersion}"
 }
