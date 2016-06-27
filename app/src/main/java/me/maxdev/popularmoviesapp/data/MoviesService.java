@@ -9,14 +9,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import java.util.List;
-
-import me.maxdev.popularmoviesapp.api.DiscoverResponse;
 import me.maxdev.popularmoviesapp.api.TheMovieDbClient;
 import me.maxdev.popularmoviesapp.api.TheMovieDbService;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class MoviesService {
@@ -85,38 +81,32 @@ public class MoviesService {
 
         service.discoverMovies(sort, page)
                 .subscribeOn(Schedulers.newThread())
-                .map(new Func1<DiscoverResponse<Movie>, List<Movie>>() {
-                    @Override
-                    public List<Movie> call(DiscoverResponse<Movie> movieDiscoverResponse) {
-                        int page = movieDiscoverResponse.getPage();
-                        if (page == 1) {
-                            context.getContentResolver().delete(
-                                    uri,
-                                    null,
-                                    null
-                            );
-                        }
-                        Log.d(LOG_TAG, "page == " + page + " " + movieDiscoverResponse.getResults().toString());
-                        return movieDiscoverResponse.getResults();
+                .map(movieDiscoverResponse -> {
+                    int movieDiscoverResponsePage = movieDiscoverResponse.getPage();
+                    if (movieDiscoverResponsePage == 1) {
+                        context.getContentResolver().delete(
+                                uri,
+                                null,
+                                null
+                        );
                     }
+                    Log.d(LOG_TAG, "page == " + movieDiscoverResponsePage + " " +
+                            movieDiscoverResponse.getResults().toString());
+                    return movieDiscoverResponse.getResults();
                 })
-                .map(new Func1<List<Movie>, Boolean>() {
-                    @Override
-                    public Boolean call(List<Movie> movies) {
+                .map(movies -> {
+                    for (int i = 0; i < movies.size(); i++) {
 
-                        for (int i = 0; i < movies.size(); i++) {
+                        Uri movieUri = context.getContentResolver()
+                                .insert(MoviesContract.MovieEntry.CONTENT_URI, movies.get(i).toContentValues());
+                        long id = MoviesContract.MovieEntry.getIdFromUri(movieUri);
 
-                            Uri movieUri = context.getContentResolver()
-                                    .insert(MoviesContract.MovieEntry.CONTENT_URI, movies.get(i).toContentValues());
-                            long id = MoviesContract.MovieEntry.getIdFromUri(movieUri);
-
-                            ContentValues entry = new ContentValues();
-                            entry.put(MoviesContract.COLUMN_MOVIE_ID_KEY, id);
-                            context.getContentResolver().insert(uri, entry);
-                        }
-
-                        return true;
+                        ContentValues entry = new ContentValues();
+                        entry.put(MoviesContract.COLUMN_MOVIE_ID_KEY, id);
+                        context.getContentResolver().insert(uri, entry);
                     }
+
+                    return true;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Boolean>() {
