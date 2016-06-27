@@ -98,9 +98,13 @@ dependencies {
 
     compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+    compile "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
 
     compile "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     compile "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
+
+    compile 'io.reactivex:rxjava:1.1.6'
+    compile 'io.reactivex:rxandroid:1.2.1'
 
     compile "com.jakewharton:butterknife:${butterknifeVersion}"
     apt "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
