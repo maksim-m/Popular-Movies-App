@@ -5,20 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
-import java.util.List;
 
 import me.maxdev.popularmoviesapp.api.DiscoverResponse;
 import me.maxdev.popularmoviesapp.api.TheMovieDbClient;
 import me.maxdev.popularmoviesapp.api.TheMovieDbService;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-public class MoviesService implements Callback<DiscoverResponse<Movie>> {
+public class MoviesService {
 
     public static final String BROADCAST_UPDATE_FINISHED = "UpdateFinished";
     public static final String EXTRA_IS_SUCCESSFUL_UPDATED = "isSuccessfulUpdated";
@@ -51,12 +50,9 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
             return;
         }
         loading = true;
-        TheMovieDbService service = TheMovieDbClient.getInstance(context);
+
         String sort = SortUtil.getSortByPreference(context).toString();
-
-        Call<DiscoverResponse<Movie>> call = service.discoverMovies(sort, null);
-
-        call.enqueue(this);
+        callDiscoverMovies(sort, null);
     }
 
     public boolean isLoading() {
@@ -68,13 +64,79 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
             return;
         }
         loading = true;
-        TheMovieDbService service = TheMovieDbClient.getInstance(context);
         String sort = SortUtil.getSortByPreference(context).toString();
         Uri uri = SortUtil.getSortedMoviesUri(context);
         if (uri == null) {
             return;
         }
+        callDiscoverMovies(sort, getCurrentPage(uri) + 1);
+    }
 
+    private void callDiscoverMovies(String sort, @Nullable Integer page) {
+        TheMovieDbService service = TheMovieDbClient.getInstance(context);
+
+        service.discoverMovies(sort, page)
+                .subscribeOn(Schedulers.newThread())
+                .doOnNext(discoverMoviesResponse -> clearMoviesSortTableIfNeeded(discoverMoviesResponse))
+                .doOnNext(discoverMoviesResponse -> logResponse(discoverMoviesResponse))
+                .map(discoverMoviesResponse -> discoverMoviesResponse.getResults())
+                .flatMap(movies -> Observable.from(movies))
+                .map(movie -> saveMovie(movie))
+                .map(movieUri -> MoviesContract.MovieEntry.getIdFromUri(movieUri))
+                .doOnNext(movieId -> saveMovieReference(movieId))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Long>() {
+                    @Override
+                    public void onCompleted() {
+                        loading = false;
+                        sendUpdateFinishedBroadcast(true);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        loading = false;
+                        sendUpdateFinishedBroadcast(false);
+                    }
+
+                    @Override
+                    public void onNext(Long aLong) {
+                        // do nothing
+                    }
+                });
+    }
+
+    private void saveMovieReference(Long movieId) {
+        ContentValues entry = new ContentValues();
+        entry.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movieId);
+        context.getContentResolver().insert(SortUtil.getSortedMoviesUri(context), entry);
+    }
+
+    private Uri saveMovie(Movie movie) {
+        return context.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, movie.toContentValues());
+    }
+
+    private void logResponse(DiscoverResponse<Movie> discoverMoviesResponse) {
+        Log.d(LOG_TAG, "page == " + discoverMoviesResponse.getPage() + " " +
+                discoverMoviesResponse.getResults().toString());
+    }
+
+    private void clearMoviesSortTableIfNeeded(DiscoverResponse<Movie> discoverMoviesResponse) {
+        if (discoverMoviesResponse.getPage() == 1) {
+            context.getContentResolver().delete(
+                    SortUtil.getSortedMoviesUri(context),
+                    null,
+                    null
+            );
+        }
+    }
+
+    private void sendUpdateFinishedBroadcast(boolean successfulUpdated) {
+        Intent intent = new Intent(BROADCAST_UPDATE_FINISHED);
+        intent.putExtra(EXTRA_IS_SUCCESSFUL_UPDATED, successfulUpdated);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    private int getCurrentPage(Uri uri) {
         Cursor movies = context.getContentResolver().query(
                 uri,
                 null,
@@ -88,76 +150,6 @@ public class MoviesService implements Callback<DiscoverResponse<Movie>> {
             currentPage = (movies.getCount() - 1) / PAGE_SIZE + 1;
             movies.close();
         }
-
-        Call<DiscoverResponse<Movie>> call = service.discoverMovies(sort, currentPage + 1);
-
-        call.enqueue(this);
-    }
-
-    @Override
-    public void onResponse(Call<DiscoverResponse<Movie>> call, Response<DiscoverResponse<Movie>> response) {
-        new SaveMoviesToDbTask().execute(response);
-    }
-
-    @Override
-    public void onFailure(Call<DiscoverResponse<Movie>> call, Throwable t) {
-        sendUpdateFinishedBroadcast(false);
-        loading = false;
-    }
-
-    private void sendUpdateFinishedBroadcast(boolean successfulUpdated) {
-        Intent intent = new Intent(BROADCAST_UPDATE_FINISHED);
-        intent.putExtra(EXTRA_IS_SUCCESSFUL_UPDATED, successfulUpdated);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-    }
-
-    private class SaveMoviesToDbTask extends AsyncTask<Response, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Response... params) {
-            Response<DiscoverResponse<Movie>> response = params[0];
-            if (response != null && response.isSuccessful()) {
-                Uri uri = SortUtil.getSortedMoviesUri(context);
-                if (uri == null) {
-                    return false;
-                }
-                Log.d(LOG_TAG, "Successful!");
-                Log.d(LOG_TAG, response.message());
-
-                DiscoverResponse<Movie> discoverResponse = response.body();
-                int page = discoverResponse.getPage();
-                if (page == 1) {
-                    context.getContentResolver().delete(
-                            uri,
-                            null,
-                            null
-                    );
-                }
-
-                List<Movie> movies = discoverResponse.getResults();
-                Log.d(LOG_TAG, movies.toString());
-
-                for (int i = 0; i < movies.size(); i++) {
-                    Uri movieUri = context.getContentResolver()
-                            .insert(MoviesContract.MovieEntry.CONTENT_URI, movies.get(i).toContentValues());
-                    long id = MoviesContract.MovieEntry.getIdFromUri(movieUri);
-
-                    ContentValues entry = new ContentValues();
-                    entry.put(MoviesContract.COLUMN_MOVIE_ID_KEY, id);
-                    context.getContentResolver().insert(uri, entry);
-                }
-
-                return true;
-
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean successfulUpdated) {
-            loading = false;
-            sendUpdateFinishedBroadcast(successfulUpdated);
-        }
+        return currentPage;
     }
 }

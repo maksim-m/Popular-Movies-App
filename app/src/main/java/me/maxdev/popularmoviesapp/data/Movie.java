@@ -175,7 +175,7 @@ public class Movie implements Parcelable {
 
     @Override
     public String toString() {
-        return "[MOVIE]: " + "id: " + this.id + "title: " + this.title;
+        return "[" + this.id + ", " + this.title + "]";
     }
 
     //CHECKSTYLE:OFF
