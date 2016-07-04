@@ -2,7 +2,10 @@ package me.maxdev.popularmoviesapp.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +24,10 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
     private static final String MOVIE_SELECTED_KEY = "MovieSelected";
 
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
     @Nullable
     @BindView(R.id.movie_detail_container)
     FrameLayout movieDetailContainer;
@@ -42,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         if (twoPaneMode && !movieSelected && movieDetailContainer != null) {
             movieDetailContainer.setVisibility(View.GONE);
         }
+        setupToolbar();
+        setupNavigationDrawer();
     }
 
     @Override
@@ -92,5 +101,17 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         } else {
             MovieDetailActivity.start(this, movie);
         }
+    }
+
+    private void setupToolbar() {
+        setSupportActionBar(toolbar);
+    }
+
+    private void setupNavigationDrawer() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        //toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
+        toolbar.setNavigationOnClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
     }
 }
