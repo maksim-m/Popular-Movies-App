@@ -1,23 +1,60 @@
 package me.maxdev.popularmoviesapp.ui;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import me.maxdev.popularmoviesapp.R;
+import me.maxdev.popularmoviesapp.data.Movie;
 import me.maxdev.popularmoviesapp.ui.movies.MoviesGridFragment;
+import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailActivity;
+import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailFragment;
+import me.maxdev.popularmoviesapp.util.OnItemSelectedListener;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnItemSelectedListener {
+
+    private static final String MOVIE_SELECTED_KEY = "MovieSelected";
+
+    @Nullable
+    @BindView(R.id.movie_detail_container)
+    FrameLayout movieDetailContainer;
+
+    private boolean twoPaneMode;
+    private boolean movieSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        twoPaneMode = findViewById(R.id.movie_detail_container) != null;
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new MoviesGridFragment())
+                    .add(R.id.movies_grid_container, new MoviesGridFragment())
                     .commit();
+        }
+        if (twoPaneMode && !movieSelected && movieDetailContainer != null) {
+            movieDetailContainer.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(MOVIE_SELECTED_KEY, movieSelected);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            movieSelected = savedInstanceState.getBoolean(MOVIE_SELECTED_KEY);
         }
     }
 
@@ -41,5 +78,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemSelected(Movie movie) {
+        if (twoPaneMode) {
+            if (movieDetailContainer != null) {
+                movieDetailContainer.setVisibility(View.VISIBLE);
+            }
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.movie_detail_container, MovieDetailFragment.create(movie))
+                    .commit();
+        } else {
+            MovieDetailActivity.start(this, movie);
+        }
     }
 }

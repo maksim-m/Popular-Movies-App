@@ -45,7 +45,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         movie = getIntent().getParcelableExtra(ARG_MOVIE);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, MovieDetailFragment.create(movie))
+                    .add(R.id.movies_grid_container, MovieDetailFragment.create(movie))
                     .commit();
         }
         initToolbar();

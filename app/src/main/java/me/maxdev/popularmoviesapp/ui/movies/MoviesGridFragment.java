@@ -33,8 +33,8 @@ import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.MoviesService;
 import me.maxdev.popularmoviesapp.data.SortUtil;
 import me.maxdev.popularmoviesapp.ui.ItemOffsetDecoration;
-import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailActivity;
 import me.maxdev.popularmoviesapp.util.OnItemClickListener;
+import me.maxdev.popularmoviesapp.util.OnItemSelectedListener;
 
 public class MoviesGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
         OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -50,6 +50,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     private Uri contentUri;
     private MoviesAdapter adapter;
     private EndlessRecyclerViewOnScrollListener endlessRecyclerViewOnScrollListener;
+    private OnItemSelectedListener onItemSelectedListener;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -87,6 +88,17 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         contentUri = SortUtil.getSortedMoviesUri(getContext());
         getLoaderManager().initLoader(LOADER_ID, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnItemSelectedListener) {
+            onItemSelectedListener = (OnItemSelectedListener) context;
+        } else {
+            throw new IllegalStateException("The activity must implement " +
+                    OnItemSelectedListener.class.getSimpleName() + " interface.");
+        }
     }
 
     @Override
@@ -197,7 +209,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onItemClick(View itemView, int position) {
-        MovieDetailActivity.start(getContext(), adapter.getItem(position));
+        onItemSelectedListener.onItemSelected(adapter.getItem(position));
     }
 
     @Override
