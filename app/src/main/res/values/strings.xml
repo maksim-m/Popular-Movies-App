@@ -28,7 +28,7 @@
     <!-- Label for "most rated" option in "sort by" preference [CHAR LIMIT=25] -->
     <string name="pref_sort_by_most_rated_label">most rated</string>
 
-    <string name="navigation_item_1">Item One</string>
-    <string name="navigation_item_2">Item Two</string>
+    <string name="navigation_item_explore">Explore</string>
+    <string name="navigation_item_favorites">Favorites</string>
 
 </resources>
