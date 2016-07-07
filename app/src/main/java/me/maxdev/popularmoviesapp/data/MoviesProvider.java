@@ -71,6 +71,8 @@ public class MoviesProvider extends ContentProvider {
                 return MoviesContract.HighestRatedMovies.CONTENT_DIR_TYPE;
             case MOST_RATED_MOVIES:
                 return MoviesContract.MostRatedMovies.CONTENT_DIR_TYPE;
+            case FAVORITES:
+                return MoviesContract.Favorites.CONTENT_DIR_TYPE;
             default:
                 return null;
         }
@@ -98,15 +100,19 @@ public class MoviesProvider extends ContentProvider {
                 cursor = getMovieById(uri, projection, sortOrder);
                 break;
             case MOST_POPULAR_MOVIES:
-                cursor = getMoviesFromSortTable(MoviesContract.MostPopularMovies.TABLE_NAME,
+                cursor = getMoviesFromReferenceTable(MoviesContract.MostPopularMovies.TABLE_NAME,
                         projection, selection, selectionArgs, sortOrder);
                 break;
             case HIGHEST_RATED_MOVIES:
-                cursor = getMoviesFromSortTable(MoviesContract.HighestRatedMovies.TABLE_NAME,
+                cursor = getMoviesFromReferenceTable(MoviesContract.HighestRatedMovies.TABLE_NAME,
                         projection, selection, selectionArgs, sortOrder);
                 break;
             case MOST_RATED_MOVIES:
-                cursor = getMoviesFromSortTable(MoviesContract.MostRatedMovies.TABLE_NAME,
+                cursor = getMoviesFromReferenceTable(MoviesContract.MostRatedMovies.TABLE_NAME,
+                        projection, selection, selectionArgs, sortOrder);
+                break;
+            case FAVORITES:
+                cursor = getMoviesFromReferenceTable(MoviesContract.Favorites.TABLE_NAME,
                         projection, selection, selectionArgs, sortOrder);
                 break;
             default:
@@ -152,6 +158,14 @@ public class MoviesProvider extends ContentProvider {
                 id = db.insert(MoviesContract.MostRatedMovies.TABLE_NAME, null, values);
                 if (id > 0) {
                     returnUri = MoviesContract.MostRatedMovies.CONTENT_URI;
+                } else {
+                    throw new android.database.SQLException(FAILED_TO_INSERT_ROW_INTO + uri);
+                }
+                break;
+            case FAVORITES:
+                id = db.insert(MoviesContract.Favorites.TABLE_NAME, null, values);
+                if (id > 0) {
+                    returnUri = MoviesContract.Favorites.CONTENT_URI;
                 } else {
                     throw new android.database.SQLException(FAILED_TO_INSERT_ROW_INTO + uri);
                 }
@@ -205,6 +219,9 @@ public class MoviesProvider extends ContentProvider {
                 break;
             case MOST_RATED_MOVIES:
                 rowsDeleted = db.delete(MoviesContract.MostRatedMovies.TABLE_NAME, selection, selectionArgs);
+                break;
+            case FAVORITES:
+                rowsDeleted = db.delete(MoviesContract.Favorites.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -263,8 +280,8 @@ public class MoviesProvider extends ContentProvider {
         );
     }
 
-    private Cursor getMoviesFromSortTable(String tableName, String[] projection, String selection,
-                                          String[] selectionArgs, String sortOrder) {
+    private Cursor getMoviesFromReferenceTable(String tableName, String[] projection, String selection,
+                                               String[] selectionArgs, String sortOrder) {
 
         SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
 

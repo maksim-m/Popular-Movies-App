@@ -97,7 +97,9 @@
         <module name="UnusedImports"/>
 
         <!-- Metrics -->
-        <module name="CyclomaticComplexity"/>
+        <module name="CyclomaticComplexity">
+            <property name="max" value="15"/>
+        </module>
 
         <!-- Modifiers -->
         <module name="ModifierOrder"/>
