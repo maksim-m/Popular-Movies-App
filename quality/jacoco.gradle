@@ -1,0 +1,48 @@
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = '0.7.1.201405082137'
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'connectedAndroidTest',
+                                                      'createDebugCoverageReport']) {
+
+    // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
+    // We iterate through the compiled .class tree and rename $$ to $.
+    def renamedFiles = [:]
+    doFirst {
+        new File("${buildDir}/intermediates/classes/").eachFileRecurse { file ->
+            if (file.name.contains('$$')) {
+                renamedFiles.put(file.path, file.path.replace('$$', '$'))
+                file.renameTo(file.path.replace('$$', '$'))
+            }
+        }
+    }
+    doLast {
+        renamedFiles.each {
+            entry -> new File(entry.value.toString()).renameTo(entry.key.toString())
+        }
+        new File("${buildDir}/reports/coverage/debug").deleteDir()
+    }
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+        xml.destination "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+        html.destination "${buildDir}/reports/jacoco/test/"
+    }
+
+    jacocoClasspath = configurations['androidJacocoAnt']
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+    def mainSrc = "${project.projectDir}/src/main/java"
+
+    sourceDirectories = files([mainSrc])
+    classDirectories = files([debugTree])
+    executionData = files(["${buildDir}/jacoco/testDebugUnitTest.exec",
+                           "${buildDir}/outputs/code-coverage/connected/coverage.ec"
+    ])
+}
+
+check.dependsOn 'jacocoTestReport'

@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -31,7 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.MoviesService;
-import me.maxdev.popularmoviesapp.data.SortUtil;
+import me.maxdev.popularmoviesapp.data.SortHelper;
 import me.maxdev.popularmoviesapp.ui.ItemOffsetDecoration;
 import me.maxdev.popularmoviesapp.util.OnItemClickListener;
 import me.maxdev.popularmoviesapp.util.OnItemSelectedListener;
@@ -47,6 +48,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     RecyclerView recyclerView;
 
     private MoviesService moviesService;
+    private SortHelper sortHelper;
     private Uri contentUri;
     private MoviesAdapter adapter;
     private EndlessRecyclerViewOnScrollListener endlessRecyclerViewOnScrollListener;
@@ -65,7 +67,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
                 swipeRefreshLayout.setRefreshing(false);
                 endlessRecyclerViewOnScrollListener.setLoading(false);
             } else if (action.equals(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED)) {
-                contentUri = SortUtil.getSortedMoviesUri(getContext());
+                contentUri = sortHelper.getSortedMoviesUri();
                 recyclerView.smoothScrollToPosition(0);
                 getLoaderManager().restartLoader(LOADER_ID, null, MoviesGridFragment.this);
             }
@@ -81,11 +83,12 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         moviesService = MoviesService.getInstance(getContext());
+        sortHelper = new SortHelper(PreferenceManager.getDefaultSharedPreferences(getContext()));
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        contentUri = SortUtil.getSortedMoviesUri(getContext());
+        contentUri = sortHelper.getSortedMoviesUri();
         getLoaderManager().initLoader(LOADER_ID, null, this);
         super.onActivityCreated(savedInstanceState);
     }

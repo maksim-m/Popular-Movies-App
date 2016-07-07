@@ -16,11 +16,6 @@
     <!-- Label for the "sort by" preference [CHAR LIMIT=30] -->
     <string name="pref_sort_by_label">Sort by</string>
 
-    <!-- Key name for storing "sort by" preference in SharedPreferences [CHAR LIMIT=NONE] -->
-    <string name="pref_sort_by_key" translatable="false">sortBy</string>
-    <!-- Default value for "sort by" preference [CHAR LIMIT=NONE] -->
-    <string name="pref_sort_by_default" translatable="false">popularity.desc</string>
-
     <!-- Label for "most popular" option in "sort by" preference [CHAR LIMIT=25] -->
     <string name="pref_sort_by_most_popular_label">most popular</string>
     <!-- Label for "highest-rated" option in "sort by" preference [CHAR LIMIT=25] -->

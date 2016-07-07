@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -26,6 +27,7 @@ public class MoviesService {
     private static final String LOG_TAG = "MoviesService";
     private static volatile MoviesService instance = null;
 
+    private SortHelper sortHelper;
     private final Context context;
     private volatile boolean loading = false;
 
@@ -34,6 +36,7 @@ public class MoviesService {
             throw new IllegalStateException("Already instantiated.");
         }
         this.context = context.getApplicationContext();
+        sortHelper = new SortHelper(PreferenceManager.getDefaultSharedPreferences(context));
     }
 
     public static MoviesService getInstance(Context context) {
@@ -51,7 +54,7 @@ public class MoviesService {
         }
         loading = true;
 
-        String sort = SortUtil.getSortByPreference(context).toString();
+        String sort = sortHelper.getSortByPreference().toString();
         callDiscoverMovies(sort, null);
     }
 
@@ -64,8 +67,8 @@ public class MoviesService {
             return;
         }
         loading = true;
-        String sort = SortUtil.getSortByPreference(context).toString();
-        Uri uri = SortUtil.getSortedMoviesUri(context);
+        String sort = sortHelper.getSortByPreference().toString();
+        Uri uri = sortHelper.getSortedMoviesUri();
         if (uri == null) {
             return;
         }
@@ -108,7 +111,7 @@ public class MoviesService {
     private void saveMovieReference(Long movieId) {
         ContentValues entry = new ContentValues();
         entry.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movieId);
-        context.getContentResolver().insert(SortUtil.getSortedMoviesUri(context), entry);
+        context.getContentResolver().insert(sortHelper.getSortedMoviesUri(), entry);
     }
 
     private Uri saveMovie(Movie movie) {
@@ -123,7 +126,7 @@ public class MoviesService {
     private void clearMoviesSortTableIfNeeded(DiscoverResponse<Movie> discoverMoviesResponse) {
         if (discoverMoviesResponse.getPage() == 1) {
             context.getContentResolver().delete(
-                    SortUtil.getSortedMoviesUri(context),
+                    sortHelper.getSortedMoviesUri(),
                     null,
                     null
             );

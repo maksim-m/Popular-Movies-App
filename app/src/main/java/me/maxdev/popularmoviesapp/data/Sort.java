@@ -2,9 +2,6 @@ package me.maxdev.popularmoviesapp.data;
 
 import android.support.annotation.NonNull;
 
-/**
- * Created by Max on 03.06.2016.
- */
 public enum Sort {
 
     MOST_POPULAR("popularity.desc"),
@@ -23,7 +20,7 @@ public enum Sort {
                 return sort;
             }
         }
-        throw new IllegalStateException("No constant with text " + string + "found");
+        throw new IllegalArgumentException("No constant with text " + string + " found.");
     }
 
     @Override

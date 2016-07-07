@@ -5,6 +5,7 @@ apply plugin: 'com.neenbedankt.android-apt'
 apply from: '../quality/checkstyle.gradle'
 apply from: '../quality/findbugs.gradle'
 apply from: '../quality/pmd.gradle'
+apply from: '../quality/jacoco.gradle'
 
 def isOnCi() {
     def ci = System.getenv("CI")
@@ -72,6 +73,9 @@ android {
         testLogging {
             events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
             exceptionFormat 'full'
+        }
+        jacoco {
+            includeNoLocationClasses = true
         }
     }
 
