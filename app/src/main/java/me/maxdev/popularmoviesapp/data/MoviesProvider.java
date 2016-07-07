@@ -19,6 +19,7 @@ public class MoviesProvider extends ContentProvider {
     static final int MOST_POPULAR_MOVIES = 201;
     static final int HIGHEST_RATED_MOVIES = 202;
     static final int MOST_RATED_MOVIES = 203;
+    static final int FAVORITES = 300;
 
     private static final UriMatcher URI_MATCHER = buildUriMatcher();
     private static final String FAILED_TO_INSERT_ROW_INTO = "Failed to insert row into ";
@@ -43,6 +44,9 @@ public class MoviesProvider extends ContentProvider {
                 MoviesContract.PATH_HIGHEST_RATED, HIGHEST_RATED_MOVIES);
         uriMatcher.addURI(authority, MoviesContract.PATH_MOVIES + "/" +
                 MoviesContract.PATH_MOST_RATED, MOST_RATED_MOVIES);
+
+        uriMatcher.addURI(authority, MoviesContract.PATH_MOVIES + "/" +
+                MoviesContract.PATH_FAVORITES, FAVORITES);
 
         return uriMatcher;
     }

@@ -17,6 +17,7 @@ public final class MoviesContract {
     public static final String PATH_MOST_POPULAR = "most_popular";
     public static final String PATH_HIGHEST_RATED = "highest_rated";
     public static final String PATH_MOST_RATED = "most_rated";
+    public static final String PATH_FAVORITES = "favorites";
 
     static final String COLUMN_MOVIE_ID_KEY = "movie_id";
 
@@ -162,6 +163,36 @@ public final class MoviesContract {
         private static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
 
         private MostRatedMovies() {
+        }
+
+        public static String[] getColumns() {
+            return COLUMNS.clone();
+        }
+    }
+
+    public static final class Favorites implements BaseColumns {
+        public static final Uri CONTENT_URI = MovieEntry.CONTENT_URI.buildUpon()
+                .appendPath(PATH_FAVORITES)
+                .build();
+        public static final String CONTENT_DIR_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES
+                        + "/" + PATH_FAVORITES;
+
+        public static final String TABLE_NAME = "favorites";
+
+        public static final String SQL_CREATE_TABLE =
+                "CREATE TABLE " + TABLE_NAME + " (" +
+                        _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        COLUMN_MOVIE_ID_KEY + " INTEGER NOT NULL, " +
+
+                        " FOREIGN KEY (" + COLUMN_MOVIE_ID_KEY + ") REFERENCES " +
+                        MovieEntry.TABLE_NAME + " (" + MovieEntry._ID + ") " +
+
+                        " );";
+
+        private static final String[] COLUMNS = {_ID, COLUMN_MOVIE_ID_KEY};
+
+        private Favorites() {
         }
 
         public static String[] getColumns() {

@@ -61,4 +61,11 @@ public class TestMoviesContract extends AndroidTestCase {
                 MoviesContract.MostRatedMovies.CONTENT_URI.toString(),
                 "content://me.maxdev.popularmoviesapp/movies/most_rated");
     }
+
+    public void testFavoritesUri() {
+        assertNotNull("Error: Null Uri returned.", MoviesContract.Favorites.CONTENT_URI);
+        assertEquals("Error: Most rated movies Uri doesn't match expected result",
+                MoviesContract.Favorites.CONTENT_URI.toString(),
+                "content://me.maxdev.popularmoviesapp/movies/favorites");
+    }
 }

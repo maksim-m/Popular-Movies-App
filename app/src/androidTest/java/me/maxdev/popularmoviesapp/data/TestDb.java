@@ -32,6 +32,7 @@ public class TestDb extends AndroidTestCase {
         tableNameHashSet.add(MoviesContract.MostPopularMovies.TABLE_NAME);
         tableNameHashSet.add(MoviesContract.HighestRatedMovies.TABLE_NAME);
         tableNameHashSet.add(MoviesContract.MostRatedMovies.TABLE_NAME);
+        tableNameHashSet.add(MoviesContract.Favorites.TABLE_NAME);
 
         SQLiteDatabase db = new MoviesDbHelper(this.mContext).getWritableDatabase();
         assertEquals(true, db.isOpen());
@@ -43,7 +44,7 @@ public class TestDb extends AndroidTestCase {
         // verify that the tables have been created
         do {
             tableNameHashSet.remove(c.getString(0));
-        } while( c.moveToNext() );
+        } while (c.moveToNext());
         assertTrue("Error. The database doesn't contain all of the required tables", tableNameHashSet.isEmpty());
 
         // now, do our tables contain the correct columns?
@@ -51,6 +52,7 @@ public class TestDb extends AndroidTestCase {
         checkTableColumns(db, MoviesContract.MostPopularMovies.TABLE_NAME, MoviesContract.MostPopularMovies.getColumns());
         checkTableColumns(db, MoviesContract.HighestRatedMovies.TABLE_NAME, MoviesContract.HighestRatedMovies.getColumns());
         checkTableColumns(db, MoviesContract.MostRatedMovies.TABLE_NAME, MoviesContract.MostRatedMovies.getColumns());
+        checkTableColumns(db, MoviesContract.Favorites.TABLE_NAME, MoviesContract.Favorites.getColumns());
 
         c.close();
         db.close();
@@ -144,6 +146,34 @@ public class TestDb extends AndroidTestCase {
         assertFalse("Error: More than one record returned from query", cursor.moveToNext());
     }
 
+    public void testFavoritesTable() {
+        long movieId = insertMovie();
+
+        MoviesDbHelper helper = new MoviesDbHelper(mContext);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movieId);
+
+        long id = db.insert(MoviesContract.Favorites.TABLE_NAME, null, contentValues);
+        if (id == -1) {
+            fail("Error by inserting contentValues into database.");
+        }
+        Cursor cursor = db.query(
+                MoviesContract.Favorites.TABLE_NAME,
+                null,       // all columns
+                null,       // Columns for the "where" clause
+                null,       // Values for the "where" clause
+                null,       // columns to group by
+                null,       // columns to filter by row groups
+                null        // sort order
+        );
+        contentValues.put(MoviesContract.Favorites._ID, id);
+        assertTrue("Error: No Records returned from query", cursor.moveToFirst());
+        TestUtilities.validateCurrentRecord("Error: Query Validation Failed", cursor, contentValues);
+        assertFalse("Error: More than one record returned from query", cursor.moveToNext());
+    }
+
     private long insertMovie() {
         MoviesDbHelper helper = new MoviesDbHelper(mContext);
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -208,7 +238,7 @@ public class TestDb extends AndroidTestCase {
         do {
             String columnName = c.getString(columnNameIndex);
             columns.remove(columnName);
-        } while(c.moveToNext());
+        } while (c.moveToNext());
 
         assertTrue("Error: The table " + tableName + " doesn't contains all of the required columns",
                 columns.isEmpty());

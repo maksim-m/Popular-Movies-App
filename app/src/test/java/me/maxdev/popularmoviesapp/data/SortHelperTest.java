@@ -1,6 +1,5 @@
 package me.maxdev.popularmoviesapp.data;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import org.junit.Test;
@@ -15,9 +14,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SortHelperTest {
-
-    @Mock
-    Context mockContext;
 
     @Mock
     SharedPreferences mockSharedPreferences;
@@ -36,11 +32,6 @@ public class SortHelperTest {
         sort = Sort.MOST_POPULAR;
         mockSortHelper = createMockSharedPreference();
         assertEquals(sort, mockSortHelper.getSortByPreference());
-    }
-
-    @Test
-    public void testGetSortedMoviesUri() throws Exception {
-        //assertEquals(MoviesContract.MostPopularMovies.CONTENT_URI, mockSortHelper.getSortedMoviesUri());
     }
 
     @Test

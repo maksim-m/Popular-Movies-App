@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MoviesDbHelper extends SQLiteOpenHelper {
 
     static final String DATABASE_NAME = "movies.db";
-    private static final int DATABASE_SCHEMA_VERSION = 3;
+    private static final int DATABASE_SCHEMA_VERSION = 4;
     private static final String SQL_DROP_TABLE_IF_EXISTS = "DROP TABLE IF EXISTS ";
 
     public MoviesDbHelper(Context context) {
@@ -23,6 +23,7 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
         db.execSQL(MoviesContract.MostPopularMovies.SQL_CREATE_TABLE);
         db.execSQL(MoviesContract.HighestRatedMovies.SQL_CREATE_TABLE);
         db.execSQL(MoviesContract.MostRatedMovies.SQL_CREATE_TABLE);
+        db.execSQL(MoviesContract.Favorites.SQL_CREATE_TABLE);
     }
 
     @Override
@@ -31,6 +32,7 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DROP_TABLE_IF_EXISTS + MoviesContract.MostPopularMovies.TABLE_NAME);
         db.execSQL(SQL_DROP_TABLE_IF_EXISTS + MoviesContract.HighestRatedMovies.TABLE_NAME);
         db.execSQL(SQL_DROP_TABLE_IF_EXISTS + MoviesContract.MostRatedMovies.TABLE_NAME);
+        db.execSQL(SQL_DROP_TABLE_IF_EXISTS + MoviesContract.Favorites.TABLE_NAME);
         onCreate(db);
     }
 }
