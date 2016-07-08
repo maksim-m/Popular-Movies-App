@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         ButterKnife.bind(this);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.movies_grid_container, new MoviesGridFragment())
+                    .replace(R.id.movies_grid_container, MoviesGridFragment.create(MoviesGridFragment.MODE_EXPLORE))
                     .commit();
         }
         twoPaneMode = findViewById(R.id.movie_detail_container) != null;
@@ -130,7 +130,8 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
             case R.id.drawer_item_explore:
                 if (selectedNavigationItem != 0) {
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.movies_grid_container, new MoviesGridFragment())
+                            .replace(R.id.movies_grid_container,
+                                    MoviesGridFragment.create(MoviesGridFragment.MODE_EXPLORE))
                             .commit();
                     selectedNavigationItem = 0;
                 }
@@ -138,7 +139,10 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                 return true;
             case R.id.drawer_item_favorites:
                 if (selectedNavigationItem != 1) {
-                    // TODO
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.movies_grid_container,
+                                    MoviesGridFragment.create(MoviesGridFragment.MODE_FAVORITES))
+                            .commit();
                     selectedNavigationItem = 1;
                 }
                 drawerLayout.closeDrawers();

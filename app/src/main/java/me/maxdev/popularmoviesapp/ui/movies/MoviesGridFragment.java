@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -28,9 +29,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.maxdev.popularmoviesapp.R;
+import me.maxdev.popularmoviesapp.data.MoviesContract;
 import me.maxdev.popularmoviesapp.data.MoviesService;
 import me.maxdev.popularmoviesapp.data.SortHelper;
 import me.maxdev.popularmoviesapp.ui.ItemOffsetDecoration;
@@ -40,7 +45,11 @@ import me.maxdev.popularmoviesapp.util.OnItemSelectedListener;
 public class MoviesGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
         OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
+    public static final int MODE_EXPLORE = 1;
+    public static final int MODE_FAVORITES = 2;
+
     private static final int LOADER_ID = 0;
+    private static final String ARG_MODE = "argMode";
 
     @BindView(R.id.swipe_layout)
     SwipeRefreshLayout swipeRefreshLayout;
@@ -53,6 +62,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     private MoviesAdapter adapter;
     private EndlessRecyclerViewOnScrollListener endlessRecyclerViewOnScrollListener;
     private OnItemSelectedListener onItemSelectedListener;
+    private int currentMode;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -66,16 +76,32 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
                 }
                 swipeRefreshLayout.setRefreshing(false);
                 endlessRecyclerViewOnScrollListener.setLoading(false);
-            } else if (action.equals(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED)) {
+            } else if (action.equals(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED) &&
+                    currentMode == MODE_EXPLORE) {
+
                 contentUri = sortHelper.getSortedMoviesUri();
                 recyclerView.smoothScrollToPosition(0);
                 getLoaderManager().restartLoader(LOADER_ID, null, MoviesGridFragment.this);
+
             }
         }
     };
 
+    @IntDef({MODE_EXPLORE, MODE_FAVORITES})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface MoviesGridFragmentMode {
+    }
+
     public MoviesGridFragment() {
         // Required empty public constructor
+    }
+
+    public static MoviesGridFragment create(@MoviesGridFragmentMode int mode) {
+        MoviesGridFragment fragment = new MoviesGridFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_MODE, mode);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -84,11 +110,19 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         setHasOptionsMenu(true);
         moviesService = MoviesService.getInstance(getContext());
         sortHelper = new SortHelper(PreferenceManager.getDefaultSharedPreferences(getContext()));
+        if (getArguments() != null) {
+            currentMode = getArguments().getInt(ARG_MODE);
+        }
+        if (currentMode == MODE_EXPLORE) {
+            contentUri = sortHelper.getSortedMoviesUri();
+        } else if (currentMode == MODE_FAVORITES) {
+            contentUri = MoviesContract.Favorites.CONTENT_URI;
+        }
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        contentUri = sortHelper.getSortedMoviesUri();
+
         getLoaderManager().initLoader(LOADER_ID, null, this);
         super.onActivityCreated(savedInstanceState);
     }
@@ -111,7 +145,9 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         intentFilter.addAction(MoviesService.BROADCAST_UPDATE_FINISHED);
         intentFilter.addAction(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, intentFilter);
-        endlessRecyclerViewOnScrollListener.setLoading(moviesService.isLoading());
+        if (endlessRecyclerViewOnScrollListener != null && currentMode == MODE_EXPLORE) {
+            endlessRecyclerViewOnScrollListener.setLoading(moviesService.isLoading());
+        }
         swipeRefreshLayout.setRefreshing(moviesService.isLoading());
     }
 
@@ -159,6 +195,12 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
         recyclerView.addItemDecoration(new ItemOffsetDecoration(getActivity(), R.dimen.movie_item_offset));
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), columns);
         recyclerView.setLayoutManager(gridLayoutManager);
+        if (currentMode == MODE_EXPLORE) {
+            initEndlessScrolling(gridLayoutManager);
+        }
+    }
+
+    private void initEndlessScrolling(final GridLayoutManager gridLayoutManager) {
         endlessRecyclerViewOnScrollListener = new EndlessRecyclerViewOnScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore() {
@@ -178,7 +220,10 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_movies_grid, menu);
+        if (currentMode == MODE_EXPLORE) {
+            inflater.inflate(R.menu.fragment_movies_grid, menu);
+        }
+        // TODO: else
     }
 
     private void refreshMovies() {
@@ -200,7 +245,7 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         adapter.changeCursor(data);
-        if (data == null || data.getCount() == 0) {
+        if (currentMode == MODE_EXPLORE && (data == null || data.getCount() == 0)) {
             refreshMovies();
         }
     }
@@ -217,6 +262,8 @@ public class MoviesGridFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onRefresh() {
-        refreshMovies();
+        if (currentMode == MODE_EXPLORE) {
+            refreshMovies();
+        }
     }
 }
