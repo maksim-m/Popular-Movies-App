@@ -19,7 +19,7 @@ public final class MoviesContract {
     public static final String PATH_MOST_RATED = "most_rated";
     public static final String PATH_FAVORITES = "favorites";
 
-    static final String COLUMN_MOVIE_ID_KEY = "movie_id";
+    public static final String COLUMN_MOVIE_ID_KEY = "movie_id";
 
     private MoviesContract() {
     }

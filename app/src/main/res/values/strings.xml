@@ -8,6 +8,9 @@
     <string name="user_rating">User rating: %.1f</string>
     <string name="release_date">Release date: %s</string>
 
+    <string name="added_to_favorites">Added to favorites</string>
+    <string name="removed_from_favorites">Removed from favorites</string>
+
     <string name="content_description_movie_backdrop">Movie backdrop image</string>
     <string name="content_description_movie_poster">Movie poster image</string>
 
