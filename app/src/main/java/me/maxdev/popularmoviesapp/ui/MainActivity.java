@@ -16,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.Movie;
+import me.maxdev.popularmoviesapp.ui.movies.FavoritesGridFragment;
 import me.maxdev.popularmoviesapp.ui.movies.MoviesGridFragment;
 import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailActivity;
 import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailFragment;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         ButterKnife.bind(this);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.movies_grid_container, MoviesGridFragment.create(MoviesGridFragment.MODE_EXPLORE))
+                    .replace(R.id.movies_grid_container, MoviesGridFragment.create())
                     .commit();
         }
         twoPaneMode = findViewById(R.id.movie_detail_container) != null;
@@ -111,10 +112,8 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
     @Override
     public void onItemSelected(Movie movie) {
-        if (twoPaneMode) {
-            if (movieDetailContainer != null) {
-                movieDetailContainer.setVisibility(View.VISIBLE);
-            }
+        if (twoPaneMode && movieDetailContainer != null) {
+            movieDetailContainer.setVisibility(View.VISIBLE);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.movie_detail_container, MovieDetailFragment.create(movie))
                     .commit();
@@ -130,25 +129,31 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
             case R.id.drawer_item_explore:
                 if (selectedNavigationItem != 0) {
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.movies_grid_container,
-                                    MoviesGridFragment.create(MoviesGridFragment.MODE_EXPLORE))
+                            .replace(R.id.movies_grid_container, MoviesGridFragment.create())
                             .commit();
                     selectedNavigationItem = 0;
+                    hideMovieDetailContainer();
                 }
                 drawerLayout.closeDrawers();
                 return true;
             case R.id.drawer_item_favorites:
                 if (selectedNavigationItem != 1) {
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.movies_grid_container,
-                                    MoviesGridFragment.create(MoviesGridFragment.MODE_FAVORITES))
+                            .replace(R.id.movies_grid_container, FavoritesGridFragment.create())
                             .commit();
                     selectedNavigationItem = 1;
+                    hideMovieDetailContainer();
                 }
                 drawerLayout.closeDrawers();
                 return true;
             default:
                 return false;
+        }
+    }
+
+    private void hideMovieDetailContainer() {
+        if (twoPaneMode && movieDetailContainer != null) {
+            movieDetailContainer.setVisibility(View.GONE);
         }
     }
 
