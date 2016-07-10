@@ -1,5 +1,9 @@
 package me.maxdev.popularmoviesapp.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -7,6 +11,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +30,7 @@ import me.maxdev.popularmoviesapp.data.FavoritesService;
 import me.maxdev.popularmoviesapp.data.Movie;
 import me.maxdev.popularmoviesapp.ui.movies.FavoritesGridFragment;
 import me.maxdev.popularmoviesapp.ui.movies.MoviesGridFragment;
+import me.maxdev.popularmoviesapp.ui.movies.SortingDialogFragment;
 import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailActivity;
 import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailFragment;
 import me.maxdev.popularmoviesapp.util.OnItemSelectedListener;
@@ -55,6 +61,16 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     private Movie selectedMovie = null;
     private int selectedNavigationItem;
 
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED)) {
+                hideMovieDetailContainer();
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +90,19 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         setupNavigationDrawer();
         setupNavigationView();
         setupFab();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter intentFilter = new IntentFilter(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 
     private void setupFab() {

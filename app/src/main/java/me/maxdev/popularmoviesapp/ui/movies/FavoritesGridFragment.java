@@ -12,12 +12,6 @@ public class FavoritesGridFragment extends AbstractMoviesGridFragment {
         return new FavoritesGridFragment();
     }
 
-    /*@Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(false);
-    }*/
-
     @Override
     @NonNull
     protected Uri getContentUri() {
