@@ -72,10 +72,10 @@ public class MovieDetailFragment extends Fragment {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(movieImagePoster);
         movieOriginalTitle.setText(movie.getOriginalTitle());
-        String userRating = String.format(getString(me.maxdev.popularmoviesapp.R.string.user_rating),
+        String userRating = String.format(getString(me.maxdev.popularmoviesapp.R.string.movie_detail_user_rating),
                 movie.getAverageVote());
         movieUserRating.setText(userRating);
-        String releaseDate = String.format(getString(me.maxdev.popularmoviesapp.R.string.release_date),
+        String releaseDate = String.format(getString(me.maxdev.popularmoviesapp.R.string.movie_detail_release_date),
                 movie.getReleaseDate());
         movieReleaseDate.setText(releaseDate);
         movieOverview.setText(movie.getOverview());

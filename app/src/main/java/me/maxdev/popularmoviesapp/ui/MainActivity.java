@@ -217,11 +217,11 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     void onFabClicked() {
         if (favoritesService.isFavorite(selectedMovie)) {
             favoritesService.removeFromFavorites(selectedMovie);
-            showSnackbar(R.string.removed_from_favorites);
+            showSnackbar(R.string.message_removed_from_favorites);
             hideMovieDetailContainer();
         } else {
             favoritesService.addToFavorites(selectedMovie);
-            showSnackbar(R.string.added_to_favorites);
+            showSnackbar(R.string.message_added_to_favorites);
         }
         setupFab();
     }

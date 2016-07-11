@@ -5,4 +5,5 @@
     <color name="accent_material_light" tools:override="true">#536dfe</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
+    <color name="gray_background">#eeeeee</color>
 </resources>

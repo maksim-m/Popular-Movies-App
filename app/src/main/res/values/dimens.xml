@@ -2,8 +2,8 @@
 <resources>
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="text_margin">16dp</dimen>
-
+    <dimen name="spacing_small">4dp</dimen>
+    <dimen name="spacing_medium">8dp</dimen>
     <integer name="movies_columns">2</integer>
     <dimen name="movie_item_offset">4dp</dimen>
 </resources>

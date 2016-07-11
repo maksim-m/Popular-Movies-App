@@ -2,9 +2,9 @@
 <resources>
 
     <string-array name="pref_sort_by_labels">
-        <item>@string/pref_sort_by_most_popular_label</item>
-        <item>@string/pref_sort_by_highest_rated_label</item>
-        <item>@string/pref_sort_by_most_rated_label</item>
+        <item>@string/sort_dialog_most_popular</item>
+        <item>@string/sort_dialog_highest_rated</item>
+        <item>@string/sort_dialog_most_rated</item>
     </string-array>
 
 </resources>

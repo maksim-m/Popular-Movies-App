@@ -32,7 +32,7 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
             String action = intent.getAction();
             if (action.equals(MoviesService.BROADCAST_UPDATE_FINISHED)) {
                 if (!intent.getBooleanExtra(MoviesService.EXTRA_IS_SUCCESSFUL_UPDATED, true)) {
-                    Snackbar.make(swipeRefreshLayout, R.string.snackbar_failed_to_update_movies,
+                    Snackbar.make(swipeRefreshLayout, R.string.error_failed_to_update_movies,
                             Snackbar.LENGTH_LONG)
                             .show();
                 }

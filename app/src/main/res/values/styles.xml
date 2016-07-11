@@ -4,6 +4,7 @@
         <item name="colorAccent" tools:ignore="PrivateResource">@color/accent_material_light</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/gray_background</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

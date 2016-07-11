@@ -66,10 +66,10 @@ public class MovieDetailActivity extends AppCompatActivity {
     void onFabClicked() {
         if (favoritesService.isFavorite(movie)) {
             favoritesService.removeFromFavorites(movie);
-            showSnackbar(R.string.removed_from_favorites);
+            showSnackbar(R.string.message_removed_from_favorites);
         } else {
             favoritesService.addToFavorites(movie);
-            showSnackbar(R.string.added_to_favorites);
+            showSnackbar(R.string.message_added_to_favorites);
         }
 
         updateFab();
