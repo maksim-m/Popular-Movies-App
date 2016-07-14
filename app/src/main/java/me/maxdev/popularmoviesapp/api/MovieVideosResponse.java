@@ -2,16 +2,16 @@ package me.maxdev.popularmoviesapp.api;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import me.maxdev.popularmoviesapp.data.Video;
+import me.maxdev.popularmoviesapp.data.MovieVideo;
 
-public class VideosResponse {
+public class MovieVideosResponse {
     @SerializedName("id")
     private long movieId;
 
     @SerializedName("results")
-    private List<Video> results;
+    private ArrayList<MovieVideo> results;
 
     public long getMovieId() {
         return movieId;
@@ -21,11 +21,11 @@ public class VideosResponse {
         this.movieId = movieId;
     }
 
-    public List<Video> getResults() {
+    public ArrayList<MovieVideo> getResults() {
         return results;
     }
 
-    public void setResults(List<Video> results) {
+    public void setResults(ArrayList<MovieVideo> results) {
         this.results = results;
     }
 }

@@ -22,7 +22,6 @@ android {
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
-        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -46,7 +45,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro',
                     'proguard-glide.pro',
-                    'proguard-square-retrofit.pro'
+                    'proguard-retrofit.pro'
         }
     }
 
@@ -116,6 +115,8 @@ dependencies {
 
     compile 'io.reactivex:rxjava:1.1.6'
     compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'com.trello:rxlifecycle:0.6.1'
+    compile 'com.trello:rxlifecycle-components:0.6.1'
 
     compile "com.jakewharton:butterknife:${butterknifeVersion}"
     apt "com.jakewharton:butterknife-compiler:${butterknifeVersion}"

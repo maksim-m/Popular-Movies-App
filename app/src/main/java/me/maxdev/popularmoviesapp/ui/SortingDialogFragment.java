@@ -1,4 +1,4 @@
-package me.maxdev.popularmoviesapp.ui.movies;
+package me.maxdev.popularmoviesapp.ui;
 
 import android.app.Dialog;
 import android.content.DialogInterface;

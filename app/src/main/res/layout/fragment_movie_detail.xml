@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".ui.movies.detail.MovieDetailActivity">
+    tools:context=".ui.detail.MovieDetailActivity">
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_movie_detail"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/movie_detail_content_width"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/spacing_small"
-        android:layout_marginEnd="@dimen/spacing_medium"
         android:layout_marginLeft="@dimen/spacing_medium"
         android:layout_marginRight="@dimen/spacing_medium"
-        android:layout_marginStart="@dimen/spacing_medium"
         android:layout_marginTop="@dimen/spacing_medium">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            >
 
             <me.maxdev.popularmoviesapp.ui.ProportionalImageView
                 android:id="@+id/image_movie_detail_poster"
@@ -79,14 +80,13 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_movie_overview"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/movie_detail_content_width"
         android:layout_height="wrap_content"
         android:layout_below="@+id/card_movie_detail"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/spacing_small"
-        android:layout_marginEnd="@dimen/spacing_medium"
         android:layout_marginLeft="@dimen/spacing_medium"
         android:layout_marginRight="@dimen/spacing_medium"
-        android:layout_marginStart="@dimen/spacing_medium"
         android:layout_marginTop="@dimen/spacing_small">
 
         <RelativeLayout
@@ -112,5 +112,42 @@
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
+
+    <FrameLayout
+        android:id="@+id/card_movie_videos"
+        android:layout_width="@dimen/movie_detail_content_width"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/card_movie_overview"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="@dimen/spacing_medium"
+        android:layout_marginRight="@dimen/spacing_medium"
+        android:layout_marginTop="@dimen/spacing_small"
+        android:background="@color/white">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/spacing_medium">
+
+            <TextView
+                android:id="@+id/text_videos_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/movie_detail_videos_title"
+                android:textStyle="bold"/>
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/movie_videos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/card_movie_videos"
+        android:layout_marginBottom="@dimen/spacing_small"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
 
 </RelativeLayout>

@@ -15,6 +15,7 @@
     <string name="movie_detail_user_rating">User rating: %.1f</string>
     <string name="movie_detail_release_date">Release date: %s</string>
     <string name="movie_detail_overview_title">Overview</string>
+    <string name="movie_detail_videos_title">Videos</string>
 
     <!-- Sort dialog -->
     <string name="sort_dialog_title">Sort by</string>
@@ -32,5 +33,6 @@
     <!-- Content description -->
     <string name="content_description_movie_poster">Movie poster image</string>
     <string name="content_description_movie_backdrop">Movie backdrop image</string>
+    <string name="content_description_movie_video">Movie video thumbnail</string>
 
 </resources>

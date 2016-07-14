@@ -1,4 +1,4 @@
-package me.maxdev.popularmoviesapp.ui.movies;
+package me.maxdev.popularmoviesapp.ui.grid;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,6 +19,8 @@ import android.view.MenuItem;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.MoviesService;
 import me.maxdev.popularmoviesapp.data.SortHelper;
+import me.maxdev.popularmoviesapp.ui.EndlessRecyclerViewOnScrollListener;
+import me.maxdev.popularmoviesapp.ui.SortingDialogFragment;
 
 public class MoviesGridFragment extends AbstractMoviesGridFragment {
 

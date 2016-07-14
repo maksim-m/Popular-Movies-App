@@ -1,4 +1,4 @@
-package me.maxdev.popularmoviesapp.ui.movies.detail;
+package me.maxdev.popularmoviesapp.ui.detail;
 
 import android.content.Context;
 import android.content.Intent;

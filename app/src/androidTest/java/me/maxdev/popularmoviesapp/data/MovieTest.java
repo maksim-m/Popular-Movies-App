@@ -13,16 +13,16 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class MovieTest {
 
-    public static final int ID = 10378;
-    public static final String TITLE = "Big Buck Bunny";
-    public static final String OVERVIEW = "Follow a day of the life of Big Buck Bunny when he meets three bullying rodents: Frank, Rinky, and Gamera. The rodents amuse themselves by harassing helpless creatures by throwing fruits, nuts and rocks at them. After the deaths of two of Bunny's favorite butterflies, and an offensive attack on Bunny himself, Bunny sets aside his gentle nature and orchestrates a complex plan for revenge.";
-    public static final String RELEASE_DATE = "2008-05-30";
-    public static final String POSTER_PATH = "https://image.tmdb.org/t/p/original/uVEFQvFMMsg4e6yb03xOfVsDz4o.jpg";
-    public static final double POPULARITY = 1.5;
-    public static final String ORIGINAL_TITLE = "Big Buck Bunny";
-    public static final double AVERAGE_VOTE = 6.5;
-    public static final int VOTE_COUNT = 33;
-    public static final String BACKDROP_PATH = "https://image.tmdb.org/t/p/original/1O3tFuQsVgmjwx47xGKBjkSUiU6.jpg";
+    private static final int ID = 10378;
+    private static final String TITLE = "Big Buck Bunny";
+    private static final String OVERVIEW = "Follow a day of the life of Big Buck Bunny when he meets three bullying rodents: Frank, Rinky, and Gamera. The rodents amuse themselves by harassing helpless creatures by throwing fruits, nuts and rocks at them. After the deaths of two of Bunny's favorite butterflies, and an offensive attack on Bunny himself, Bunny sets aside his gentle nature and orchestrates a complex plan for revenge.";
+    private static final String RELEASE_DATE = "2008-05-30";
+    private static final String POSTER_PATH = "https://image.tmdb.org/t/p/original/uVEFQvFMMsg4e6yb03xOfVsDz4o.jpg";
+    private static final double POPULARITY = 1.5;
+    private static final String ORIGINAL_TITLE = "Big Buck Bunny";
+    private static final double AVERAGE_VOTE = 6.5;
+    private static final int VOTE_COUNT = 33;
+    private static final String BACKDROP_PATH = "https://image.tmdb.org/t/p/original/1O3tFuQsVgmjwx47xGKBjkSUiU6.jpg";
 
     private Movie movie;
 

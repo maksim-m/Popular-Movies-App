@@ -6,4 +6,5 @@
     <dimen name="spacing_medium">8dp</dimen>
     <integer name="movies_columns">2</integer>
     <dimen name="movie_item_offset">4dp</dimen>
+    <dimen name="movie_detail_content_width">@dimen/match_parent</dimen>
 </resources>

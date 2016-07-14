@@ -28,11 +28,10 @@ import butterknife.Optional;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.FavoritesService;
 import me.maxdev.popularmoviesapp.data.Movie;
-import me.maxdev.popularmoviesapp.ui.movies.FavoritesGridFragment;
-import me.maxdev.popularmoviesapp.ui.movies.MoviesGridFragment;
-import me.maxdev.popularmoviesapp.ui.movies.SortingDialogFragment;
-import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailActivity;
-import me.maxdev.popularmoviesapp.ui.movies.detail.MovieDetailFragment;
+import me.maxdev.popularmoviesapp.ui.grid.FavoritesGridFragment;
+import me.maxdev.popularmoviesapp.ui.grid.MoviesGridFragment;
+import me.maxdev.popularmoviesapp.ui.detail.MovieDetailActivity;
+import me.maxdev.popularmoviesapp.ui.detail.MovieDetailFragment;
 import me.maxdev.popularmoviesapp.util.OnItemSelectedListener;
 
 public class MainActivity extends AppCompatActivity implements OnItemSelectedListener,

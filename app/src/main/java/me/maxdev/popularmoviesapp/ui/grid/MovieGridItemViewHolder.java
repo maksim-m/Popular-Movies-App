@@ -1,4 +1,4 @@
-package me.maxdev.popularmoviesapp.ui.movies;
+package me.maxdev.popularmoviesapp.ui.grid;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -26,9 +26,9 @@ public class MovieGridItemViewHolder extends RecyclerView.ViewHolder implements 
 
 
     @Override
-    public void onClick(View v) {
+    public void onClick(View view) {
         if (onItemClickListener != null) {
-            onItemClickListener.onItemClick(v, getAdapterPosition());
+            onItemClickListener.onItemClick(view, getAdapterPosition());
         }
     }
 }

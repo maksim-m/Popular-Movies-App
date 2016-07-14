@@ -1,4 +1,4 @@
-package me.maxdev.popularmoviesapp.ui.movies;
+package me.maxdev.popularmoviesapp.ui.grid;
 
 import android.database.Cursor;
 import android.net.Uri;

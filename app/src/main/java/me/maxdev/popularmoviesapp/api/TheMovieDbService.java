@@ -12,7 +12,7 @@ public interface TheMovieDbService {
     Observable<Movie> getMovie(@Path("id") long id);
 
     @GET("movie/{id}/videos")
-    Observable<Movie> getMovieVideos(@Path("id") long id);
+    Observable<MovieVideosResponse> getMovieVideos(@Path("id") long id);
 
     @GET("discover/movie")
     Observable<DiscoverResponse<Movie>> discoverMovies(@Query("sort_by") String sortBy, @Query("page") Integer page);

@@ -1,4 +1,4 @@
-package me.maxdev.popularmoviesapp.ui.movies;
+package me.maxdev.popularmoviesapp.ui.grid;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -51,8 +51,7 @@ public class MoviesAdapter extends CursorRecyclerViewAdapter<MovieGridItemViewHo
 
     @Override
     public MovieGridItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.grid_item_movie, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item_movie, parent, false);
         return new MovieGridItemViewHolder(itemView, onItemClickListener);
     }
 

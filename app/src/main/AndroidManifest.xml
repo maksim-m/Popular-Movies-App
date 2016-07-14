@@ -25,7 +25,7 @@
             android:theme="@style/AppTheme">
         </activity>
         <activity
-            android:name=".ui.movies.detail.MovieDetailActivity"
+            android:name=".ui.detail.MovieDetailActivity"
             android:parentActivityName="me.maxdev.popularmoviesapp.ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data

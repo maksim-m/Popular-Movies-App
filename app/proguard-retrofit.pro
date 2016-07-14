@@ -3,9 +3,11 @@
 -dontwarn com.squareup.okhttp.**
 
 -dontwarn rx.**
--dontwarn retrofit.**
+-dontwarn retrofit2.**
 -dontwarn okio.**
--keep class retrofit.** { *; }
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
 -keepclasseswithmembers class * {
     @retrofit.http.* <methods>;
 }
