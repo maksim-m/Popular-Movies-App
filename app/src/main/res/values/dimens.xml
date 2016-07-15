@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="app_bar_height">180dp</dimen>
+    <!-- General -->
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="spacing_small">4dp</dimen>
     <dimen name="spacing_medium">8dp</dimen>
+
+    <!-- Movies Grid -->
     <integer name="movies_columns">2</integer>
     <dimen name="movie_item_offset">4dp</dimen>
+
+    <!-- Movie Detail -->
+    <dimen name="app_bar_height">180dp</dimen>
     <dimen name="movie_detail_content_width">@dimen/match_parent</dimen>
+    <dimen name="movie_detail_content_margin_left_right">0dp</dimen>
+    <dimen name="movie_detail_cards_margin_left_right">0dp</dimen>
+    <integer name="movie_detail_content_elevation_in_dp">6</integer>
+    <integer name="movie_detail_fab_elevation_in_dp">10</integer>
+    <dimen name="movie_detail_content_overlay">0dp</dimen>
+
 </resources>

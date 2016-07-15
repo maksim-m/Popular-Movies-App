@@ -19,7 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.ScrollView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     Toolbar toolbar;
     @Nullable
     @BindView(R.id.movie_detail_container)
-    FrameLayout movieDetailContainer;
+    ScrollView movieDetailContainer;
     @Nullable
     @BindView(R.id.fab)
     FloatingActionButton fab;
@@ -217,7 +217,9 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         if (favoritesService.isFavorite(selectedMovie)) {
             favoritesService.removeFromFavorites(selectedMovie);
             showSnackbar(R.string.message_removed_from_favorites);
-            hideMovieDetailContainer();
+            if (selectedNavigationItem == 1) {
+                hideMovieDetailContainer();
+            }
         } else {
             favoritesService.addToFavorites(selectedMovie);
             showSnackbar(R.string.message_added_to_favorites);

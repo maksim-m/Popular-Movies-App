@@ -7,8 +7,12 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -35,6 +39,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     ImageView movieBackdropImage;
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    @BindView(R.id.nestedScrollView)
+    NestedScrollView nestedScrollView;
 
     private FavoritesService favoritesService;
     private Movie movie;
@@ -58,8 +64,17 @@ public class MovieDetailActivity extends AppCompatActivity {
                     .commit();
         }
         initToolbar();
+        ViewCompat.setElevation(nestedScrollView,
+                convertDpToPixel(getResources().getInteger(R.integer.movie_detail_content_elevation_in_dp)));
+        ViewCompat.setElevation(fab,
+                convertDpToPixel(getResources().getInteger(R.integer.movie_detail_fab_elevation_in_dp)));
         updateFab();
-        setTitle(movie.getTitle());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        nestedScrollView.fullScroll(View.FOCUS_UP);
     }
 
     @OnClick(R.id.fab)
@@ -71,7 +86,6 @@ public class MovieDetailActivity extends AppCompatActivity {
             favoritesService.addToFavorites(movie);
             showSnackbar(R.string.message_added_to_favorites);
         }
-
         updateFab();
     }
 
@@ -91,6 +105,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             toolbar.setNavigationOnClickListener(view -> onBackPressed());
         }
+        setTitle("");
         Glide.with(this)
                 .load(POSTER_IMAGE_BASE_URL + BACKDROP_IMAGE_SIZE + movie.getBackdropPath())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -104,6 +119,11 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     private void showSnackbar(@StringRes int messageResourceId) {
         showSnackbar(getString(messageResourceId));
+    }
+
+    public float convertDpToPixel(float dp) {
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        return dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 
 }

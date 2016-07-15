@@ -15,6 +15,7 @@ public class MovieVideoViewHolder extends RecyclerView.ViewHolder implements Vie
     @BindView(R.id.movie_video_thumbnail)
     ImageView movieVideoThumbnail;
 
+    @Nullable
     private OnItemClickListener onItemClickListener;
 
     public MovieVideoViewHolder(View itemView, @Nullable OnItemClickListener onItemClickListener) {

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ public class MoviesAdapter extends CursorRecyclerViewAdapter<MovieGridItemViewHo
         return new MovieGridItemViewHolder(itemView, onItemClickListener);
     }
 
+    @Nullable
     public Movie getItem(int position) {
         Cursor cursor = getCursor();
         if (cursor == null) {

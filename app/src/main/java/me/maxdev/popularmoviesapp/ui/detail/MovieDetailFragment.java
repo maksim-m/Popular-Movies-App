@@ -1,14 +1,20 @@
 package me.maxdev.popularmoviesapp.ui.detail;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -49,6 +55,12 @@ public class MovieDetailFragment extends RxFragment {
     TextView movieReleaseDate;
     @BindView(R.id.text_movie_overview)
     TextView movieOverview;
+    @BindView(R.id.card_movie_detail)
+    CardView cardMovieDetail;
+    @BindView(R.id.card_movie_overview)
+    CardView cardMovieOverview;
+    @BindView(R.id.card_movie_videos)
+    FrameLayout cardMovieVideos;
     @BindView(R.id.movie_videos)
     RecyclerView movieVideos;
 
@@ -81,6 +93,7 @@ public class MovieDetailFragment extends RxFragment {
         ButterKnife.bind(this, rootView);
         initViews();
         initVideosList();
+        setupCardsElevation();
         return rootView;
     }
 
@@ -90,6 +103,18 @@ public class MovieDetailFragment extends RxFragment {
         if (adapter.getItemCount() == 0) {
             loadMovieVideos();
         }
+    }
+
+    private void setupCardsElevation() {
+        setupCardElevation(cardMovieDetail);
+        setupCardElevation(cardMovieVideos);
+        setupCardElevation(movieVideos);
+        setupCardElevation(cardMovieOverview);
+    }
+
+    private void setupCardElevation(View view) {
+        ViewCompat.setElevation(view,
+                convertDpToPixel(getResources().getInteger(R.integer.movie_detail_content_elevation_in_dp)));
     }
 
     @Override
@@ -151,12 +176,27 @@ public class MovieDetailFragment extends RxFragment {
 
     private void initVideosList() {
         adapter = new MovieVideosAdapter(getContext());
+        adapter.setOnItemClickListener((itemView, position) -> onMovieVideoClicked(position));
         movieVideos.setAdapter(adapter);
         movieVideos.setItemAnimator(new DefaultItemAnimator());
         movieVideos.addItemDecoration(new ItemOffsetDecoration(getActivity(), R.dimen.movie_item_offset));
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.HORIZONTAL, false);
         movieVideos.setLayoutManager(layoutManager);
+    }
+
+    private void onMovieVideoClicked(int position) {
+        MovieVideo video = adapter.getItem(position);
+        if (video != null && video.isYoutubeVideo()) {
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://www.youtube.com/watch?v=" + video.getKey()));
+            startActivity(intent);
+        }
+    }
+
+    public float convertDpToPixel(float dp) {
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        return dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 
 }
