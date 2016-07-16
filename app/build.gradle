@@ -92,7 +92,7 @@ android {
 ext {
     supportLibraryVersion = "24.0.0"
     testingSupportLibraryVersion = "0.5"
-    okHttpVersion = "3.3.1"
+    okHttpVersion = "3.4.1"
     retrofitVersion = "2.1.0"
     butterknifeVersion = "8.1.0"
 }
