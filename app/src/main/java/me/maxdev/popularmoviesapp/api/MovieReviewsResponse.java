@@ -2,43 +2,43 @@ package me.maxdev.popularmoviesapp.api;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.ArrayList;
 
-public class DiscoverResponse<T> {
+import me.maxdev.popularmoviesapp.data.MovieReview;
+
+public class MovieReviewsResponse {
+    @SerializedName("id")
+    private long movieId;
 
     @SerializedName("page")
     private int page;
 
     @SerializedName("results")
-    private List<T> results;
+    private ArrayList<MovieReview> results;
 
     @SerializedName("total_pages")
     private int totalPages;
 
-    @SerializedName("total_results")
-    private long totalResults;
-
-    public DiscoverResponse(int page, List<T> results, int totalPages, long totalResults) {
+    public MovieReviewsResponse(long movieId, int page, ArrayList<MovieReview> results, int totalPages) {
+        this.movieId = movieId;
         this.page = page;
         this.results = results;
         this.totalPages = totalPages;
-        this.totalResults = totalResults;
+    }
+
+    public long getMovieId() {
+        return movieId;
     }
 
     public int getPage() {
         return page;
     }
 
-    public List<T> getResults() {
+    public ArrayList<MovieReview> getResults() {
         return results;
     }
 
     public int getTotalPages() {
         return totalPages;
     }
-
-    public long getTotalResults() {
-        return totalResults;
-    }
-
 }

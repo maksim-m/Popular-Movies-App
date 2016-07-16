@@ -16,6 +16,7 @@
     <string name="movie_detail_release_date">Release date: %s</string>
     <string name="movie_detail_overview_title">Overview</string>
     <string name="movie_detail_videos_title">Videos</string>
+    <string name="movie_detail_reviews_title">Reviews</string>
 
     <!-- Sort dialog -->
     <string name="sort_dialog_title">Sort by</string>

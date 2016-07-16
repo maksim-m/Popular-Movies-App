@@ -13,19 +13,16 @@ public class MovieVideosResponse {
     @SerializedName("results")
     private ArrayList<MovieVideo> results;
 
+    public MovieVideosResponse(long movieId, ArrayList<MovieVideo> results) {
+        this.movieId = movieId;
+        this.results = results;
+    }
+
     public long getMovieId() {
         return movieId;
     }
 
-    public void setMovieId(long movieId) {
-        this.movieId = movieId;
-    }
-
     public ArrayList<MovieVideo> getResults() {
         return results;
-    }
-
-    public void setResults(ArrayList<MovieVideo> results) {
-        this.results = results;
     }
 }

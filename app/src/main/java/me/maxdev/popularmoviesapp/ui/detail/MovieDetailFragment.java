@@ -27,9 +27,12 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.maxdev.popularmoviesapp.R;
+import me.maxdev.popularmoviesapp.api.MovieReviewsResponse;
+import me.maxdev.popularmoviesapp.api.MovieVideosResponse;
 import me.maxdev.popularmoviesapp.api.TheMovieDbClient;
 import me.maxdev.popularmoviesapp.api.TheMovieDbService;
 import me.maxdev.popularmoviesapp.data.Movie;
+import me.maxdev.popularmoviesapp.data.MovieReview;
 import me.maxdev.popularmoviesapp.data.MovieVideo;
 import me.maxdev.popularmoviesapp.ui.ItemOffsetDecoration;
 import rx.Subscriber;
@@ -43,6 +46,7 @@ public class MovieDetailFragment extends RxFragment {
 
     private static final String ARG_MOVIE = "ArgMovie";
     private static final String MOVIE_VIDEOS_KEY = "MovieVideos";
+    private static final String MOVIE_REVIEWS_KEY = "MovieReviews";
     private static final String LOG_TAG = "MovieDetailFragment";
 
     @BindView(R.id.image_movie_detail_poster)
@@ -63,9 +67,14 @@ public class MovieDetailFragment extends RxFragment {
     FrameLayout cardMovieVideos;
     @BindView(R.id.movie_videos)
     RecyclerView movieVideos;
+    @BindView(R.id.card_movie_reviews)
+    CardView cardMovieReviews;
+    @BindView(R.id.movie_reviews)
+    RecyclerView movieReviews;
 
     private Movie movie;
-    private MovieVideosAdapter adapter;
+    private MovieVideosAdapter videosAdapter;
+    private MovieReviewsAdapter reviewsAdapter;
 
     public MovieDetailFragment() {
         // Required empty public constructor
@@ -93,23 +102,30 @@ public class MovieDetailFragment extends RxFragment {
         ButterKnife.bind(this, rootView);
         initViews();
         initVideosList();
+        initReviewsList();
         setupCardsElevation();
         return rootView;
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
-        if (adapter.getItemCount() == 0) {
+        if (videosAdapter.getItemCount() == 0) {
             loadMovieVideos();
         }
+        if (reviewsAdapter.getItemCount() == 0) {
+            loadMovieReviews();
+        }
     }
+
 
     private void setupCardsElevation() {
         setupCardElevation(cardMovieDetail);
         setupCardElevation(cardMovieVideos);
         setupCardElevation(movieVideos);
         setupCardElevation(cardMovieOverview);
+        setupCardElevation(cardMovieReviews);
     }
 
     private void setupCardElevation(View view) {
@@ -120,8 +136,11 @@ public class MovieDetailFragment extends RxFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (adapter.getItemCount() != 0) {
-            outState.putParcelableArrayList(MOVIE_VIDEOS_KEY, adapter.getMovieVideos());
+        if (videosAdapter.getItemCount() != 0) {
+            outState.putParcelableArrayList(MOVIE_VIDEOS_KEY, videosAdapter.getMovieVideos());
+        }
+        if (reviewsAdapter.getItemCount() != 0) {
+            outState.putParcelableArrayList(MOVIE_REVIEWS_KEY, reviewsAdapter.getMovieReviews());
         }
     }
 
@@ -129,7 +148,8 @@ public class MovieDetailFragment extends RxFragment {
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
-            adapter.setMovieVideos(savedInstanceState.getParcelableArrayList(MOVIE_VIDEOS_KEY));
+            videosAdapter.setMovieVideos(savedInstanceState.getParcelableArrayList(MOVIE_VIDEOS_KEY));
+            reviewsAdapter.setMovieReviews(savedInstanceState.getParcelableArrayList(MOVIE_REVIEWS_KEY));
         }
     }
 
@@ -138,7 +158,7 @@ public class MovieDetailFragment extends RxFragment {
         service.getMovieVideos(movie.getId())
                 .compose(bindToLifecycle())
                 .subscribeOn(Schedulers.newThread())
-                .map(movieVideosResponse -> movieVideosResponse.getResults())
+                .map(MovieVideosResponse::getResults)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ArrayList<MovieVideo>>() {
                     @Override
@@ -153,9 +173,35 @@ public class MovieDetailFragment extends RxFragment {
 
                     @Override
                     public void onNext(ArrayList<MovieVideo> movieVideos) {
-                        adapter.setMovieVideos(movieVideos);
+                        videosAdapter.setMovieVideos(movieVideos);
                     }
                 });
+    }
+
+    private void loadMovieReviews() {
+        TheMovieDbService service = TheMovieDbClient.getInstance(getContext());
+        service.getMovieReviews(movie.getId())
+                .compose(bindToLifecycle())
+                .subscribeOn(Schedulers.newThread())
+                .map(MovieReviewsResponse::getResults)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ArrayList<MovieReview>>() {
+                    @Override
+                    public void onCompleted() {
+                        // do nothing
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(LOG_TAG, e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(ArrayList<MovieReview> movieReviews) {
+                        reviewsAdapter.setMovieReviews(movieReviews);
+                    }
+                });
+
     }
 
     private void initViews() {
@@ -175,9 +221,9 @@ public class MovieDetailFragment extends RxFragment {
     }
 
     private void initVideosList() {
-        adapter = new MovieVideosAdapter(getContext());
-        adapter.setOnItemClickListener((itemView, position) -> onMovieVideoClicked(position));
-        movieVideos.setAdapter(adapter);
+        videosAdapter = new MovieVideosAdapter(getContext());
+        videosAdapter.setOnItemClickListener((itemView, position) -> onMovieVideoClicked(position));
+        movieVideos.setAdapter(videosAdapter);
         movieVideos.setItemAnimator(new DefaultItemAnimator());
         movieVideos.addItemDecoration(new ItemOffsetDecoration(getActivity(), R.dimen.movie_item_offset));
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
@@ -185,8 +231,25 @@ public class MovieDetailFragment extends RxFragment {
         movieVideos.setLayoutManager(layoutManager);
     }
 
+    private void initReviewsList() {
+        reviewsAdapter = new MovieReviewsAdapter();
+        reviewsAdapter.setOnItemClickListener((itemView, position) -> onMovieReviewClicked(position));
+        movieReviews.setAdapter(reviewsAdapter);
+        movieReviews.setItemAnimator(new DefaultItemAnimator());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        movieReviews.setLayoutManager(layoutManager);
+    }
+
+    private void onMovieReviewClicked(int position) {
+        MovieReview review = reviewsAdapter.getItem(position);
+        if (review != null && review.getReviewUrl() != null) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(review.getReviewUrl()));
+            startActivity(intent);
+        }
+    }
+
     private void onMovieVideoClicked(int position) {
-        MovieVideo video = adapter.getItem(position);
+        MovieVideo video = videosAdapter.getItem(position);
         if (video != null && video.isYoutubeVideo()) {
             Intent intent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse("http://www.youtube.com/watch?v=" + video.getKey()));

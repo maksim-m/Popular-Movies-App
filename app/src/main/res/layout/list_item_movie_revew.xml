@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/spacing_medium">
+
+    <TextView
+        android:id="@+id/text_movie_review_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="5"
+        android:singleLine="false"
+        tools:src="Review content"/>
+
+    <TextView
+        android:id="@+id/text_movie_review_author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/text_movie_review_content"
+        android:gravity="end"
+        android:paddingTop="@dimen/spacing_small"
+        tools:src="Author"/>
+
+</RelativeLayout>
