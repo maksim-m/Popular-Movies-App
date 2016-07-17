@@ -17,6 +17,10 @@ android:
     - extra-android-m2repository
     - sys-img-armeabi-v7a-android-17
 
+branches:
+  except:
+    - gh-pages
+
 before_install:
   - chmod +x gradlew
 

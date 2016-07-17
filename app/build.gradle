@@ -25,6 +25,10 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        config
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -42,13 +46,14 @@ android {
 
         release {
             minifyEnabled false
+            signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro',
                     'proguard-glide.pro',
-                    'proguard-retrofit.pro'
+                    'proguard-retrofit.pro',
+                    'proguard-rxjava.pro'
         }
     }
-
     buildTypes.each {
         if (!isOnCi()) {
             it.buildConfigField STRING, THE_MOVIE_DB_API_KEY, MY_MOVIE_DB_API_KEY
@@ -87,6 +92,34 @@ android {
             logging.level = LogLevel.LIFECYCLE
         }
     }
+}
+
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+
+if (keystorePropertiesFile.exists()) {
+
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+    if (keystoreProperties != null &&
+            keystoreProperties.containsKey('storeFile') &&
+            keystoreProperties.containsKey('storePassword') &&
+            keystoreProperties.containsKey('keyAlias') &&
+            keystoreProperties.containsKey('keyPassword')) {
+
+        println 'keystore.properties found. Sign APK'
+        android.signingConfigs.config.storeFile file(keystoreProperties['storeFile'])
+        android.signingConfigs.config.storePassword keystoreProperties['storePassword']
+        android.signingConfigs.config.keyAlias keystoreProperties['keyAlias']
+        android.signingConfigs.config.keyPassword keystoreProperties['keyPassword']
+
+    } else {
+        println 'keystore.properties found but some entries are missing'
+        android.buildTypes.release.signingConfig = null
+    }
+} else {
+    println 'keystore.properties not found'
+    android.buildTypes.release.signingConfig = null
 }
 
 ext {
