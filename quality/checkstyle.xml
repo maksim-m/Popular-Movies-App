@@ -6,6 +6,8 @@
 
     <module name="FileTabCharacter"/>
 
+    <module name="NewlineAtEndOfFile"/>
+
     <module name="TreeWalker">
 
         <!-- Naming Conventions -->
@@ -148,6 +150,8 @@
         </module>
         <module name="CommentsIndentation"/>
         <module name="Indentation">
+            <property name="forceStrictCondition" value="false"/>
+            <property name="caseIndent" value="4"/>
             <property name="arrayInitIndent" value="8"/>
         </module>
         <module name="OuterTypeFilename"/>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
@@ -21,6 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ScrollView;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -28,10 +31,11 @@ import butterknife.Optional;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.FavoritesService;
 import me.maxdev.popularmoviesapp.data.Movie;
-import me.maxdev.popularmoviesapp.ui.grid.FavoritesGridFragment;
-import me.maxdev.popularmoviesapp.ui.grid.MoviesGridFragment;
+import me.maxdev.popularmoviesapp.data.SortHelper;
 import me.maxdev.popularmoviesapp.ui.detail.MovieDetailActivity;
 import me.maxdev.popularmoviesapp.ui.detail.MovieDetailFragment;
+import me.maxdev.popularmoviesapp.ui.grid.FavoritesGridFragment;
+import me.maxdev.popularmoviesapp.ui.grid.MoviesGridFragment;
 import me.maxdev.popularmoviesapp.util.OnItemSelectedListener;
 
 public class MainActivity extends AppCompatActivity implements OnItemSelectedListener,
@@ -56,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     FloatingActionButton fab;
 
     private FavoritesService favoritesService;
+    private SortHelper sortHelper;
     private boolean twoPaneMode;
     private Movie selectedMovie = null;
     private int selectedNavigationItem;
@@ -66,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
             String action = intent.getAction();
             if (action.equals(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED)) {
                 hideMovieDetailContainer();
+                updateTitle();
             }
         }
     };
@@ -76,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         favoritesService = FavoritesService.getInstance(this);
+        sortHelper = new SortHelper(PreferenceManager.getDefaultSharedPreferences(this));
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.movies_grid_container, MoviesGridFragment.create())
@@ -96,12 +103,25 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         super.onResume();
         IntentFilter intentFilter = new IntentFilter(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED);
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
+        updateTitle();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+    }
+
+    private void updateTitle() {
+        if (selectedNavigationItem == 0) {
+            String[] sortTitles = getResources().getStringArray(R.array.pref_sort_by_labels);
+            int currentSortIndex = sortHelper.getSortByPreference().ordinal();
+            String title = Character.toString(sortTitles[currentSortIndex].charAt(0)).toUpperCase(Locale.US) +
+                    sortTitles[currentSortIndex].substring(1);
+            setTitle(title);
+        } else if (selectedNavigationItem == 1) {
+            setTitle(getResources().getString(R.string.favorites_grid_title));
+        }
     }
 
     private void setupFab() {
@@ -195,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                     hideMovieDetailContainer();
                 }
                 drawerLayout.closeDrawers();
+                updateTitle();
                 return true;
             case R.id.drawer_item_favorites:
                 if (selectedNavigationItem != 1) {
@@ -205,6 +226,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                     hideMovieDetailContainer();
                 }
                 drawerLayout.closeDrawers();
+                updateTitle();
                 return true;
             default:
                 return false;

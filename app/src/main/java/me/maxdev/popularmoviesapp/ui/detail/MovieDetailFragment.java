@@ -3,7 +3,9 @@ package me.maxdev.popularmoviesapp.ui.detail;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -14,7 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.trello.rxlifecycle.components.support.RxFragment;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,6 +51,10 @@ public class MovieDetailFragment extends RxFragment {
     private static final String MOVIE_REVIEWS_KEY = "MovieReviews";
     private static final String LOG_TAG = "MovieDetailFragment";
 
+    private static final double VOTE_PERFECT = 9.0;
+    private static final double VOTE_GOOD = 7.0;
+    private static final double VOTE_NORMAL = 5.0;
+
     @BindView(R.id.image_movie_detail_poster)
     ImageView movieImagePoster;
     @BindView(R.id.text_movie_original_title)
@@ -63,10 +69,12 @@ public class MovieDetailFragment extends RxFragment {
     CardView cardMovieDetail;
     @BindView(R.id.card_movie_overview)
     CardView cardMovieOverview;
+
     @BindView(R.id.card_movie_videos)
-    FrameLayout cardMovieVideos;
+    CardView cardMovieVideos;
     @BindView(R.id.movie_videos)
     RecyclerView movieVideos;
+
     @BindView(R.id.card_movie_reviews)
     CardView cardMovieReviews;
     @BindView(R.id.movie_reviews)
@@ -117,15 +125,32 @@ public class MovieDetailFragment extends RxFragment {
         if (reviewsAdapter.getItemCount() == 0) {
             loadMovieReviews();
         }
+        updateMovieVideosCard();
+        updateMovieReviewsCard();
     }
 
 
     private void setupCardsElevation() {
         setupCardElevation(cardMovieDetail);
         setupCardElevation(cardMovieVideos);
-        setupCardElevation(movieVideos);
         setupCardElevation(cardMovieOverview);
         setupCardElevation(cardMovieReviews);
+    }
+
+    private void updateMovieVideosCard() {
+        if (videosAdapter == null || videosAdapter.getItemCount() == 0) {
+            cardMovieVideos.setVisibility(View.GONE);
+        } else {
+            cardMovieVideos.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void updateMovieReviewsCard() {
+        if (reviewsAdapter == null || reviewsAdapter.getItemCount() == 0) {
+            cardMovieReviews.setVisibility(View.GONE);
+        } else {
+            cardMovieReviews.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setupCardElevation(View view) {
@@ -169,11 +194,13 @@ public class MovieDetailFragment extends RxFragment {
                     @Override
                     public void onError(Throwable e) {
                         Log.e(LOG_TAG, e.getMessage());
+                        updateMovieVideosCard();
                     }
 
                     @Override
                     public void onNext(ArrayList<MovieVideo> movieVideos) {
                         videosAdapter.setMovieVideos(movieVideos);
+                        updateMovieVideosCard();
                     }
                 });
     }
@@ -194,11 +221,13 @@ public class MovieDetailFragment extends RxFragment {
                     @Override
                     public void onError(Throwable e) {
                         Log.e(LOG_TAG, e.getMessage());
+                        updateMovieReviewsCard();
                     }
 
                     @Override
                     public void onNext(ArrayList<MovieReview> movieReviews) {
                         reviewsAdapter.setMovieReviews(movieReviews);
+                        updateMovieReviewsCard();
                     }
                 });
 
@@ -211,13 +240,25 @@ public class MovieDetailFragment extends RxFragment {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(movieImagePoster);
         movieOriginalTitle.setText(movie.getOriginalTitle());
-        String userRating = String.format(getString(me.maxdev.popularmoviesapp.R.string.movie_detail_user_rating),
-                movie.getAverageVote());
-        movieUserRating.setText(userRating);
+        movieUserRating.setText(String.format(Locale.US, "%.1f", movie.getAverageVote()));
+        movieUserRating.setTextColor(getRatingColor(movie.getAverageVote()));
         String releaseDate = String.format(getString(me.maxdev.popularmoviesapp.R.string.movie_detail_release_date),
                 movie.getReleaseDate());
         movieReleaseDate.setText(releaseDate);
         movieOverview.setText(movie.getOverview());
+    }
+
+    @ColorInt
+    private int getRatingColor(double averageVote) {
+        if (averageVote >= VOTE_PERFECT) {
+            return ContextCompat.getColor(getContext(), R.color.vote_perfect);
+        } else if (averageVote >= VOTE_GOOD) {
+            return ContextCompat.getColor(getContext(), R.color.vote_good);
+        } else if (averageVote >= VOTE_NORMAL) {
+            return ContextCompat.getColor(getContext(), R.color.vote_normal);
+        } else {
+            return ContextCompat.getColor(getContext(), R.color.vote_bad);
+        }
     }
 
     private void initVideosList() {

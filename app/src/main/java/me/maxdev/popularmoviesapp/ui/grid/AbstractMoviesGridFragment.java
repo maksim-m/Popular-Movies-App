@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +36,8 @@ public abstract class AbstractMoviesGridFragment extends Fragment implements Loa
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.movies_grid)
     RecyclerView recyclerView;
+    @BindView(R.id.view_no_movies)
+    RelativeLayout noMoviesView;
 
     private MoviesAdapter adapter;
     private OnItemSelectedListener onItemSelectedListener;
@@ -82,8 +85,24 @@ public abstract class AbstractMoviesGridFragment extends Fragment implements Loa
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateGridLayout();
+    }
+
     protected void restartLoader() {
         getLoaderManager().restartLoader(LOADER_ID, null, AbstractMoviesGridFragment.this);
+    }
+
+    protected void updateGridLayout() {
+        if (adapter.getItemCount() == 0) {
+            recyclerView.setVisibility(View.GONE);
+            noMoviesView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            noMoviesView.setVisibility(View.GONE);
+        }
     }
 
     private void initMoviesGrid() {
@@ -119,11 +138,13 @@ public abstract class AbstractMoviesGridFragment extends Fragment implements Loa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         onCursorLoaded(data);
+        updateGridLayout();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.changeCursor(null);
+        updateGridLayout();
     }
 
     @Override

@@ -40,7 +40,8 @@ public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewViewHol
 
     @Override
     public MovieReviewViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_movie_revew, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.list_item_movie_review, parent, false);
         return new MovieReviewViewHolder(itemView, onItemClickListener);
     }
 

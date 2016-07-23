@@ -40,8 +40,8 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
                 }
                 swipeRefreshLayout.setRefreshing(false);
                 endlessRecyclerViewOnScrollListener.setLoading(false);
+                updateGridLayout();
             } else if (action.equals(SortingDialogFragment.BROADCAST_SORT_PREFERENCE_CHANGED)) {
-
                 recyclerView.smoothScrollToPosition(0);
                 restartLoader();
             }

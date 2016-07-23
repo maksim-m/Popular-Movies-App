@@ -6,4 +6,9 @@
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
     <color name="gray_background">#eeeeee</color>
+
+    <color name="vote_perfect">#1b5e20</color>
+    <color name="vote_good">#4caf50</color>
+    <color name="vote_normal">#757575</color>
+    <color name="vote_bad">#f44336</color>
 </resources>

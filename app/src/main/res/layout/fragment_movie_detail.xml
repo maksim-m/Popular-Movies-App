@@ -38,6 +38,9 @@
                 android:layout_alignTop="@+id/image_movie_detail_poster"
                 android:layout_toEndOf="@+id/image_movie_detail_poster"
                 android:layout_toRightOf="@+id/image_movie_detail_poster"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-condensed"
+                android:maxLines="3"
                 android:paddingEnd="8dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
@@ -47,24 +50,23 @@
 
             <TextView
                 android:id="@+id/text_movie_user_rating"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/text_movie_original_title"
-                android:layout_marginTop="25dp"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/spacing_medium"
                 android:layout_toEndOf="@+id/image_movie_detail_poster"
                 android:layout_toRightOf="@+id/image_movie_detail_poster"
-                android:paddingEnd="8dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingStart="8dp"
-                tools:text="User rating: 7.345"/>
+                android:fontFamily="sans-serif-light"
+                android:gravity="center"
+                android:textSize="42sp"
+                tools:text="10.0"/>
 
             <TextView
                 android:id="@+id/text_movie_release_date"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/text_movie_user_rating"
-                android:layout_marginTop="25dp"
+                android:layout_alignBottom="@id/image_movie_detail_poster"
+                android:layout_marginBottom="@dimen/spacing_medium"
                 android:layout_toEndOf="@+id/image_movie_detail_poster"
                 android:layout_toRightOf="@+id/image_movie_detail_poster"
                 android:paddingEnd="8dp"
@@ -112,7 +114,7 @@
 
     </android.support.v7.widget.CardView>
 
-    <FrameLayout
+    <android.support.v7.widget.CardView
         android:id="@+id/card_movie_videos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -124,6 +126,7 @@
         android:background="@color/white">
 
         <RelativeLayout
+            android:id="@+id/card_movie_videos_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/spacing_medium">
@@ -135,25 +138,25 @@
                 android:text="@string/movie_detail_videos_title"
                 android:textStyle="bold"/>
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/movie_videos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/text_videos_title"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/spacing_medium"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+
         </RelativeLayout>
 
-    </FrameLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/movie_videos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/card_movie_videos"
-        android:layout_marginBottom="@dimen/spacing_small"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+    </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_movie_reviews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/movie_videos"
+        android:layout_below="@+id/card_movie_videos"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/spacing_small"
         android:layout_marginLeft="@dimen/movie_detail_cards_margin_left_right"

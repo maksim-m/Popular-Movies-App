@@ -29,15 +29,14 @@ public class SortingDialogFragment extends DialogFragment {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogStyle);
         builder.setTitle(getString(R.string.sort_dialog_title));
         builder.setNegativeButton(getString(R.string.action_cancel), null);
-        builder.setSingleChoiceItems(
-                R.array.pref_sort_by_labels,
+        builder.setSingleChoiceItems(R.array.pref_sort_by_labels,
                 sortHelper.getSortByPreference().ordinal(),
                 new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(DialogInterface dialogInterface, int which) {
                         sortHelper.saveSortByPreference(Sort.values()[which]);
                         sendSortPreferenceChangedBroadcast();
-                        dialog.dismiss();
+                        dialogInterface.dismiss();
                     }
                 });
 

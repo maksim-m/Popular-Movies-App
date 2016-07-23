@@ -11,8 +11,13 @@
     <string name="navigation_item_explore">Explore</string>
     <string name="navigation_item_favorites">Favorites</string>
 
+    <!-- Movies grid screen -->
+    <string name="movies_grid_no_movies">No movies</string>
+
+    <!-- Favorites grid screen -->
+    <string name="favorites_grid_title">Favorites</string>
+
     <!-- Movie detail screen -->
-    <string name="movie_detail_user_rating">User rating: %.1f</string>
     <string name="movie_detail_release_date">Release date: %s</string>
     <string name="movie_detail_overview_title">Overview</string>
     <string name="movie_detail_videos_title">Videos</string>
@@ -35,5 +40,6 @@
     <string name="content_description_movie_poster">Movie poster image</string>
     <string name="content_description_movie_backdrop">Movie backdrop image</string>
     <string name="content_description_movie_video">Movie video thumbnail</string>
+    <string name="content_description_no_movies_icon">No movies icon</string>
 
 </resources>

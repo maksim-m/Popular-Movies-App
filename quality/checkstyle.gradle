@@ -3,7 +3,7 @@ apply plugin: 'checkstyle'
 def qualityConfigFolder = "${project.rootDir}/quality/"
 
 checkstyle {
-    toolVersion = '6.18'
+    toolVersion = '7.0'
 }
 
 task checkstyle(type: Checkstyle) {

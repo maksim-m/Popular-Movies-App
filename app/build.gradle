@@ -14,7 +14,7 @@ def isOnCi() {
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.0"
+    buildToolsVersion "24.0.1"
 
     defaultConfig {
         applicationId "me.maxdev.popularmoviesapp"
@@ -123,7 +123,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 ext {
-    supportLibraryVersion = "24.0.0"
+    supportLibraryVersion = "24.1.1"
     testingSupportLibraryVersion = "0.5"
     okHttpVersion = "3.4.1"
     retrofitVersion = "2.1.0"
