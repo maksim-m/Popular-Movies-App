@@ -14,7 +14,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -78,7 +77,6 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        nestedScrollView.fullScroll(View.FOCUS_UP);
     }
 
     @OnClick(R.id.fab)
