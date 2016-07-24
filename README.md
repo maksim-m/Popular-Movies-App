@@ -6,7 +6,15 @@ Popular Movies App
 A simple Android app, that helps user to discover movies. 
 This is Project 1 & Project 2 of Udacity's Android Developer Nanodegree.
 
-Currently in development.
+**Features:**
+
+- Discover the most popular, the highest rated and the most rated movies
+- Watch movie trailers and teasers
+- Read reviews from other users
+- Mark movies as favorites
+- Offline work
+- Material design
+- UI optimized for phone and tablet
 
 Screenshots
 -----------
@@ -14,33 +22,20 @@ Screenshots
 <img width="45%" src=".github/screen1.png" />
 <img width="45%" src=".github/screen2.png" />
 
-<img width="90%" src=".github/screen3.png" />
+<img width="89%" src=".github/screen3.png" />
 
-Roadmap
--------
-
-### To Do:
-- [X] Allow user to mark a movie as a favorite
-- [X] Tablet UI
-- [ ] Display trailers
-- [ ] Display reviews
-
-### Done in v1.0:
-- [X] Display movie posters in grid
-- [X] Show additional information on a detail screen
-- [X] Allow user to change sort order 
-- [X] Continuous integration
-- [X] Add code quality tools (Checkstyle, FindBugs, PMD, Android Lint)
-- [X] Offline work
+<img width="90%" src=".github/screen4.png" />
 
 Developer setup
 ---------------
 
 ### Requirements
+
 - Java 8
 - Latest version of Android SDK and Android Build Tools
 
 ### API Key
+
 The app uses themoviedb.org API to get movie information and posters. You must provide your own [API key][1] in order to build the app.
 
 Just put your API key into `~/.gradle/gradle.properties` file (create the file if it does not exist already):
@@ -48,6 +43,17 @@ Just put your API key into `~/.gradle/gradle.properties` file (create the file i
 ```gradle
 MY_MOVIE_DB_API_KEY="abc123"
 ```
+
+### Building
+
+You can build the app with Android Studio or with `./gradlew assembleDebug` command.
+
+### Testing
+
+This project integrates a combination of [local unit tests][2], [instrumented tests][3] and [code analysis tools][4].
+
+Just run `build.sh` to ensure that project code is valid and stable.
+This will run local unit tests on the JVM, instrumented tests on connected device (or emulator) and analyse code with Checkstyle, Findbugs and PMD.
 
 License
 -------
@@ -67,3 +73,6 @@ License
     limitations under the License.
 
 [1]: https://www.themoviedb.org/documentation/api
+[2]: app/src/test/
+[3]: app/src/androidTest/
+[4]: quality/
