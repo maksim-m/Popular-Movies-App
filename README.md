@@ -16,6 +16,10 @@ This is Project 1 & Project 2 of Udacity's Android Developer Nanodegree.
 - Material design
 - UI optimized for phone and tablet
 
+**Download:**
+
+You can download APK [on releases page][5].
+
 Screenshots
 -----------
 
@@ -76,3 +80,4 @@ License
 [2]: app/src/test/
 [3]: app/src/androidTest/
 [4]: quality/
+[5]: https://github.com/maksim-m/Popular-Movies-App/releases
