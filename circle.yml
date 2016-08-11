@@ -1,0 +1,31 @@
+machine:
+  java:
+    version: oraclejdk8
+
+
+dependencies:
+  pre:
+    - echo y | android update sdk --no-ui --all --filter tool,platform-tools,tools,extra-android-m2repository,extra-android-support,extra-google-google_play_services,extra-google-m2repository,android-24
+    - echo y | android update sdk --no-ui --all --filter build-tools-24.0.1
+    - curl http://www.jpm4j.org/install/script > jpmInstall.sh
+    - sudo sh jpmInstall.sh
+    - sudo jpm install com.codacy:codacy-coverage-reporter:assembly
+
+test:
+  override:
+    - echo no | android create avd --force -n test -t android-18 --abi armeabi-v7a
+    - emulator -avd test -no-skin -no-audio -no-window:
+        background: true
+        parallel: true
+    - circle-android wait-for-boot
+    - adb shell input keyevent 82
+    - sh build.sh
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/app/build/test-results/**/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+
+deployment:
+  codacy-coverage:
+    branch: /.*/
+    commands:
+      - codacy-coverage-reporter -l Java -r app/build/reports/jacoco/test/jacocoTestReport.xml
