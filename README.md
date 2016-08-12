@@ -2,6 +2,8 @@ Popular Movies App
 ==================
 
 [![Build Status](https://travis-ci.org/maksim-m/Popular-Movies-App.svg?branch=master)](https://travis-ci.org/maksim-m/Popular-Movies-App)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9d71713560374c938dba8a476ce8debf)](https://www.codacy.com/app/maksim-m/Popular-Movies-App)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/9d71713560374c938dba8a476ce8debf)](https://www.codacy.com/app/maksim-m/Popular-Movies-App)
 
 A simple Android app, that helps user to discover movies. 
 This is Project 1 & Project 2 of Udacity's Android Developer Nanodegree.
