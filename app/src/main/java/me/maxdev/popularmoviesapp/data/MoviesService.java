@@ -5,13 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import me.maxdev.popularmoviesapp.api.DiscoverResponse;
-import me.maxdev.popularmoviesapp.api.TheMovieDbClient;
 import me.maxdev.popularmoviesapp.api.TheMovieDbService;
 import rx.Observable;
 import rx.Subscriber;
@@ -25,27 +25,18 @@ public class MoviesService {
 
     private static final int PAGE_SIZE = 20;
     private static final String LOG_TAG = "MoviesService";
-    private static volatile MoviesService instance = null;
 
     private SortHelper sortHelper;
     private final Context context;
     private volatile boolean loading = false;
 
-    public MoviesService(Context context) {
-        if (instance != null) {
-            throw new IllegalStateException("Already instantiated.");
-        }
-        this.context = context.getApplicationContext();
-        sortHelper = new SortHelper(PreferenceManager.getDefaultSharedPreferences(context));
-    }
+    private TheMovieDbService theMovieDbService;
 
-    public static MoviesService getInstance(Context context) {
-        synchronized (MoviesService.class) {
-            if (instance == null) {
-                instance = new MoviesService(context);
-            }
-        }
-        return instance;
+    @Inject
+    public MoviesService(Context context, TheMovieDbService theMovieDbService, SortHelper sortHelper) {
+        this.context = context.getApplicationContext();
+        this.sortHelper = sortHelper;
+        this.theMovieDbService = theMovieDbService;
     }
 
     public void refreshMovies() {
@@ -76,9 +67,8 @@ public class MoviesService {
     }
 
     private void callDiscoverMovies(String sort, @Nullable Integer page) {
-        TheMovieDbService service = TheMovieDbClient.getInstance(context);
 
-        service.discoverMovies(sort, page)
+        theMovieDbService.discoverMovies(sort, page)
                 .subscribeOn(Schedulers.newThread())
                 .doOnNext(discoverMoviesResponse -> clearMoviesSortTableIfNeeded(discoverMoviesResponse))
                 .doOnNext(discoverMoviesResponse -> logResponse(discoverMoviesResponse))

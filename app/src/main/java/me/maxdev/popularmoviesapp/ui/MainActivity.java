@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
@@ -24,10 +23,13 @@ import android.widget.ScrollView;
 
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
+import me.maxdev.popularmoviesapp.PopularMoviesApp;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.FavoritesService;
 import me.maxdev.popularmoviesapp.data.Movie;
@@ -59,8 +61,11 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     @BindView(R.id.fab)
     FloatingActionButton fab;
 
-    private FavoritesService favoritesService;
-    private SortHelper sortHelper;
+    @Inject
+    SortHelper sortHelper;
+    @Inject
+    FavoritesService favoritesService;
+
     private boolean twoPaneMode;
     private Movie selectedMovie = null;
     private int selectedNavigationItem;
@@ -81,8 +86,9 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        favoritesService = FavoritesService.getInstance(this);
-        sortHelper = new SortHelper(PreferenceManager.getDefaultSharedPreferences(this));
+
+        ((PopularMoviesApp) getApplication()).getNetworkComponent().inject(this);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.movies_grid_container, MoviesGridFragment.create())

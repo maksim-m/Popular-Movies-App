@@ -128,6 +128,7 @@ ext {
     okHttpVersion = "3.4.1"
     retrofitVersion = "2.1.0"
     butterknifeVersion = "8.1.0"
+    daggerVersion = "2.6.1"
 }
 
 dependencies {
@@ -152,6 +153,9 @@ dependencies {
 
     compile "com.jakewharton:butterknife:${butterknifeVersion}"
     apt "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
+
+    compile "com.google.dagger:dagger:${daggerVersion}"
+    apt "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     compile 'com.github.bumptech.glide:glide:3.7.0'
 

@@ -19,9 +19,12 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.maxdev.popularmoviesapp.PopularMoviesApp;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.FavoritesService;
 import me.maxdev.popularmoviesapp.data.Movie;
@@ -45,7 +48,9 @@ public class MovieDetailActivity extends AppCompatActivity {
     @BindView(R.id.nestedScrollView)
     NestedScrollView nestedScrollView;
 
-    private FavoritesService favoritesService;
+    @Inject
+    FavoritesService favoritesService;
+
     private Movie movie;
 
     public static void start(Context context, Movie movie) {
@@ -60,7 +65,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
         ButterKnife.bind(this);
         movie = getIntent().getParcelableExtra(ARG_MOVIE);
-        favoritesService = FavoritesService.getInstance(this);
+
+        ((PopularMoviesApp) getApplication()).getNetworkComponent().inject(this);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.movies_grid_container, MovieDetailFragment.create(movie))

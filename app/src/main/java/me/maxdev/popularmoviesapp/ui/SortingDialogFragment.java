@@ -4,12 +4,14 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 
+import javax.inject.Inject;
+
+import me.maxdev.popularmoviesapp.PopularMoviesApp;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.Sort;
 import me.maxdev.popularmoviesapp.data.SortHelper;
@@ -20,12 +22,15 @@ public class SortingDialogFragment extends DialogFragment {
 
     public static final String TAG = "SortingDialogFragment";
 
-    private SortHelper sortHelper;
+    @Inject
+    SortHelper sortHelper;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        sortHelper = new SortHelper(PreferenceManager.getDefaultSharedPreferences(getContext()));
+
+        ((PopularMoviesApp) getActivity().getApplication()).getNetworkComponent().inject(this);
+
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.DialogStyle);
         builder.setTitle(getString(R.string.sort_dialog_title));
         builder.setNegativeButton(getString(R.string.action_cancel), null);

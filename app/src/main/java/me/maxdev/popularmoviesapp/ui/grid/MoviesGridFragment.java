@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -16,6 +15,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import javax.inject.Inject;
+
+import me.maxdev.popularmoviesapp.PopularMoviesApp;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.data.MoviesService;
 import me.maxdev.popularmoviesapp.data.SortHelper;
@@ -24,8 +26,11 @@ import me.maxdev.popularmoviesapp.ui.SortingDialogFragment;
 
 public class MoviesGridFragment extends AbstractMoviesGridFragment {
 
-    private MoviesService moviesService;
-    private SortHelper sortHelper;
+    @Inject
+    MoviesService moviesService;
+    @Inject
+    SortHelper sortHelper;
+
     private EndlessRecyclerViewOnScrollListener endlessRecyclerViewOnScrollListener;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -56,8 +61,8 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        sortHelper = new SortHelper(PreferenceManager.getDefaultSharedPreferences(getContext()));
-        moviesService = MoviesService.getInstance(getContext());
+
+        ((PopularMoviesApp) getActivity().getApplication()).getNetworkComponent().inject(this);
     }
 
     @Override
