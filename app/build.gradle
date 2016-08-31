@@ -125,11 +125,12 @@ if (keystorePropertiesFile.exists()) {
 
 ext {
     supportLibraryVersion = "24.2.0"
-    testingSupportLibraryVersion = "0.5"
-    okHttpVersion = "3.4.1"
     retrofitVersion = "2.1.0"
+    okHttpVersion = "3.4.1"
     butterknifeVersion = "8.1.0"
     daggerVersion = "2.6.1"
+    rxLifecycleVersion = "0.7.0"
+    testingSupportLibraryVersion = "0.5"
 }
 
 dependencies {
@@ -147,10 +148,12 @@ dependencies {
     compile "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     compile "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
 
-    compile 'io.reactivex:rxjava:1.1.6'
+    compile 'io.reactivex:rxjava:1.1.9'
     compile 'io.reactivex:rxandroid:1.2.1'
-    compile 'com.trello:rxlifecycle:0.6.1'
-    compile 'com.trello:rxlifecycle-components:0.6.1'
+
+    compile "com.trello:rxlifecycle:${rxLifecycleVersion}"
+    compile "com.trello:rxlifecycle-android:${rxLifecycleVersion}"
+    compile "com.trello:rxlifecycle-components:${rxLifecycleVersion}"
 
     compile "com.jakewharton:butterknife:${butterknifeVersion}"
     apt "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
