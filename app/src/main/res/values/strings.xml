@@ -2,9 +2,11 @@
     <!-- App -->
     <string name="app_name">Popular Movies App</string>
 
-    <!-- Actions (menu items, buttons, etc.) -->
+    <!-- Actions (menu items, buttons, etc.) and common strings -->
     <string name="action_settings">Settings</string>
     <string name="action_sort">Sort by…</string>
+    <string name="action_search">Search</string>
+    <string name="hint_search">Search for a movie</string>
     <string name="action_cancel">Cancel</string>
 
     <!-- Navigation drawer items -->
