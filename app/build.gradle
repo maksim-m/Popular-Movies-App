@@ -124,7 +124,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 ext {
-    supportLibraryVersion = "24.2.0"
+    supportLibraryVersion = "24.2.1"
     retrofitVersion = "2.1.0"
     okHttpVersion = "3.4.1"
     butterknifeVersion = "8.1.0"
