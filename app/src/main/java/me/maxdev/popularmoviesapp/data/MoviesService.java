@@ -11,7 +11,7 @@ import android.util.Log;
 
 import javax.inject.Inject;
 
-import me.maxdev.popularmoviesapp.api.DiscoverResponse;
+import me.maxdev.popularmoviesapp.api.DiscoverAndSearchResponse;
 import me.maxdev.popularmoviesapp.api.TheMovieDbService;
 import rx.Observable;
 import rx.Subscriber;
@@ -89,6 +89,7 @@ public class MoviesService {
                     public void onError(Throwable e) {
                         loading = false;
                         sendUpdateFinishedBroadcast(false);
+                        Log.e(LOG_TAG, "Error", e);
                     }
 
                     @Override
@@ -108,12 +109,12 @@ public class MoviesService {
         return context.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, movie.toContentValues());
     }
 
-    private void logResponse(DiscoverResponse<Movie> discoverMoviesResponse) {
+    private void logResponse(DiscoverAndSearchResponse<Movie> discoverMoviesResponse) {
         Log.d(LOG_TAG, "page == " + discoverMoviesResponse.getPage() + " " +
                 discoverMoviesResponse.getResults().toString());
     }
 
-    private void clearMoviesSortTableIfNeeded(DiscoverResponse<Movie> discoverMoviesResponse) {
+    private void clearMoviesSortTableIfNeeded(DiscoverAndSearchResponse<Movie> discoverMoviesResponse) {
         if (discoverMoviesResponse.getPage() == 1) {
             context.getContentResolver().delete(
                     sortHelper.getSortedMoviesUri(),

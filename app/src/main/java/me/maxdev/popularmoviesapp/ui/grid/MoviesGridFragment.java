@@ -1,5 +1,6 @@
 package me.maxdev.popularmoviesapp.ui.grid;
 
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,27 +12,47 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import me.maxdev.popularmoviesapp.PopularMoviesApp;
 import me.maxdev.popularmoviesapp.R;
+import me.maxdev.popularmoviesapp.api.DiscoverAndSearchResponse;
+import me.maxdev.popularmoviesapp.api.TheMovieDbService;
+import me.maxdev.popularmoviesapp.data.Movie;
 import me.maxdev.popularmoviesapp.data.MoviesService;
 import me.maxdev.popularmoviesapp.data.SortHelper;
 import me.maxdev.popularmoviesapp.ui.EndlessRecyclerViewOnScrollListener;
 import me.maxdev.popularmoviesapp.ui.SortingDialogFragment;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MoviesGridFragment extends AbstractMoviesGridFragment {
+
+    private static final String LOG_TAG = "MoviesGridFragment";
+    private static final int SEARCH_QUERY_DELAY_MILLIS = 400;
 
     @Inject
     MoviesService moviesService;
     @Inject
     SortHelper sortHelper;
 
+    @Inject
+    TheMovieDbService theMovieDbService;
+
     private EndlessRecyclerViewOnScrollListener endlessRecyclerViewOnScrollListener;
+    private SearchView searchView;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -87,6 +108,9 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_movies_grid, menu);
+
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        setupSearchView();
     }
 
     @Override
@@ -130,6 +154,42 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
             }
         };
         recyclerView.addOnScrollListener(endlessRecyclerViewOnScrollListener);
+    }
+
+    private void setupSearchView() {
+        if (searchView == null) {
+            Log.e(LOG_TAG, "SearchView is not initialized");
+            return;
+        }
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+
+        RxSearchView.queryTextChanges(searchView)
+                .debounce(SEARCH_QUERY_DELAY_MILLIS, TimeUnit.MILLISECONDS)
+                .map(CharSequence::toString)
+                .filter(query -> query.length() > 0)
+                .doOnNext(query -> Log.d("search", query))
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.newThread())
+                .switchMap(query -> theMovieDbService.searchMovies(query, null))
+                .map(DiscoverAndSearchResponse::getResults)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Movie>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(LOG_TAG, "Error", e);
+                    }
+
+                    @Override
+                    public void onNext(List<Movie> movies) {
+                        Log.d(LOG_TAG, movies.toString());
+                    }
+                });
     }
 
     private void refreshMovies() {

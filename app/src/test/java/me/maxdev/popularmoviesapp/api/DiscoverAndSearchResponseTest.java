@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class DiscoverResponseTest {
+public class DiscoverAndSearchResponseTest {
 
     private static final List<Integer> NUMBERS = new ArrayList<>();
 
@@ -22,23 +22,23 @@ public class DiscoverResponseTest {
     private static final int PAGE = 1;
     private static final int TOTAL_PAGES = 1;
 
-    private DiscoverResponse<Integer> discoverResponse;
+    private DiscoverAndSearchResponse<Integer> discoverAndSearchResponse;
 
     @Before
     public void setUp() throws Exception {
-        discoverResponse = new DiscoverResponse<>(PAGE, NUMBERS, TOTAL_PAGES, NUMBERS.size());
+        discoverAndSearchResponse = new DiscoverAndSearchResponse<>(PAGE, NUMBERS, TOTAL_PAGES, NUMBERS.size());
     }
 
     @After
     public void tearDown() throws Exception {
-        discoverResponse = null;
+        discoverAndSearchResponse = null;
     }
 
     @Test
     public void testGetters() throws Exception {
-        assertEquals(PAGE, discoverResponse.getPage());
-        assertEquals(TOTAL_PAGES, discoverResponse.getTotalPages());
-        assertEquals(NUMBERS.size(), discoverResponse.getTotalResults());
-        assertEquals(NUMBERS, discoverResponse.getResults());
+        assertEquals(PAGE, discoverAndSearchResponse.getPage());
+        assertEquals(TOTAL_PAGES, discoverAndSearchResponse.getTotalPages());
+        assertEquals(NUMBERS.size(), discoverAndSearchResponse.getTotalResults());
+        assertEquals(NUMBERS, discoverAndSearchResponse.getResults());
     }
 }
