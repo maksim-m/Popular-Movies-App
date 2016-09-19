@@ -177,7 +177,7 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
                 .subscribe(new Subscriber<List<Movie>>() {
                     @Override
                     public void onCompleted() {
-
+                        // TODO
                     }
 
                     @Override
@@ -187,6 +187,7 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
 
                     @Override
                     public void onNext(List<Movie> movies) {
+                        // TODO
                         Log.d(LOG_TAG, movies.toString());
                     }
                 });
