@@ -41,6 +41,7 @@ android {
 
     buildTypes {
         debug {
+            versionNameSuffix "-debug"
             minifyEnabled false
             testCoverageEnabled true
         }
@@ -131,8 +132,8 @@ ext {
     rxAndroidVersion = "1.2.1"
     rxLifecycleVersion = "0.7.0"
     rxBindingsVersion = "0.4.0"
-    butterknifeVersion = "8.1.0"
-    daggerVersion = "2.6.1"
+    butterknifeVersion = "8.4.0"
+    daggerVersion = "2.7"
     glideVersion = "3.7.0"
     jUnitVersion = "4.12"
     mockitoVersion = "1.10.19"

@@ -1,1 +1,1 @@
-gradlew.bat clean build connectedAndroidTest -PdisablePreDex
+gradlew.bat clean build connectedAndroidTest jacocoTestReport -PdisablePreDex
