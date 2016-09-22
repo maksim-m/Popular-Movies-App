@@ -187,8 +187,7 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
 
                     @Override
                     public void onNext(List<Movie> movies) {
-                        // TODO
-                        Log.d(LOG_TAG, movies.toString());
+                        recyclerView.setAdapter(new MoviesSearchAdapter(getContext(), movies));
                     }
                 });
     }
