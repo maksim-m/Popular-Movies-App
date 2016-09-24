@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class DiscoverResponse<T> {
+public class DiscoverAndSearchResponse<T> {
 
     @SerializedName("page")
     private int page;
@@ -18,7 +18,7 @@ public class DiscoverResponse<T> {
     @SerializedName("total_results")
     private long totalResults;
 
-    public DiscoverResponse(int page, List<T> results, int totalPages, long totalResults) {
+    public DiscoverAndSearchResponse(int page, List<T> results, int totalPages, long totalResults) {
         this.page = page;
         this.results = results;
         this.totalPages = totalPages;

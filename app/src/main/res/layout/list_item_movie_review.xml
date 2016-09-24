@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="5"
-        android:singleLine="false"
         tools:src="Review content"/>
 
     <TextView

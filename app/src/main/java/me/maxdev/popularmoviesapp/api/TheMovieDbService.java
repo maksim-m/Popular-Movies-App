@@ -15,6 +15,11 @@ public interface TheMovieDbService {
     Observable<MovieReviewsResponse> getMovieReviews(@Path("id") long movieId);
 
     @GET("discover/movie")
-    Observable<DiscoverResponse<Movie>> discoverMovies(@Query("sort_by") String sortBy, @Query("page") Integer page);
+    Observable<DiscoverAndSearchResponse<Movie>> discoverMovies(@Query("sort_by") String sortBy,
+                                                                @Query("page") Integer page);
+
+    @GET("search/movie")
+    Observable<DiscoverAndSearchResponse<Movie>> searchMovies(@Query("query") String query,
+                                                              @Query("page") Integer page);
 
 }

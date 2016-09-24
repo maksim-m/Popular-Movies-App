@@ -4,26 +4,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-public class FavoritesService {
+import javax.inject.Inject;
 
-    private static volatile FavoritesService instance = null;
+public class FavoritesService {
 
     private final Context context;
 
+    @Inject
     public FavoritesService(Context context) {
-        if (instance != null) {
-            throw new IllegalStateException("Already instantiated.");
-        }
         this.context = context.getApplicationContext();
-    }
-
-    public static FavoritesService getInstance(Context context) {
-        synchronized (FavoritesService.class) {
-            if (instance == null) {
-                instance = new FavoritesService(context);
-            }
-        }
-        return instance;
     }
 
     public void addToFavorites(Movie movie) {

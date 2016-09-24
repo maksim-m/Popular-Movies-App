@@ -1,11 +1,12 @@
 apply plugin: 'jacoco'
 
+def connectedExecutionDataPath = "${buildDir}/outputs/code-coverage/connected/connectedExecutionData.ec"
+
 jacoco {
     toolVersion = '0.7.7.201606060606'
 }
 
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'connectedAndroidTest',
-                                                      'createDebugCoverageReport']) {
+task jacocoTestReport(type: JacocoReport, dependsOn: 'renameAndroidExecutionData') {
 
     // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
     // We iterate through the compiled .class tree and rename $$ to $.
@@ -40,9 +41,15 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'conn
 
     sourceDirectories = files([mainSrc])
     classDirectories = files([debugTree])
-    executionData = files(["${buildDir}/jacoco/testDebugUnitTest.exec",
-                           "${buildDir}/outputs/code-coverage/connected/coverage.ec"
-    ])
+    executionData = files(["${buildDir}/jacoco/testDebugUnitTest.exec", connectedExecutionDataPath])
 }
 
-check.dependsOn 'jacocoTestReport'
+task renameAndroidExecutionData() {
+    doFirst {
+        new File("${buildDir}/outputs/code-coverage/connected/").eachFileRecurse { file ->
+            if (file.name.contains('.ec')) {
+                file.renameTo(connectedExecutionDataPath)
+            }
+        }
+    }
+}

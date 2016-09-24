@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'com.getkeepsafe.dexcount'        // apply dexcount AFTER the Android plugin!
+apply plugin: 'com.neenbedankt.android-apt'     // android-apt modifies the javaCompile task, apply this plugin LAST!
 
 apply from: '../quality/checkstyle.gradle'
 apply from: '../quality/findbugs.gradle'
@@ -14,7 +15,7 @@ def isOnCi() {
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    buildToolsVersion "24.0.2"
 
     defaultConfig {
         applicationId "me.maxdev.popularmoviesapp"
@@ -40,6 +41,7 @@ android {
 
     buildTypes {
         debug {
+            versionNameSuffix "-debug"
             minifyEnabled false
             testCoverageEnabled true
         }
@@ -123,11 +125,19 @@ if (keystorePropertiesFile.exists()) {
 }
 
 ext {
-    supportLibraryVersion = "24.2.0"
-    testingSupportLibraryVersion = "0.5"
-    okHttpVersion = "3.4.1"
+    supportLibraryVersion = "24.2.1"
     retrofitVersion = "2.1.0"
-    butterknifeVersion = "8.1.0"
+    okHttpVersion = "3.4.1"
+    rxJavaVersion = "1.2.0"
+    rxAndroidVersion = "1.2.1"
+    rxLifecycleVersion = "0.7.0"
+    rxBindingsVersion = "0.4.0"
+    butterknifeVersion = "8.4.0"
+    daggerVersion = "2.7"
+    glideVersion = "3.7.0"
+    jUnitVersion = "4.12"
+    mockitoVersion = "1.10.19"
+    testingSupportLibraryVersion = "0.5"
 }
 
 dependencies {
@@ -145,18 +155,25 @@ dependencies {
     compile "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     compile "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
 
-    compile 'io.reactivex:rxjava:1.1.6'
-    compile 'io.reactivex:rxandroid:1.2.1'
-    compile 'com.trello:rxlifecycle:0.6.1'
-    compile 'com.trello:rxlifecycle-components:0.6.1'
+    compile "io.reactivex:rxjava:${rxJavaVersion}"
+    compile "io.reactivex:rxandroid:${rxAndroidVersion}"
+
+    compile "com.trello:rxlifecycle:${rxLifecycleVersion}"
+    compile "com.trello:rxlifecycle-android:${rxLifecycleVersion}"
+    compile "com.trello:rxlifecycle-components:${rxLifecycleVersion}"
+
+    compile "com.jakewharton.rxbinding:rxbinding-appcompat-v7:${rxBindingsVersion}"
 
     compile "com.jakewharton:butterknife:${butterknifeVersion}"
     apt "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
 
-    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile "com.google.dagger:dagger:${daggerVersion}"
+    apt "com.google.dagger:dagger-compiler:${daggerVersion}"
 
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    compile "com.github.bumptech.glide:glide:${glideVersion}"
+
+    testCompile "junit:junit:${jUnitVersion}"
+    testCompile "org.mockito:mockito-core:${mockitoVersion}"
 
     androidTestCompile "com.android.support:support-annotations:${supportLibraryVersion}"
     androidTestCompile "com.android.support.test:runner:${testingSupportLibraryVersion}"

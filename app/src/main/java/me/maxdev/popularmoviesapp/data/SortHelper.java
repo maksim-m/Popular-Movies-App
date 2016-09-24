@@ -3,6 +3,8 @@ package me.maxdev.popularmoviesapp.data;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+import javax.inject.Inject;
+
 public final class SortHelper {
 
     private static final String PREF_SORT_BY_KEY = "sortBy";
@@ -10,6 +12,7 @@ public final class SortHelper {
 
     private SharedPreferences sharedPreferences;
 
+    @Inject
     public SortHelper(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
     }
