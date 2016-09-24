@@ -120,6 +120,7 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
                             recyclerView.setAdapter(null);
                             initMoviesGrid();
                             restartLoader();
+                            swipeRefreshLayout.setEnabled(true);
                             return true;
                         }
 
@@ -196,7 +197,7 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
                 .subscribe(new Subscriber<List<Movie>>() {
                     @Override
                     public void onCompleted() {
-                        // TODO
+                        // do nothing
                     }
 
                     @Override
@@ -207,9 +208,9 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
                     @Override
                     public void onNext(List<Movie> movies) {
                         MoviesSearchAdapter adapter = new MoviesSearchAdapter(getContext(), movies);
-                        adapter.setOnItemClickListener((itemView, position) -> {
-                            getOnItemSelectedListener().onItemSelected(adapter.getItem(position));
-                        });
+                        adapter.setOnItemClickListener((itemView, position) ->
+                                getOnItemSelectedListener().onItemSelected(adapter.getItem(position))
+                        );
                         recyclerView.setAdapter(adapter);
                         updateGridLayout();
                     }
@@ -219,6 +220,7 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
             recyclerView.setAdapter(null);
             recyclerView.removeOnScrollListener(endlessRecyclerViewOnScrollListener);
             updateGridLayout();
+            swipeRefreshLayout.setEnabled(false);
         });
     }
 

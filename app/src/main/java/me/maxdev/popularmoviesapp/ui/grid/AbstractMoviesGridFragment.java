@@ -42,8 +42,8 @@ public abstract class AbstractMoviesGridFragment extends Fragment implements Loa
     private MoviesAdapter adapter;
 
     private OnItemSelectedListener onItemSelectedListener;
-
     private GridLayoutManager gridLayoutManager;
+
     public AbstractMoviesGridFragment() {
         // Required empty public constructor
     }
@@ -81,6 +81,7 @@ public abstract class AbstractMoviesGridFragment extends Fragment implements Loa
         ButterKnife.bind(this, rootView);
 
         initSwipeRefreshLayout();
+        recyclerView.addItemDecoration(new ItemOffsetDecoration(getActivity(), R.dimen.movie_item_offset));
         initMoviesGrid();
 
         return rootView;
@@ -116,7 +117,6 @@ public abstract class AbstractMoviesGridFragment extends Fragment implements Loa
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         int columns = getResources().getInteger(R.integer.movies_columns);
-        recyclerView.addItemDecoration(new ItemOffsetDecoration(getActivity(), R.dimen.movie_item_offset));
         gridLayoutManager = new GridLayoutManager(getActivity(), columns);
         recyclerView.setLayoutManager(gridLayoutManager);
         onMoviesGridInitialisationFinished();
