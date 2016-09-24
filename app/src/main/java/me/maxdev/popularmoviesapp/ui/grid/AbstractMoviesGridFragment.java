@@ -40,9 +40,10 @@ public abstract class AbstractMoviesGridFragment extends Fragment implements Loa
     RelativeLayout noMoviesView;
 
     private MoviesAdapter adapter;
-    private OnItemSelectedListener onItemSelectedListener;
-    private GridLayoutManager gridLayoutManager;
 
+    private OnItemSelectedListener onItemSelectedListener;
+
+    private GridLayoutManager gridLayoutManager;
     public AbstractMoviesGridFragment() {
         // Required empty public constructor
     }
@@ -91,12 +92,16 @@ public abstract class AbstractMoviesGridFragment extends Fragment implements Loa
         updateGridLayout();
     }
 
+    public OnItemSelectedListener getOnItemSelectedListener() {
+        return onItemSelectedListener;
+    }
+
     protected void restartLoader() {
         getLoaderManager().restartLoader(LOADER_ID, null, AbstractMoviesGridFragment.this);
     }
 
     protected void updateGridLayout() {
-        if (adapter.getItemCount() == 0) {
+        if (recyclerView.getAdapter() == null || recyclerView.getAdapter().getItemCount() == 0) {
             recyclerView.setVisibility(View.GONE);
             noMoviesView.setVisibility(View.VISIBLE);
         } else {
@@ -105,7 +110,7 @@ public abstract class AbstractMoviesGridFragment extends Fragment implements Loa
         }
     }
 
-    private void initMoviesGrid() {
+    protected void initMoviesGrid() {
         adapter = new MoviesAdapter(getContext(), null);
         adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);

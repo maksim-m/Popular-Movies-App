@@ -31,6 +31,17 @@ public abstract class ArrayRecyclerViewAdapter<T, VH extends RecyclerView.ViewHo
         return items;
     }
 
+    @Nullable
+    public T getItem(int position) {
+        if (items == null) {
+            return null;
+        }
+        if (position < 0 || position > items.size()) {
+            return null;
+        }
+        return items.get(position);
+    }
+
     public void setItems(List<T> items) {
         this.items = items;
     }

@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
@@ -109,8 +110,26 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_movies_grid, menu);
 
-        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        setupSearchView();
+        MenuItem searchViewMenuItem = menu.findItem(R.id.action_search);
+        if (searchViewMenuItem != null) {
+            searchView = (SearchView) searchViewMenuItem.getActionView();
+            MenuItemCompat.setOnActionExpandListener(searchViewMenuItem,
+                    new MenuItemCompat.OnActionExpandListener() {
+                        @Override
+                        public boolean onMenuItemActionCollapse(MenuItem item) {
+                            recyclerView.setAdapter(null);
+                            initMoviesGrid();
+                            restartLoader();
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onMenuItemActionExpand(MenuItem item) {
+                            return true;
+                        }
+                    });
+            setupSearchView();
+        }
     }
 
     @Override
@@ -187,9 +206,20 @@ public class MoviesGridFragment extends AbstractMoviesGridFragment {
 
                     @Override
                     public void onNext(List<Movie> movies) {
-                        recyclerView.setAdapter(new MoviesSearchAdapter(getContext(), movies));
+                        MoviesSearchAdapter adapter = new MoviesSearchAdapter(getContext(), movies);
+                        adapter.setOnItemClickListener((itemView, position) -> {
+                            getOnItemSelectedListener().onItemSelected(adapter.getItem(position));
+                        });
+                        recyclerView.setAdapter(adapter);
+                        updateGridLayout();
                     }
                 });
+
+        searchView.setOnSearchClickListener(view -> {
+            recyclerView.setAdapter(null);
+            recyclerView.removeOnScrollListener(endlessRecyclerViewOnScrollListener);
+            updateGridLayout();
+        });
     }
 
     private void refreshMovies() {
