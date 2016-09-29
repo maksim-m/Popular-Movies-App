@@ -26,12 +26,14 @@ import com.trello.rxlifecycle.components.support.RxFragment;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.maxdev.popularmoviesapp.PopularMoviesApp;
 import me.maxdev.popularmoviesapp.R;
 import me.maxdev.popularmoviesapp.api.MovieReviewsResponse;
 import me.maxdev.popularmoviesapp.api.MovieVideosResponse;
-import me.maxdev.popularmoviesapp.api.TheMovieDbClient;
 import me.maxdev.popularmoviesapp.api.TheMovieDbService;
 import me.maxdev.popularmoviesapp.data.Movie;
 import me.maxdev.popularmoviesapp.data.MovieReview;
@@ -80,6 +82,9 @@ public class MovieDetailFragment extends RxFragment {
     @BindView(R.id.movie_reviews)
     RecyclerView movieReviews;
 
+    @Inject
+    TheMovieDbService theMovieDbService;
+
     private Movie movie;
     private MovieVideosAdapter videosAdapter;
     private MovieReviewsAdapter reviewsAdapter;
@@ -102,6 +107,8 @@ public class MovieDetailFragment extends RxFragment {
         if (getArguments() != null) {
             movie = getArguments().getParcelable(ARG_MOVIE);
         }
+
+        ((PopularMoviesApp) getActivity().getApplication()).getNetworkComponent().inject(this);
     }
 
     @Override
@@ -179,8 +186,7 @@ public class MovieDetailFragment extends RxFragment {
     }
 
     private void loadMovieVideos() {
-        TheMovieDbService service = TheMovieDbClient.getInstance(getContext());
-        service.getMovieVideos(movie.getId())
+        theMovieDbService.getMovieVideos(movie.getId())
                 .compose(bindToLifecycle())
                 .subscribeOn(Schedulers.newThread())
                 .map(MovieVideosResponse::getResults)
@@ -206,8 +212,7 @@ public class MovieDetailFragment extends RxFragment {
     }
 
     private void loadMovieReviews() {
-        TheMovieDbService service = TheMovieDbClient.getInstance(getContext());
-        service.getMovieReviews(movie.getId())
+        theMovieDbService.getMovieReviews(movie.getId())
                 .compose(bindToLifecycle())
                 .subscribeOn(Schedulers.newThread())
                 .map(MovieReviewsResponse::getResults)
@@ -230,7 +235,6 @@ public class MovieDetailFragment extends RxFragment {
                         updateMovieReviewsCard();
                     }
                 });
-
     }
 
     private void initViews() {
