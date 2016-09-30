@@ -21,8 +21,8 @@ android {
         applicationId "me.maxdev.popularmoviesapp"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 2
-        versionName "2.0"
+        versionCode 3
+        versionName "2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
