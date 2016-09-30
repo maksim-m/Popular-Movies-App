@@ -16,6 +16,7 @@ public class FavoritesService {
     }
 
     public void addToFavorites(Movie movie) {
+        context.getContentResolver().insert(MoviesContract.MovieEntry.CONTENT_URI, movie.toContentValues());
         ContentValues contentValues = new ContentValues();
         contentValues.put(MoviesContract.COLUMN_MOVIE_ID_KEY, movie.getId());
         context.getContentResolver().insert(MoviesContract.Favorites.CONTENT_URI, contentValues);
