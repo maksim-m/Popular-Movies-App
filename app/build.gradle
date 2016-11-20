@@ -14,13 +14,13 @@ def isOnCi() {
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
 
     defaultConfig {
         applicationId "me.maxdev.popularmoviesapp"
         minSdkVersion 16
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 3
         versionName "2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -125,12 +125,12 @@ if (keystorePropertiesFile.exists()) {
 }
 
 ext {
-    supportLibraryVersion = "24.2.1"
+    supportLibraryVersion = "25.0.1"
     retrofitVersion = "2.1.0"
-    okHttpVersion = "3.4.1"
-    rxJavaVersion = "1.2.0"
+    okHttpVersion = "3.4.2"
+    rxJavaVersion = "1.2.2"
     rxAndroidVersion = "1.2.1"
-    rxLifecycleVersion = "0.7.0"
+    rxLifecycleVersion = "1.0"
     rxBindingsVersion = "0.4.0"
     butterknifeVersion = "8.4.0"
     daggerVersion = "2.7"
